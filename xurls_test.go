@@ -26,7 +26,7 @@ func TestFindString(t *testing.T) {
 		{"foo.com/", "foo.com/"},
 		{"foo.org/bar", "foo.org/bar"},
 		{" foo.com ", "foo.com"},
-		{" foo.com,", "foo.com"},
+		{",foo.com,", "foo.com"},
 		{"(foo.com)", "foo.com"},
 		{"<foo.com>", "foo.com"},
 		{"\"foo.com\"", "foo.com"},
