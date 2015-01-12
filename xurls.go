@@ -8,7 +8,7 @@ import (
 )
 
 var regexLink = regexp.MustCompile(
-	`(([^\s'"<>\(\)]+:(//)?|(http|ftp|www)[^.]*\.)[^\s'"<>\(\)]*|[^\s'"<>\(\)]+\.(com|org|net|edu|info)(/[^\s'"<>\(\)]*)?)[^.,;:\s'"<>\(\)]`)
+	`(([^\s'"<>\(\)]+:(//)?|(http|ftp|www)[^.]*\.)[^\s'"<>\(\)]*[^.,;:\s'"<>\(\)]|[^\s'"<>\(\)]+\.(com|org|net|edu|info)(/([^\s'"<>\(\)]*[^.,;:\s'"<>\(\)])?)?)`)
 
 func FindString(s string) string {
 	return regexLink.FindString(s)

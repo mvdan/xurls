@@ -18,10 +18,18 @@ func TestFindString(t *testing.T) {
 		{"test.foo.bar", ""},
 		{"test.foo.bar/path", ""},
 		{"http://foo.bar", "http://foo.bar"},
+		{"http://foo.bar/", "http://foo.bar/"},
+		{"http://foo.bar/path", "http://foo.bar/path"},
 		{"mailto:foo@bar", "mailto:foo@bar"},
 		{"www.foo.bar", "www.foo.bar"},
-		//{"foo.com", "foo.com"},
+		{"foo.com", "foo.com"},
+		{"foo.com/", "foo.com/"},
 		{"foo.org/bar", "foo.org/bar"},
+		{" foo.com ", "foo.com"},
+		{" foo.com,", "foo.com"},
+		{"(foo.com)", "foo.com"},
+		{"<foo.com>", "foo.com"},
+		{"\"foo.com\"", "foo.com"},
 	} {
 		got := FindString(c.in)
 		if got != c.want {
