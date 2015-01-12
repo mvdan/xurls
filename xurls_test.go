@@ -5,6 +5,7 @@ package xurls
 
 import (
 	"testing"
+	"reflect"
 )
 
 func TestFindString(t *testing.T) {
@@ -46,40 +47,27 @@ func TestFindString(t *testing.T) {
 		{"<foo.com>", "foo.com"},
 		{"\"foo.com\"", "foo.com"},
 	} {
-		got := FindString(c.in)
+		got := Regexp.FindString(c.in)
 		if got != c.want {
-			t.Errorf("FindString(\"%s\") got \"%s\", want \"%s\"", c.in, got, c.want)
+			t.Errorf(`Regexp.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
-}
-
-func stringSliceEqual(a, b []string) bool {
-	if a == nil && b == nil {
-		return true
-	}
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }
 
 func TestFindAllString(t *testing.T) {
 	for _, c := range []struct {
 		in   string
+		inN  int
 		want []string
 	}{
-		{"", nil},
-		{"http://foo.bar", []string{"http://foo.bar"}},
-		{" http://foo.bar www.foo.bar ", []string{"http://foo.bar", "www.foo.bar"}},
+		{"", -1, nil},
+		{"http://foo.bar", 0, nil},
+		{"http://foo.bar", -1, []string{"http://foo.bar"}},
+		{" http://foo.bar www.foo.bar ", -1, []string{"http://foo.bar", "www.foo.bar"}},
 	} {
-		got := FindAllString(c.in)
-		if !stringSliceEqual(got, c.want) {
-			t.Errorf("urlsFromString(\"%s\") got %q, want %q", c.in, got, c.want)
+		got := Regexp.FindAllString(c.in, c.inN)
+		if !reflect.DeepEqual(got, c.want) {
+			t.Errorf(`Regexp.FindAllString("%s") got "%q", want "%q"`, c.in, got, c.want)
 		}
 	}
 }
