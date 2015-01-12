@@ -1,12 +1,9 @@
 /* Copyright (c) 2015, Daniel Martí <mvdan@mvdan.cc> */
 /* See LICENSE for licensing information */
 
-package main
+package xurls
 
 import (
-	"bufio"
-	"fmt"
-	"os"
 	"regexp"
 )
 
@@ -19,18 +16,4 @@ func FindString(s string) string {
 
 func FindAllString(s string) []string {
 	return regexLink.FindAllString(s, -1)
-}
-
-func main() {
-	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan() {
-		line := scanner.Text()
-		urls := FindAllString(line)
-		if urls == nil {
-			continue
-		}
-		for _, url := range urls {
-			fmt.Println(url)
-		}
-	}
 }
