@@ -13,11 +13,19 @@ import (
 var regexLink = regexp.MustCompile(
 	`(([^\s'"<>\(\)]+:(//)?|(http|ftp|www)[^.]*\.)[^\s'"<>\(\)]*|[^\s'"<>\(\)]+\.(com|org|net|edu|info)(/[^\s'"<>\(\)]*)?)[^.,;:\s'"<>\(\)]`)
 
+func FindString(s string) string {
+	return regexLink.FindString(s)
+}
+
+func FindAllString(s string) []string {
+	return regexLink.FindAllString(s, -1)
+}
+
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
-		urls := regexLink.FindAllString(line, -1)
+		urls := FindAllString(line)
 		if urls == nil {
 			continue
 		}
