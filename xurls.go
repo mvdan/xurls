@@ -11,7 +11,7 @@ import (
 )
 
 var regexLink = regexp.MustCompile(
-	`([^\s'"<\(]+:(//)?|(http|ftp|www)[^.]*\.)[^\s'">\)]*[^\s.,;'">\):]`)
+	`([^\s'"<>\(\)]+:(//)?|(http|ftp|www)[^.]*\.)[^\s'"<>\(\)]*[^\s.,;:'"<>\(\)]`)
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
