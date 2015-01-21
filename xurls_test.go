@@ -9,7 +9,7 @@ import (
 )
 
 func TestFindString(t *testing.T) {
-	for _, c := range []struct {
+	for _, c := range [...]struct {
 		in   string
 		want string
 	}{
@@ -57,7 +57,7 @@ func TestFindString(t *testing.T) {
 }
 
 func TestFindAllString(t *testing.T) {
-	for _, c := range []struct {
+	for _, c := range [...]struct {
 		in   string
 		inN  int
 		want []string
