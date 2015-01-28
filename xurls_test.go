@@ -5,19 +5,27 @@ package xurls
 
 import (
 	"testing"
-	"reflect"
 )
 
-func TestFindString(t *testing.T) {
+func TestWebUrl(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
 		want string
 	}{
 		{"", ""},
 		{"foo", ""},
-		{"foo.bar", ""},
-		{"test.foo.bar", ""},
-		{"test.foo.bar/path", ""},
+		{"foo.a", ""},
+		{"foo.bar", "foo.bar"},
+		{"foo.bar/", "foo.bar/"},
+		{"1.1.1.1", "1.1.1.1"},
+		{"121.1.1.1", "121.1.1.1"},
+		{"255.1.1.1", "255.1.1.1"},
+		{"300.1.1.1", ""},
+		{"1.1.1", ""},
+		{"1.1..1", ""},
+		{"test.foo.bar", "test.foo.bar"},
+		{"test.foo.bar/path", "test.foo.bar/path"},
+		{"test.foo.bar/path_(more)", "test.foo.bar/path_(more)"},
 		{"http://foo.bar", "http://foo.bar"},
 		{" http://foo.bar ", "http://foo.bar"},
 		{",http://foo.bar,", "http://foo.bar"},
@@ -27,49 +35,40 @@ func TestFindString(t *testing.T) {
 		{"http://foo.bar", "http://foo.bar"},
 		{"http://test.foo.bar/", "http://test.foo.bar/"},
 		{"http://foo.bar/path", "http://foo.bar/path"},
-		{"mailto:foo@bar", "mailto:foo@bar"},
-		{" mailto:foo@bar ", "mailto:foo@bar"},
-		{",mailto:foo@bar,", "mailto:foo@bar"},
-		{"(mailto:foo@bar)", "mailto:foo@bar"},
-		{"<mailto:foo@bar>", "mailto:foo@bar"},
-		{"\"mailto:foo@bar\"", "mailto:foo@bar"},
+		{"http://1.1.1.1/path", "http://1.1.1.1/path"},
 		{"www.foo.bar", "www.foo.bar"},
-		{" www.foo.bar ", "www.foo.bar"},
-		{",www.foo.bar,", "www.foo.bar"},
-		{"(www.foo.bar)", "www.foo.bar"},
-		{"<www.foo.bar>", "www.foo.bar"},
-		{"\"www.foo.bar\"", "www.foo.bar"},
-		{"foo.com", "foo.com"},
-		{"test.foo.com", "test.foo.com"},
-		{"foo.com/", "foo.com/"},
-		{"foo.org/bar", "foo.org/bar"},
-		{" foo.com ", "foo.com"},
-		{",foo.com,", "foo.com"},
-		{"(foo.com)", "foo.com"},
-		{"<foo.com>", "foo.com"},
-		{"\"foo.com\"", "foo.com"},
+		{" foo.com/bar ", "foo.com/bar"},
+		{",foo.com/bar,", "foo.com/bar,"},
+		{"(foo.com/bar)", "foo.com/bar)"},
+		{"<foo.com/bar>", "foo.com/bar"},
+		{"\"foo.com/bar\"", "foo.com/bar"},
 	} {
-		got := Regexp.FindString(c.in)
+		got := WebUrl.FindString(c.in)
 		if got != c.want {
-			t.Errorf(`Regexp.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
+			t.Errorf(`WebUrl.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
 }
 
-func TestFindAllString(t *testing.T) {
+func TestEmailAddr(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
-		inN  int
-		want []string
+		want string
 	}{
-		{"", -1, nil},
-		{"http://foo.bar", 0, nil},
-		{"http://foo.bar", -1, []string{"http://foo.bar"}},
-		{" http://foo.bar www.foo.bar ", -1, []string{"http://foo.bar", "www.foo.bar"}},
+		{"", ""},
+		{"foo", ""},
+		{"foo@bar", ""},
+		{"foo@bar.a", ""},
+		{"foo@bar.tld", "foo@bar.tld"},
+		{"mailto:foo@bar.tld", "mailto:foo@bar.tld"},
+		{"foo@test.bar.tld", "foo@test.bar.tld"},
+		{"foo@bar.tld/path", "foo@bar.tld"},
+		{"foo+test@bar.tld", "foo+test@bar.tld"},
+		{"foo+._%-@bar.tld", "foo+._%-@bar.tld"},
 	} {
-		got := Regexp.FindAllString(c.in, c.inN)
-		if !reflect.DeepEqual(got, c.want) {
-			t.Errorf(`Regexp.FindAllString("%s") got "%q", want "%q"`, c.in, got, c.want)
+		got := EmailAddr.FindString(c.in)
+		if got != c.want {
+			t.Errorf(`EmailAddr.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
 }
