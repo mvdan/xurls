@@ -2,5 +2,12 @@
 
 Regex expressions to extract urls from plain text.
 
-Includes a simple command-line utility that prints urls extracted from text
-given via standard input.
+	go get github.com/mvdan/xurls
+
+### Command-line utilities
+
+#### xurls
+
+	go get github.com/mvdan/xurls/cmd/xurls
+
+Reads plain text from stdin and prints one extracted url per line.
