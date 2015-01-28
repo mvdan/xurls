@@ -15,7 +15,7 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
-		urls := xurls.WebUrl.FindAllString(line, -1)
+		urls := xurls.All.FindAllString(line, -1)
 		if urls == nil {
 			continue
 		}
