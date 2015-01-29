@@ -436,6 +436,7 @@ var tlds = []string{
 	"lacaixa",
 	"la",
 	"kz",
+	"kyoto",
 	"ky",
 	"kw",
 	"kred",
