@@ -26,7 +26,7 @@ def main():
 
     # Reversed so that the longest match first
     tldslist = [t for t in tlds]
-    tldslist.sort(reverse=True)
+    tldslist.sort()
     with open("tlds.go", mode='w+') as f:
         f.write("""\
 /* Copyright (c) 2015, Daniel Martí <mvdan@mvdan.cc> */
@@ -34,7 +34,7 @@ def main():
 
 package xurls
 
-var tlds = []string{
+var TLDs = []string{
 """)
         for tld in tldslist:
             f.write("\t`%s`,\n" % tld)
