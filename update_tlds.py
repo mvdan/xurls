@@ -37,7 +37,7 @@ package xurls
 var tlds = []string{
 """)
         for tld in tldslist:
-            f.write("\t\"%s\",\n" % tld)
+            f.write("\t`%s`,\n" % tld)
         f.write("""\
 }
 """)
