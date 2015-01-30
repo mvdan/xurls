@@ -68,7 +68,7 @@ func TestWebUrl(t *testing.T) {
 	}
 }
 
-func TestEmailAddr(t *testing.T) {
+func TestEmail(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
 		want string
@@ -78,13 +78,13 @@ func TestEmailAddr(t *testing.T) {
 		{"foo@bar", ""},
 		{"foo@bar.a", ""},
 		{"foo@bar.com", "foo@bar.com"},
-		{"mailto:foo@bar.com", "mailto:foo@bar.com"},
+		{"mailto:foo@bar.com", "foo@bar.com"},
 		{"foo@test.bar.com", "foo@test.bar.com"},
 		{"foo@bar.com/path", "foo@bar.com"},
 		{"foo+test@bar.com", "foo+test@bar.com"},
 		{"foo+._%-@bar.com", "foo+._%-@bar.com"},
 	} {
-		got := EmailAddr.FindString(c.in)
+		got := Email.FindString(c.in)
 		if got != c.want {
 			t.Errorf(`EmailAddr.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}

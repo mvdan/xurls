@@ -44,10 +44,10 @@ var (
 	hostName = `(` + iri + `\.)+` + gtld
 	domainName = `(` + hostName + `|` + ipAddr + `)`
 	webUrl = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
-	emailAddr = `(mailto:)?[a-zA-Z0-9\.\_\%\-\+]{1,256}\@` + domainName
-	all = `(` + webUrl + `|` + emailAddr + `)`
+	email = `[a-zA-Z0-9\.\_\%\-\+]{1,256}\@` + domainName
+	all = `(` + webUrl + `|` + email + `)`
 
 	WebUrl = regexp.MustCompile(webUrl)
-	EmailAddr = regexp.MustCompile(emailAddr)
+	Email = regexp.MustCompile(email)
 	All = regexp.MustCompile(all)
 )
