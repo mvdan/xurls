@@ -5,22 +5,32 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 
 	"github.com/mvdan/xurls"
 )
 
+var (
+	email = flag.Bool("e", false, "match e-mails instead of web urls")
+)
+
 func main() {
+	flag.Parse()
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
-		urls := xurls.WebUrl.FindAllString(line, -1)
-		if urls == nil {
+		exp := xurls.WebUrl
+		if *email {
+			exp = xurls.Email
+		}
+		matches := exp.FindAllString(line, -1)
+		if matches == nil {
 			continue
 		}
-		for _, url := range urls {
-			fmt.Println(url)
+		for _, match := range matches {
+			fmt.Println(match)
 		}
 	}
 }
