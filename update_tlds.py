@@ -11,18 +11,24 @@ def urlget(url):
 
 def main():
     tlds = set()
-    regex = re.compile("^[^#/.]+$")
 
+    regex = re.compile(r"^([^#]+)$")
     data = urlget("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
     for line in data.splitlines():
-        if not regex.search(line):
+        m = regex.search(line)
+        if not m:
             continue
-        tlds.add(line.lower())
+        tld = m.group(1)
+        tlds.add(tld.lower())
+
+    regex = re.compile(r"(^([^/.]+)$|^// (xn--[^\s]+)[\s$])")
     data = urlget("https://publicsuffix.org/list/effective_tld_names.dat")
     for line in data.splitlines():
-        if not regex.search(line):
+        m = regex.search(line)
+        if not m:
             continue
-        tlds.add(line)
+        tld = m.group(2) or m.group(3)
+        tlds.add(tld)
 
     # Reversed so that the longest match first
     tldslist = [t for t in tlds]
