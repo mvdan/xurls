@@ -18,14 +18,14 @@ var (
 
 func main() {
 	flag.Parse()
-	exp := xurls.WebUrl
+	re := xurls.WebUrl
 	if *email {
-		exp = xurls.Email
+		re = xurls.Email
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
-		matches := exp.FindAllString(line, -1)
+		matches := re.FindAllString(line, -1)
 		if matches == nil {
 			continue
 		}
