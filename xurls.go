@@ -7,6 +7,8 @@ import (
 	"regexp"
 )
 
+//go:generate go run cmd/tldget/main.go
+
 func reverseJoin(a []string, sep string) string {
 	if len(a) == 0 {
 		return ""
