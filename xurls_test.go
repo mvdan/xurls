@@ -7,23 +7,6 @@ import (
 	"testing"
 )
 
-func TestReverseJoin(t *testing.T) {
-	for _, c := range [...]struct {
-		in    []string
-		inSep string
-		want  string
-	}{
-		{[]string{`a`, `b`, `c`}, `.`, `c.b.a`},
-		{[]string{`1`, `22`, `333`}, `,`, `333,22,1`},
-		{[]string{`xxx`, `yyy`, `zzz`}, `__`, `zzz__yyy__xxx`},
-	} {
-		got := reverseJoin(c.in, c.inSep)
-		if got != c.want {
-			t.Errorf(`reverseJoin(%v) got "%s", want "%s"`, c.in, got, c.want)
-		}
-	}
-}
-
 func TestWebURL(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
