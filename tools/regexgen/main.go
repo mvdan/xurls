@@ -156,10 +156,10 @@ func writeRegex(tlds []string) error {
 	if _, err := fmt.Fprintf(f, "\twebUrl = `%s`\n", webUrl); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprintf(f, "\temail = `%s`\n", email); err != nil {
+	if _, err := fmt.Fprintf(f, "\temail  = `%s`\n", email); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprintf(f, "\tall = `(` + webUrl + `|` + email + `)`\n"); err != nil {
+	if _, err := fmt.Fprintf(f, "\tall    = `(` + webUrl + `|` + email + `)`\n"); err != nil {
 		return err
 	}
 	if _, err := f.WriteString(")\n"); err != nil {
