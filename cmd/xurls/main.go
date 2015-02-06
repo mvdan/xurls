@@ -18,7 +18,7 @@ var (
 
 func main() {
 	flag.Parse()
-	re := xurls.WebUrl
+	re := xurls.WebURL
 	if *email {
 		re = xurls.Email
 	}

@@ -139,7 +139,7 @@ func writeRegex(tlds []string) error {
 		gtld       = `(?i)(` + reverseJoin(tlds, `|`) + `)(?-i)`
 		hostName   = `(` + iri + `\.)+` + gtld
 		domainName = `(` + hostName + `|` + ipAddr + `)`
-		webUrl     = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
+		webURL     = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
 		email      = `[a-zA-Z0-9\.\_\%\-\+]{1,256}\@` + domainName
 	)
 
@@ -153,13 +153,13 @@ func writeRegex(tlds []string) error {
 	if _, err := f.WriteString("const (\n"); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprintf(f, "\twebUrl = `%s`\n", webUrl); err != nil {
+	if _, err := fmt.Fprintf(f, "\twebURL = `%s`\n", webURL); err != nil {
 		return err
 	}
 	if _, err := fmt.Fprintf(f, "\temail  = `%s`\n", email); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprintf(f, "\tall    = `(` + webUrl + `|` + email + `)`\n"); err != nil {
+	if _, err := fmt.Fprintf(f, "\tall    = `(` + webURL + `|` + email + `)`\n"); err != nil {
 		return err
 	}
 	if _, err := f.WriteString(")\n"); err != nil {

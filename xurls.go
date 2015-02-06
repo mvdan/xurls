@@ -10,7 +10,7 @@ import (
 //go:generate go run tools/regexgen/main.go
 
 var (
-	WebUrl = regexp.MustCompile(webUrl)
+	WebURL = regexp.MustCompile(webURL)
 	Email  = regexp.MustCompile(email)
 	All    = regexp.MustCompile(all)
 )

@@ -24,7 +24,7 @@ func TestReverseJoin(t *testing.T) {
 	}
 }
 
-func TestWebUrl(t *testing.T) {
+func TestWebURL(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
 		want string
@@ -61,9 +61,9 @@ func TestWebUrl(t *testing.T) {
 		{"<foo.com/bar>", "foo.com/bar"},
 		{"\"foo.com/bar\"", "foo.com/bar"},
 	} {
-		got := WebUrl.FindString(c.in)
+		got := WebURL.FindString(c.in)
 		if got != c.want {
-			t.Errorf(`WebUrl.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
+			t.Errorf(`WebURL.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
 }
