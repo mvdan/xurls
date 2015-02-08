@@ -2,6 +2,7 @@
 
 package xurls
 
+// TLDs is a sorted list of all public top-level domains
 var TLDs = []string{
 	`abb`,
 	`abbott`,

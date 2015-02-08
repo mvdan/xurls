@@ -89,7 +89,7 @@ func writeTlds(tlds []string) error {
 	if _, err := f.WriteString(header); err != nil {
 		return err
 	}
-	if _, err := f.WriteString("var TLDs = []string{\n"); err != nil {
+	if _, err := f.WriteString("// TLDs is a sorted list of all public top-level domains\nvar TLDs = []string{\n"); err != nil {
 		return err
 	}
 	for _, tld := range tlds {
