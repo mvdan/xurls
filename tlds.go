@@ -994,6 +994,7 @@ var TLDs = []string{
 	`xn--80asehdb`,
 	`xn--80aswg`,
 	`xn--90a3ac`,
+	`xn--90ais`,
 	`xn--9dbq2a`,
 	`xn--9et52u`,
 	`xn--b4w605ferd`,
