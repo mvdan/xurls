@@ -658,6 +658,7 @@ var TLDs = []string{
 	`omega`,
 	`one`,
 	`ong`,
+	`onion`,
 	`onl`,
 	`online`,
 	`ooo`,
