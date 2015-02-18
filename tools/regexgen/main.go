@@ -81,7 +81,9 @@ func addFromPublicSuffix(tlds map[string]struct{}) error {
 
 func addExtra(tlds map[string]struct{}) {
 	for _, tld := range []string{
-		"onion",
+		"lan", // Local area network
+		"localhost", // Loopback
+		"onion", // Tor hidden services
 	} {
 		tlds[tld] = struct{}{}
 	}
