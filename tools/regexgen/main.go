@@ -149,7 +149,7 @@ func writeRegex(tlds []string) error {
 	var (
 		gtld       = `(?i)(` + reverseJoin(tlds, `|`) + `)(?-i)`
 		hostName   = `(` + iri + `\.)+` + gtld
-		domainName = `(` + hostName + `|` + ipAddr + `)`
+		domainName = `(` + hostName + `|` + ipAddr + `|localhost)`
 		webURL     = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
 		email      = `[a-zA-Z0-9\.\_\%\-\+]{1,256}\@` + domainName
 	)
