@@ -540,7 +540,6 @@ var TLDs = []string{
 	`lk`,
 	`loan`,
 	`loans`,
-	`localhost`,
 	`london`,
 	`lotte`,
 	`lotto`,
