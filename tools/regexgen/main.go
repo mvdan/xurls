@@ -31,9 +31,7 @@ var TLDs = []string{
 package xurls
 
 const (
-	webURL = ` + "`" + `{{.WebURL}}` + "`" + `
-	email  = ` + "`" + `{{.Email}}` + "`" + `
-	all    = ` + "`" + `{{.All}}` + "`" + `
+	gtld = ` + "`" + `{{.Gtld}}` + "`" + `
 )
 `))
 )
@@ -127,15 +125,6 @@ func reverseJoin(a []string, sep string) string {
 	return string(b)
 }
 
-const (
-	letters  = "a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
-	iriChar  = letters + `0-9`
-	ipv4Addr = `((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9]))`
-	ipv6Addr = `(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))`
-	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
-	iri      = `[` + iriChar + `]([` + iriChar + `\-]{0,61}[` + iriChar + `]){0,1}`
-)
-
 func writeRegex(tlds []string) error {
 	var allTlds []string
 	for _, tld := range tlds {
@@ -145,24 +134,14 @@ func writeRegex(tlds []string) error {
 		allTlds = append(allTlds, tld)
 	}
 	sort.Strings(allTlds)
-	var (
-		gtld       = `(?i)(` + reverseJoin(allTlds, `|`) + `)(?-i)`
-		hostName   = `(` + iri + `\.)+` + gtld
-		domainName = `(` + hostName + `|` + ipAddr + `|localhost)`
-		webURL     = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
-		email      = `[a-zA-Z0-9\.\_\%\-\+]{1,256}\@` + domainName
-	)
-
 	f, err := os.Create("regex.go")
 	if err != nil {
 		return err
 	}
 	return regexTmpl.Execute(f, struct {
-		WebURL, Email, All string
+		Gtld string
 	}{
-		WebURL: webURL,
-		Email:  email,
-		All:    "(` + webURL + `|` + email + `)",
+		Gtld: `(?i)(` + reverseJoin(allTlds, `|`) + `)(?-i)`,
 	})
 }
 
