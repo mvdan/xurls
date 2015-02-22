@@ -79,15 +79,6 @@ func addFromPublicSuffix(tlds map[string]struct{}) error {
 	return nil
 }
 
-func addExtra(tlds map[string]struct{}) {
-	for _, tld := range []string{
-		"lan",   // Local area network
-		"onion", // Tor hidden services
-	} {
-		tlds[tld] = struct{}{}
-	}
-}
-
 func tldList() ([]string, error) {
 	tlds := make(map[string]struct{})
 	if err := addFromIana(tlds); err != nil {
@@ -96,7 +87,6 @@ func tldList() ([]string, error) {
 	if err := addFromPublicSuffix(tlds); err != nil {
 		return nil, err
 	}
-	addExtra(tlds)
 	list := make([]string, 0, len(tlds))
 	for tld := range tlds {
 		list = append(list, tld)
