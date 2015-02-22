@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-//go:generate go run tools/regexgen/main.go
+//go:generate go run tools/tldsgen/main.go
 
 const (
 	letters    = "a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
