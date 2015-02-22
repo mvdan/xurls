@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+
+	"github.com/mvdan/xurls"
 )
 
 var (
@@ -135,8 +137,16 @@ const (
 )
 
 func writeRegex(tlds []string) error {
+	var allTlds []string
+	for _, tld := range tlds {
+		allTlds = append(allTlds, tld)
+	}
+	for _, tld := range xurls.PseudoTLDs {
+		allTlds = append(allTlds, tld)
+	}
+	sort.Strings(allTlds)
 	var (
-		gtld       = `(?i)(` + reverseJoin(tlds, `|`) + `)(?-i)`
+		gtld       = `(?i)(` + reverseJoin(allTlds, `|`) + `)(?-i)`
 		hostName   = `(` + iri + `\.)+` + gtld
 		domainName = `(` + hostName + `|` + ipAddr + `|localhost)`
 		webURL     = `((https?:\/\/(([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,64}(\:([a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(\%[a-fA-F0-9]{2})){1,25})?\@)?)?(` + domainName + `)(\:\d{1,5})?)(\/(([` + iriChar + `\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(\%[a-fA-F0-9]{2}))*)?(\b|$)`
