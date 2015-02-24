@@ -63,17 +63,14 @@ func addFromPublicSuffix(tlds map[string]struct{}) error {
 	}
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
-	re := regexp.MustCompile(`(^([^/.]+)$|^// (xn--[^\s]+)[\s$])`)
+	re := regexp.MustCompile(`^[^/.]+$`)
 	for scanner.Scan() {
 		line := scanner.Text()
-		matches := re.FindStringSubmatch(line)
-		if matches == nil || len(matches) < 4 {
+		match := re.FindString(line)
+		if match == "" {
 			continue
 		}
-		tld := matches[2]
-		if tld == "" {
-			tld = matches[3]
-		}
+		tld := strings.ToLower(match)
 		tlds[tld] = struct{}{}
 	}
 	return nil
@@ -89,6 +86,9 @@ func tldList() ([]string, error) {
 	}
 	list := make([]string, 0, len(tlds))
 	for tld := range tlds {
+		if strings.HasPrefix(tld, "xn--") {
+			continue
+		}
 		list = append(list, tld)
 	}
 	sort.Strings(list)
