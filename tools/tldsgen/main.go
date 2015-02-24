@@ -13,6 +13,8 @@ import (
 	"strings"
 	"text/template"
 
+	"golang.org/x/net/idna"
+
 	"github.com/mvdan/xurls"
 )
 
@@ -126,11 +128,19 @@ func reverseJoin(a []string, sep string) string {
 }
 
 func writeRegex(tlds []string) error {
-	var allTlds []string
-	for _, tld := range tlds {
-		allTlds = append(allTlds, tld)
+	allTldsSet := make(map[string]struct{})
+	for _, tldlist := range [...][]string{tlds, xurls.PseudoTLDs} {
+		for _, tld := range tldlist {
+			allTldsSet[tld] = struct{}{}
+			asciiTld, err := idna.ToASCII(tld)
+			if err != nil {
+				return err
+			}
+			allTldsSet[asciiTld] = struct{}{}
+		}
 	}
-	for _, tld := range xurls.PseudoTLDs {
+	var allTlds []string
+	for tld := range allTldsSet {
 		allTlds = append(allTlds, tld)
 	}
 	sort.Strings(allTlds)
