@@ -27,9 +27,6 @@ func main() {
 	for scanner.Scan() {
 		word := scanner.Text()
 		matches := re.FindAllString(word, -1)
-		if matches == nil {
-			continue
-		}
 		for _, match := range matches {
 			fmt.Println(match)
 		}
