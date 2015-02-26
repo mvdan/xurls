@@ -23,6 +23,7 @@ func main() {
 		re = xurls.Email
 	}
 	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := re.FindAllString(line, -1)
