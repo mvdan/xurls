@@ -25,8 +25,8 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
-		line := scanner.Text()
-		matches := re.FindAllString(line, -1)
+		word := scanner.Text()
+		matches := re.FindAllString(word, -1)
 		if matches == nil {
 			continue
 		}
