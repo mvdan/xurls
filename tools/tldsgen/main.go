@@ -38,7 +38,7 @@ const (
 `))
 )
 
-func addFromIana(tlds map[string]struct{}) error {
+func addFromIana(addTld func(tld string)) error {
 	resp, err := http.Get("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
 	if err != nil {
 		return err
@@ -48,17 +48,13 @@ func addFromIana(tlds map[string]struct{}) error {
 	re := regexp.MustCompile(`^[^#]+$`)
 	for scanner.Scan() {
 		line := scanner.Text()
-		match := re.FindString(line)
-		if match == "" {
-			continue
-		}
-		tld := strings.ToLower(match)
-		tlds[tld] = struct{}{}
+		tld := re.FindString(line)
+		addTld(tld)
 	}
 	return nil
 }
 
-func addFromPublicSuffix(tlds map[string]struct{}) error {
+func addFromPublicSuffix(addTld func(tld string)) error {
 	resp, err := http.Get("https://publicsuffix.org/list/effective_tld_names.dat")
 	if err != nil {
 		return err
@@ -68,29 +64,32 @@ func addFromPublicSuffix(tlds map[string]struct{}) error {
 	re := regexp.MustCompile(`^[^/.]+$`)
 	for scanner.Scan() {
 		line := scanner.Text()
-		match := re.FindString(line)
-		if match == "" {
-			continue
-		}
-		tld := strings.ToLower(match)
-		tlds[tld] = struct{}{}
+		tld := re.FindString(line)
+		addTld(tld)
 	}
 	return nil
 }
 
 func tldList() ([]string, error) {
 	tlds := make(map[string]struct{})
-	if err := addFromIana(tlds); err != nil {
+	addTld := func(tld string) {
+		if tld == "" {
+			return
+		}
+		tld = strings.ToLower(tld)
+		if strings.HasPrefix(tld, "xn--") {
+			return
+		}
+		tlds[tld] = struct{}{}
+	}
+	if err := addFromIana(addTld); err != nil {
 		return nil, err
 	}
-	if err := addFromPublicSuffix(tlds); err != nil {
+	if err := addFromPublicSuffix(addTld); err != nil {
 		return nil, err
 	}
 	list := make([]string, 0, len(tlds))
 	for tld := range tlds {
-		if strings.HasPrefix(tld, "xn--") {
-			continue
-		}
 		list = append(list, tld)
 	}
 	sort.Strings(list)
