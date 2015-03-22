@@ -20,7 +20,7 @@ package xurls
 
 // TLDs is a sorted list of all public top-level domains
 var TLDs = []string{
-{{range $i, $value := .}}` + "\t`" + `{{$value}}` + "`" + `,
+{{range $i, $value := .TLDs}}` + "\t`" + `{{$value}}` + "`" + `,
 {{end}}}
 `))
 
@@ -87,7 +87,11 @@ func writeTlds(tlds []string) error {
 	if err != nil {
 		return err
 	}
-	return tldsTmpl.Execute(f, tlds)
+	return tldsTmpl.Execute(f, struct {
+		TLDs []string
+	}{
+		TLDs: tlds,
+	})
 }
 
 func main() {
