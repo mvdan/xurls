@@ -862,6 +862,7 @@ var TLDs = []string{
 	`tc`,
 	`tci`,
 	`td`,
+	`tech`,
 	`technology`,
 	`tel`,
 	`telefonica`,
