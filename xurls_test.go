@@ -77,7 +77,7 @@ func TestWebURL(t *testing.T) {
 			want = x
 		}
 		if got != want {
-			t.Errorf(`WebURL.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
+			t.Errorf(`WebURL.FindString("%s") got "%s", want "%s"`, c.in, got, want)
 		}
 	}
 }
@@ -109,7 +109,7 @@ func TestEmail(t *testing.T) {
 			want = x
 		}
 		if got != want {
-			t.Errorf(`EmailAddr.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
+			t.Errorf(`EmailAddr.FindString("%s") got "%s", want "%s"`, c.in, got, want)
 		}
 	}
 }
