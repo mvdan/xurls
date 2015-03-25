@@ -19,7 +19,7 @@ const (
 	iri        = `[` + iriChar + `]([` + iriChar + `\-]{0,61}[` + iriChar + `])?`
 	hostName   = `(` + iri + `\.)+` + gtld
 	domainName = `(` + hostName + `|` + ipAddr + `|localhost)`
-	webURL     = `((https?://([a-zA-Z0-9$-_.+!*'(),;?&=]{1,64}(:[a-zA-Z0-9$\-_.+!*'(),;?&=]{1,25})?\@)?)?(` + domainName + `)(:[0-9]{1,5})?)(/([` + iriChar + `;/?:@&=#~\-.+!*'(),_])*)?`
+	webURL     = `((https?://)?(` + domainName + `)(:[0-9]{1,5})?)(/([` + iriChar + `;/?:@&=#~\-.+!*'(),_])*)?`
 	email      = `[a-zA-Z0-9._%\-+]{1,256}@` + domainName
 	all        = `(` + webURL + `|` + email + `)`
 )
