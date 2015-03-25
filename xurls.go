@@ -21,7 +21,8 @@ const (
 	hostName = `((` + iri + `\.)+` + gtld + `|` + ipAddr + `|localhost)`
 	// TODO: replacing `{0,100}` by `*` currently breaks the regex since
 	// matching is done by whichever matches first when backtracking
-	webURL   = `((https?://)?(` + hostName + `)(:[0-9]{1,5})?)(/([` + pathChar + `]*[` + iriChar + `]|[` + pathChar + `]{0,100}))*`
+	path     = `(/([` + pathChar + `]{0,100}[` + iriChar + `]|[` + pathChar + `]*))*`
+	webURL   = `((https?://)?(` + hostName + `)(:[0-9]{1,5})?)` + path
 	email    = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 	all      = `(` + webURL + `|` + email + `)`
 )
