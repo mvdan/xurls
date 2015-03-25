@@ -22,7 +22,7 @@ const (
 	nonParen  = iriChar + `.,:;\-+_?@&=$~!*%'"`
 	wellParen = `([` + nonParen + `]*(\([` + nonParen + `]*\))+)+`
 	path      = `(/(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `])?)*`
-	webURL    = `(https?://)?(` + hostName + `)(:[0-9]{1,5})?` + path
+	webURL    = `(https?://)?` + hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 	all       = webURL + `|` + email
 )
