@@ -21,6 +21,7 @@ func TestWebURL(t *testing.T) {
 		{`foo.onion`, `foo.onion`},
 		{`foo.i2p`, `foo.i2p`},
 		{`中国.中国`, `中国.中国`},
+		{`中国.中国/foo中国`, `中国.中国/foo中国`},
 		{`foo.com/`, `foo.com/`},
 		{`1.1.1.1`, `1.1.1.1`},
 		{`121.1.1.1`, `121.1.1.1`},
