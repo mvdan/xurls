@@ -10,12 +10,12 @@ import (
 func TestWebURL(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
-		want string
+		want interface{}
 	}{
-		{``, ``},
-		{`foo`, ``},
-		{`foo.a`, ``},
-		{`foo.random`, ``},
+		{``, nil},
+		{`foo`, nil},
+		{`foo.a`, nil},
+		{`foo.random`, nil},
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},
 		{`foo.onion`, `foo.onion`},
@@ -26,15 +26,15 @@ func TestWebURL(t *testing.T) {
 		{`1.1.1.1`, `1.1.1.1`},
 		{`121.1.1.1`, `121.1.1.1`},
 		{`255.1.1.1`, `255.1.1.1`},
-		{`300.1.1.1`, ``},
-		{`1.1.1`, ``},
-		{`1.1..1`, ``},
+		{`300.1.1.1`, nil},
+		{`1.1.1`, nil},
+		{`1.1..1`, nil},
 		{`1080:0:0:0:8:800:200C:4171`, `1080:0:0:0:8:800:200C:4171`},
 		{`3ffe:2a00:100:7031::1`, `3ffe:2a00:100:7031::1`},
 		{`1080::8:800:200c:417a`, `1080::8:800:200c:417a`},
-		{`1:1`, ``},
-		{`:2:`, ``},
-		{`1:2:3`, ``},
+		{`1:1`, nil},
+		{`:2:`, nil},
+		{`1:2:3`, nil},
 		{`test.foo.com`, `test.foo.com`},
 		{`test.foo.com/path`, `test.foo.com/path`},
 		{`test.foo.com/path/more/`, `test.foo.com/path/more/`},
@@ -71,7 +71,12 @@ func TestWebURL(t *testing.T) {
 		{`"foo.com/bar"more`, `foo.com/bar"more`},
 	} {
 		got := WebURL.FindString(c.in)
-		if got != c.want {
+		var want string
+		switch x := c.want.(type) {
+		case string:
+			want = x
+		}
+		if got != want {
 			t.Errorf(`WebURL.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
@@ -80,12 +85,12 @@ func TestWebURL(t *testing.T) {
 func TestEmail(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
-		want string
+		want interface{}
 	}{
-		{``, ``},
-		{`foo`, ``},
-		{`foo@bar`, ``},
-		{`foo@bar.a`, ``},
+		{``, nil},
+		{`foo`, nil},
+		{`foo@bar`, nil},
+		{`foo@bar.a`, nil},
 		{`foo@bar.com`, `foo@bar.com`},
 		{`foo@bar.com bar@bar.com`, `foo@bar.com`},
 		{`foo@bar.onion`, `foo@bar.onion`},
@@ -98,7 +103,12 @@ func TestEmail(t *testing.T) {
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	} {
 		got := Email.FindString(c.in)
-		if got != c.want {
+		var want string
+		switch x := c.want.(type) {
+		case string:
+			want = x
+		}
+		if got != want {
 			t.Errorf(`EmailAddr.FindString("%s") got "%s", want "%s"`, c.in, got, c.want)
 		}
 	}
