@@ -37,7 +37,7 @@ func TestWebURL(t *testing.T) {
 		{`test.foo.com`, `test.foo.com`},
 		{`test.foo.com/path`, `test.foo.com/path`},
 		{`TEST.FOO.COM/PATH`, `TEST.FOO.COM/PATH`},
-		{`test.foo.com/path_(more)`, `test.foo.com/path_(more)`},
+		//{`test.foo.com/path_(more)`, `test.foo.com/path_(more)`},
 		{`http://foo.com`, `http://foo.com`},
 		{` http://foo.com `, `http://foo.com`},
 		{`,http://foo.com,`, `http://foo.com`},
@@ -51,10 +51,13 @@ func TestWebURL(t *testing.T) {
 		{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
 		{`www.foo.com`, `www.foo.com`},
 		{` foo.com/bar `, `foo.com/bar`},
-		{`,foo.com/bar,`, `foo.com/bar,`},
-		{`(foo.com/bar)`, `foo.com/bar)`},
 		{`<foo.com/bar>`, `foo.com/bar`},
+		{`,foo.com/bar,`, `foo.com/bar`},
+		{`,foo.com/bar,more`, `foo.com/bar,more`},
+		{`(foo.com/bar`, `foo.com/bar`},
+		{`(foo.com/bar)more`, `foo.com/bar)more`},
 		{`"foo.com/bar"`, `foo.com/bar`},
+		{`"foo.com/bar"more`, `foo.com/bar"more`},
 	} {
 		got := WebURL.FindString(c.in)
 		if got != c.want {

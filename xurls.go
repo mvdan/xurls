@@ -19,7 +19,9 @@ const (
 	iri        = `[` + iriChar + `]([` + iriChar + `\-]{0,61}[` + iriChar + `])?`
 	hostName   = `(` + iri + `\.)+` + gtld
 	domainName = `(` + hostName + `|` + ipAddr + `|localhost)`
-	webURL     = `((https?://)?(` + domainName + `)(:[0-9]{1,5})?)(/([` + iriChar + `;/?:@&=#~\-.+!*'(),_])*)?`
+	// TODO: replacing `{0,100}` by `*` currently breaks the regex since
+	// matching is done by whichever matches first when backtracking
+	webURL     = `((https?://)?(` + domainName + `)(:[0-9]{1,5})?)(/([` + iriChar + `.,:;\-+_()?@&=$#~!*%'"]*[` + iriChar + `]|[` + iriChar + `.,:;\-+_()?@&=$#~!*%'"]{0,100}))*`
 	email      = `[a-zA-Z0-9._%\-+]{1,256}@` + domainName
 	all        = `(` + webURL + `|` + email + `)`
 )
