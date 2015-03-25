@@ -19,20 +19,21 @@ const (
 	hostName  = `((` + iri + `\.)+` + gtld + `|` + ipAddr + `|localhost)`
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
 	path      = `(/(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `/])?)?`
-	webURL    = `(https?://)?` + hostName + `(:[0-9]{1,5})?` + path
+	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
-	all       = webURL + `|` + email
+
+	defUrl    = `(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `/])`
+	scheme    = `[a-zA-Z.\-+]+://`
+	allStrict = scheme + defUrl
+	all       = allStrict + `|` + webURL + `|` + email
 )
 
-// Regex expressions that match various kinds of urls and addresses
 var (
-	WebURL = regexp.MustCompile(webURL)
-	Email  = regexp.MustCompile(email)
-	All    = regexp.MustCompile(all)
+	// All matches all kinds of urls
+	All = regexp.MustCompile(all)
+	AllStrict = regexp.MustCompile(allStrict)
 )
 
 func init() {
-	WebURL.Longest()
-	Email.Longest()
 	All.Longest()
 }
