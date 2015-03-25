@@ -30,7 +30,7 @@ const (
 
 var (
 	// All matches all kinds of urls
-	All = regexp.MustCompile(all)
+	All       = regexp.MustCompile(all)
 	AllStrict = regexp.MustCompile(allStrict)
 )
 
