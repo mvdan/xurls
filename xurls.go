@@ -3,9 +3,7 @@
 
 package xurls
 
-import (
-	"regexp"
-)
+import "regexp"
 
 //go:generate go run tools/tldsgen/main.go
 //go:generate go run tools/regexgen/main.go

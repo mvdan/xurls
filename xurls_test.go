@@ -3,9 +3,7 @@
 
 package xurls
 
-import (
-	"testing"
-)
+import "testing"
 
 func TestWebURL(t *testing.T) {
 	for _, c := range [...]struct {
