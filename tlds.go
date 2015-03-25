@@ -697,6 +697,7 @@ var TLDs = []string{
 	`pl`,
 	`place`,
 	`plumbing`,
+	`plus`,
 	`pm`,
 	`pn`,
 	`pohl`,
