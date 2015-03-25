@@ -5,14 +5,21 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"os"
 
 	"github.com/mvdan/xurls"
 )
 
+var strict = flag.Bool("s", false, "match urls with scheme only (strict)")
+
 func main() {
+	flag.Parse()
 	re := xurls.All
+	if *strict {
+		re = xurls.AllStrict
+	}
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
