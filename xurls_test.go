@@ -36,6 +36,7 @@ func TestWebURL(t *testing.T) {
 		{`1:2:3`, ``},
 		{`test.foo.com`, `test.foo.com`},
 		{`test.foo.com/path`, `test.foo.com/path`},
+		{`test.foo.com/path/more/`, `test.foo.com/path/more/`},
 		{`TEST.FOO.COM/PATH`, `TEST.FOO.COM/PATH`},
 		//{`test.foo.com/path_(more)`, `test.foo.com/path_(more)`},
 		{`http://foo.com`, `http://foo.com`},
