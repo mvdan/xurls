@@ -22,15 +22,16 @@ const (
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 
-	defUrl    = `(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `/])`
+	defURL    = `(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `/])`
 	scheme    = `[a-zA-Z.\-+]+://`
-	allStrict = scheme + defUrl
+	allStrict = scheme + defURL
 	all       = allStrict + `|` + webURL + `|` + email
 )
 
 var (
-	// All matches all kinds of urls
+	// All matches all the urls it can find
 	All       = regexp.MustCompile(all)
+	// AllStrict matches only urls with a scheme to avoid false positives
 	AllStrict = regexp.MustCompile(allStrict)
 )
 
