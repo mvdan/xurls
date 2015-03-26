@@ -24,9 +24,10 @@ const (
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 
-	scheme    = `[a-zA-Z.\-+]+://`
-	allStrict = scheme + pathCont
-	all       = allStrict + `|` + webURL + `|` + email
+	commonScheme = `[a-zA-Z.\-+]+://`
+	scheme       = `(` + commonScheme + `|` + otherScheme + `)`
+	allStrict    = scheme + pathCont
+	all          = allStrict + `|` + webURL + `|` + email
 )
 
 var (
