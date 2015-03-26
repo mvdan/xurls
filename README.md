@@ -29,9 +29,11 @@ func main() {
 
 Reads text and prints one url per line.
 
-	$ echo "Do gophers live in golang.org?" | xurls
-	golang.org
+	go get github.com/mvdan/xurls/cmd/xurls
+
+```shell
+$ echo "Do gophers live in golang.org?" | xurls
+golang.org
+```
 
 * **-s** only match urls with scheme (strict)
-
-	go get github.com/mvdan/xurls/cmd/xurls
