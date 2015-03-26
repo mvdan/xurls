@@ -40,10 +40,14 @@ var alwaysNegative = []regexTestCase{
 	{`.zzz`, nil},
 	{`zzz.zzz`, nil},
 	{`/some/path`, nil},
+	{`localhost`, nil},
+	{`com`, nil},
 }
 
 var alwaysPositive = []regexTestCase{
 	// Urls with scheme and ://
+	{`http://foo`, `http://foo`},
+	{`https://localhost`, `https://localhost`},
 	{`http://foo.com`, `http://foo.com`},
 	{`http://foo.random`, `http://foo.random`},
 	{` http://foo.com/bar `, `http://foo.com/bar`},

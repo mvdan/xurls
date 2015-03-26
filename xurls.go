@@ -16,7 +16,7 @@ const (
 	ipv6Addr  = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
 	ipAddr    = `(` + ipv4Addr + `|` + ipv6Addr + `)`
 	iri       = `[` + iriChar + `]([` + iriChar + `\-]{0,61}[` + iriChar + `])?`
-	hostName  = `((` + iri + `\.)+` + gtld + `|` + ipAddr + `|localhost)`
+	hostName  = `((` + iri + `\.)+` + gtld + `|` + ipAddr + `)`
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
 	path      = `(/(` + wellParen + `|[` + pathChar + `]*[` + iriChar + `/])?)?`
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
