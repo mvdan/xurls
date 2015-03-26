@@ -16,8 +16,17 @@ func TestWebURL(t *testing.T) {
 		{`::`, nil},
 		{`:::`, nil},
 		{`::::`, nil},
+		{`.`, nil},
+		{`..`, nil},
+		{`...`, nil},
 		{`://`, nil},
 		{`foo`, nil},
+		{`foo:`, nil},
+		{`foo://`, nil},
+		{`:foo`, nil},
+		{`://foo`, nil},
+		{`foo:bar`, nil},
+		{`/some/path`, nil},
 
 		// Web links
 		{`foo.a`, nil},
@@ -84,6 +93,7 @@ func TestWebURL(t *testing.T) {
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 
+		// Urls with scheme and ://
 		{`http://foo.com`, `http://foo.com`},
 		{`http://foo.random`, `http://foo.random`},
 		{` http://foo.com/bar `, `http://foo.com/bar`},
@@ -100,6 +110,7 @@ func TestWebURL(t *testing.T) {
 		{`"http://foo.com/bar'more`, `http://foo.com/bar'more`},
 		{`"http://foo.com/bar"`, `http://foo.com/bar`},
 		{`"http://foo.com/bar"more`, `http://foo.com/bar"more`},
+		{`http://a.b/a.,:;-+_()?@&=$~!*%'"a`, `http://a.b/a.,:;-+_()?@&=$~!*%'"a`},
 		{`http://foo.com/path_(more)`, `http://foo.com/path_(more)`},
 		{`http://test.foo.com/`, `http://test.foo.com/`},
 		{`http://foo.com/path`, `http://foo.com/path`},
