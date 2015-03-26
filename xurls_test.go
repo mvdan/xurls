@@ -117,7 +117,6 @@ func TestAll(t *testing.T) {
 		{`http://foo.com:8080/path`, `http://foo.com:8080/path`},
 		{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
 		{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
-		{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
 		{`what is http://foo.com?`, `http://foo.com`},
 		{`the http://foo.com!`, `http://foo.com`},
 		{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
