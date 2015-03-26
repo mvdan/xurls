@@ -45,7 +45,6 @@ var alwaysNegative = []regexTestCase{
 }
 
 var alwaysPositive = []regexTestCase{
-	// Urls with scheme and ://
 	{`http://foo`, `http://foo`},
 	{`https://localhost`, `https://localhost`},
 	{`http://foo.com`, `http://foo.com`},
@@ -91,9 +90,11 @@ func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
 	}
 }
 
-func TestAll(t *testing.T) {
+func TestRegexes(t *testing.T) {
 	doTest(t, All, alwaysNegative)
+	doTest(t, AllStrict, alwaysNegative)
 	doTest(t, All, alwaysPositive)
+	doTest(t, AllStrict, alwaysPositive)
 	doTest(t, All, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
@@ -153,11 +154,6 @@ func TestAll(t *testing.T) {
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	})
-}
-
-func TestAllStrict(t *testing.T) {
-	doTest(t, AllStrict, alwaysNegative)
-	doTest(t, AllStrict, alwaysPositive)
 	doTest(t, AllStrict, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, nil},
