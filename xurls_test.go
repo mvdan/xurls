@@ -5,7 +5,7 @@ package xurls
 
 import "testing"
 
-func TestWebURL(t *testing.T) {
+func TestAll(t *testing.T) {
 	for _, c := range [...]struct {
 		in   string
 		want interface{}
@@ -131,6 +131,41 @@ func TestWebURL(t *testing.T) {
 		}
 		if got != want {
 			t.Errorf(`xurls.All.FindString("%s") got "%s", want "%s"`, c.in, got, want)
+		}
+	}
+}
+
+func TestStrict(t *testing.T) {
+	for _, c := range [...]struct {
+		in   string
+		want interface{}
+	}{
+		{`foo.a`, nil},
+		{`foo.com`, nil},
+		{`foo.com/`, nil},
+		{`1.1.1.1`, nil},
+		{`3ffe:2a00:100:7031::1`, nil},
+		{`test.foo.com:8080/path`, nil},
+		{`foo@bar.com`, nil},
+
+		{`http://foo.com`, `http://foo.com`},
+		{`http://foo.random`, `http://foo.random`},
+		{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
+		{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
+		{`http://a.b/a.,:;-+_()?@&=$~!*%'"a`, `http://a.b/a.,:;-+_()?@&=$~!*%'"a`},
+		{`what is http://foo.com?`, `http://foo.com`},
+		{`the http://foo.com!`, `http://foo.com`},
+		{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
+		{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
+	} {
+		got := AllStrict.FindString(c.in)
+		var want string
+		switch x := c.want.(type) {
+		case string:
+			want = x
+		}
+		if got != want {
+			t.Errorf(`xurls.AllStrict.FindString("%s") got "%s", want "%s"`, c.in, got, want)
 		}
 	}
 }
