@@ -12,7 +12,7 @@ package main
 import "github.com/mvdan/xurls"
 
 func main() {
-        xurls.AllStrict.FindString("Do gophers live in golang.org?")
+        xurls.All.FindString("Do gophers live in golang.org?")
         // "golang.org"
         xurls.All.FindAllString("foo.com is http://foo.com/.", -1)
         // ["foo.com", "http://foo.com/"]
