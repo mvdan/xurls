@@ -3,31 +3,59 @@
 
 package xurls
 
-import "testing"
+import (
+	"regexp"
+	"testing"
+)
+
+type regexTestCase struct {
+	in   string
+	want interface{}
+}
+
+var alwaysNil = []regexTestCase{
+	{``, nil},
+	{` `, nil},
+	{`:`, nil},
+	{`::`, nil},
+	{`:::`, nil},
+	{`::::`, nil},
+	{`.`, nil},
+	{`..`, nil},
+	{`...`, nil},
+	{`://`, nil},
+	{`foo`, nil},
+	{`foo:`, nil},
+	{`foo://`, nil},
+	{`:foo`, nil},
+	{`://foo`, nil},
+	{`foo:bar`, nil},
+	{`zzz.`, nil},
+	{`.zzz`, nil},
+	{`zzz.zzz`, nil},
+	{`/some/path`, nil},
+}
+
+func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
+	for _, c := range cases {
+		got := re.FindString(c.in)
+		var want string
+		switch x := c.want.(type) {
+		case string:
+			want = x
+		}
+		if got != want {
+			t.Errorf(`xurls.All.FindString("%s") got "%s", want "%s"`, c.in, got, want)
+		}
+	}
+}
 
 func TestAll(t *testing.T) {
+	doTest(t, All, alwaysNil)
 	for _, c := range [...]struct {
 		in   string
 		want interface{}
 	}{
-		{``, nil},
-		{` `, nil},
-		{`:`, nil},
-		{`::`, nil},
-		{`:::`, nil},
-		{`::::`, nil},
-		{`.`, nil},
-		{`..`, nil},
-		{`...`, nil},
-		{`://`, nil},
-		{`foo`, nil},
-		{`foo:`, nil},
-		{`foo://`, nil},
-		{`:foo`, nil},
-		{`://foo`, nil},
-		{`foo:bar`, nil},
-		{`/some/path`, nil},
-
 		// Web links
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
@@ -134,7 +162,8 @@ func TestAll(t *testing.T) {
 	}
 }
 
-func TestStrict(t *testing.T) {
+func TestAllStrict(t *testing.T) {
+	doTest(t, AllStrict, alwaysNil)
 	for _, c := range [...]struct {
 		in   string
 		want interface{}
