@@ -19,19 +19,19 @@ const (
 	iri       = `[` + iriChar + `]([` + iriChar + `\-]{0,61}[` + iriChar + `])?`
 	hostName  = `((` + iri + `\.)+` + gtld + `|` + ipAddr + `)`
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
-	path      = `(/(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])?)?`
+	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
+	path      = `(/` + pathCont + `?)?`
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 
-	defURL    = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
 	scheme    = `[a-zA-Z.\-+]+://`
-	allStrict = scheme + defURL
+	allStrict = scheme + pathCont
 	all       = allStrict + `|` + webURL + `|` + email
 )
 
 var (
 	// All matches all the urls it can find
-	All       = regexp.MustCompile(all)
+	All = regexp.MustCompile(all)
 	// AllStrict matches only urls with a scheme to avoid false positives
 	AllStrict = regexp.MustCompile(allStrict)
 )
