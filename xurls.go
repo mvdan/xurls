@@ -36,4 +36,5 @@ var (
 
 func init() {
 	All.Longest()
+	AllStrict.Longest()
 }
