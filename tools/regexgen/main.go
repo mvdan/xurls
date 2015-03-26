@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 	"text/template"
 
 	"golang.org/x/net/idna"
@@ -24,28 +25,6 @@ const (
 	gtld = ` + "`" + `{{.Gtld}}` + "`" + `
 )
 `))
-
-func reverseJoin(a []string, sep string) string {
-	if len(a) == 0 {
-		return ""
-	}
-	if len(a) == 1 {
-		return a[0]
-	}
-	n := len(sep) * (len(a) - 1)
-	for i := 0; i < len(a); i++ {
-		n += len(a[i])
-	}
-
-	b := make([]byte, n)
-	bp := copy(b, a[len(a)-1])
-	for i := len(a) - 2; i >= 0; i-- {
-		s := a[i]
-		bp += copy(b[bp:], sep)
-		bp += copy(b[bp:], s)
-	}
-	return string(b)
-}
 
 func writeRegex(tlds []string) error {
 	allTldsSet := make(map[string]struct{})
@@ -71,7 +50,7 @@ func writeRegex(tlds []string) error {
 	return regexTmpl.Execute(f, struct {
 		Gtld string
 	}{
-		Gtld: `(?i)(` + reverseJoin(allTlds, `|`) + `)(?-i)`,
+		Gtld: `(?i)(` + strings.Join(allTlds, `|`) + `)(?-i)`,
 	})
 }
 

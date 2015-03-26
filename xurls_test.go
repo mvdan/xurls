@@ -100,6 +100,7 @@ func TestRegexes(t *testing.T) {
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},
 		{`foo.com-foo`, `foo.com`},
+		{`foo.company`, `foo.company`},
 		{`foo.onion`, `foo.onion`},
 		{`foo.i2p`, `foo.i2p`},
 		{`中国.中国`, `中国.中国`},
