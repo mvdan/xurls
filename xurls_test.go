@@ -13,7 +13,7 @@ type regexTestCase struct {
 	want interface{}
 }
 
-var alwaysNil = []regexTestCase{
+var alwaysNegative = []regexTestCase{
 	{``, nil},
 	{` `, nil},
 	{`:`, nil},
@@ -36,6 +36,37 @@ var alwaysNil = []regexTestCase{
 	{`/some/path`, nil},
 }
 
+var alwaysPositive = []regexTestCase{
+	// Urls with scheme and ://
+	{`http://foo.com`, `http://foo.com`},
+	{`http://foo.random`, `http://foo.random`},
+	{` http://foo.com/bar `, `http://foo.com/bar`},
+	{` http://foo.com/bar more`, `http://foo.com/bar`},
+	{`<http://foo.com/bar>`, `http://foo.com/bar`},
+	{`<http://foo.com/bar>more`, `http://foo.com/bar`},
+	{`,http://foo.com/bar.`, `http://foo.com/bar`},
+	{`,http://foo.com/bar.more`, `http://foo.com/bar.more`},
+	{`,http://foo.com/bar,`, `http://foo.com/bar`},
+	{`,http://foo.com/bar,more`, `http://foo.com/bar,more`},
+	{`(http://foo.com/bar)`, `http://foo.com/bar`},
+	{`(http://foo.com/bar)more`, `http://foo.com/bar)more`},
+	{`"http://foo.com/bar'`, `http://foo.com/bar`},
+	{`"http://foo.com/bar'more`, `http://foo.com/bar'more`},
+	{`"http://foo.com/bar"`, `http://foo.com/bar`},
+	{`"http://foo.com/bar"more`, `http://foo.com/bar"more`},
+	{`http://a.b/a.,:;-+_()?@&=$~!*%'"a`, `http://a.b/a.,:;-+_()?@&=$~!*%'"a`},
+	{`http://foo.com/path_(more)`, `http://foo.com/path_(more)`},
+	{`http://test.foo.com/`, `http://test.foo.com/`},
+	{`http://foo.com/path`, `http://foo.com/path`},
+	{`http://foo.com:8080/path`, `http://foo.com:8080/path`},
+	{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
+	{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
+	{`what is http://foo.com?`, `http://foo.com`},
+	{`the http://foo.com!`, `http://foo.com`},
+	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
+	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
+}
+
 func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
 	for _, c := range cases {
 		got := re.FindString(c.in)
@@ -51,12 +82,9 @@ func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
 }
 
 func TestAll(t *testing.T) {
-	doTest(t, All, alwaysNil)
-	for _, c := range [...]struct {
-		in   string
-		want interface{}
-	}{
-		// Web links
+	doTest(t, All, alwaysNegative)
+	doTest(t, All, alwaysPositive)
+	doTest(t, All, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},
@@ -107,7 +135,6 @@ func TestAll(t *testing.T) {
 		{`what is foo.com?`, `foo.com`},
 		{`the foo.com!`, `foo.com`},
 
-		// Email addresses
 		{`foo@bar`, nil},
 		{`foo@bar.a`, nil},
 		{`foo@bar.com`, `foo@bar.com`},
@@ -120,54 +147,13 @@ func TestAll(t *testing.T) {
 		{`foo@bar.com/path`, `foo@bar.com`},
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
-
-		// Urls with scheme and ://
-		{`http://foo.com`, `http://foo.com`},
-		{`http://foo.random`, `http://foo.random`},
-		{` http://foo.com/bar `, `http://foo.com/bar`},
-		{` http://foo.com/bar more`, `http://foo.com/bar`},
-		{`<http://foo.com/bar>`, `http://foo.com/bar`},
-		{`<http://foo.com/bar>more`, `http://foo.com/bar`},
-		{`,http://foo.com/bar.`, `http://foo.com/bar`},
-		{`,http://foo.com/bar.more`, `http://foo.com/bar.more`},
-		{`,http://foo.com/bar,`, `http://foo.com/bar`},
-		{`,http://foo.com/bar,more`, `http://foo.com/bar,more`},
-		{`(http://foo.com/bar)`, `http://foo.com/bar`},
-		{`(http://foo.com/bar)more`, `http://foo.com/bar)more`},
-		{`"http://foo.com/bar'`, `http://foo.com/bar`},
-		{`"http://foo.com/bar'more`, `http://foo.com/bar'more`},
-		{`"http://foo.com/bar"`, `http://foo.com/bar`},
-		{`"http://foo.com/bar"more`, `http://foo.com/bar"more`},
-		{`http://a.b/a.,:;-+_()?@&=$~!*%'"a`, `http://a.b/a.,:;-+_()?@&=$~!*%'"a`},
-		{`http://foo.com/path_(more)`, `http://foo.com/path_(more)`},
-		{`http://test.foo.com/`, `http://test.foo.com/`},
-		{`http://foo.com/path`, `http://foo.com/path`},
-		{`http://foo.com:8080/path`, `http://foo.com:8080/path`},
-		{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
-		{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
-		{`what is http://foo.com?`, `http://foo.com`},
-		{`the http://foo.com!`, `http://foo.com`},
-		{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
-		{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
-	} {
-		got := All.FindString(c.in)
-		var want string
-		switch x := c.want.(type) {
-		case string:
-			want = x
-		}
-		if got != want {
-			t.Errorf(`xurls.All.FindString("%s") got "%s", want "%s"`, c.in, got, want)
-		}
-	}
+	})
 }
 
 func TestAllStrict(t *testing.T) {
-	doTest(t, AllStrict, alwaysNil)
-	for _, c := range [...]struct {
-		in   string
-		want interface{}
-	}{
+	doTest(t, AllStrict, alwaysNegative)
+	doTest(t, AllStrict, alwaysPositive)
+	doTest(t, AllStrict, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},
@@ -175,25 +161,5 @@ func TestAllStrict(t *testing.T) {
 		{`3ffe:2a00:100:7031::1`, nil},
 		{`test.foo.com:8080/path`, nil},
 		{`foo@bar.com`, nil},
-
-		{`http://foo.com`, `http://foo.com`},
-		{`http://foo.random`, `http://foo.random`},
-		{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
-		{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
-		{`http://a.b/a.,:;-+_()?@&=$~!*%'"a`, `http://a.b/a.,:;-+_()?@&=$~!*%'"a`},
-		{`what is http://foo.com?`, `http://foo.com`},
-		{`the http://foo.com!`, `http://foo.com`},
-		{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
-		{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
-	} {
-		got := AllStrict.FindString(c.in)
-		var want string
-		switch x := c.want.(type) {
-		case string:
-			want = x
-		}
-		if got != want {
-			t.Errorf(`xurls.AllStrict.FindString("%s") got "%s", want "%s"`, c.in, got, want)
-		}
-	}
+	})
 }
