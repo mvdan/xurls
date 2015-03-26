@@ -12,7 +12,7 @@ import (
 	"github.com/mvdan/xurls"
 )
 
-var strict = flag.Bool("s", false, "match urls with scheme only (strict)")
+var strict = flag.Bool("s", false, "only match urls with scheme (strict)")
 
 func main() {
 	flag.Parse()
