@@ -18,8 +18,6 @@ func main() {
         // ["foo.com", "http://foo.com/"]
         xurls.AllStrict.FindAllString("foo.com is http://foo.com/.", -1)
         // ["http://foo.com/"]
-        xurls.All.ReplaceAllString("I'd linkify golang.org", "http://${0}")
-        // "I'd linkify http://golang.org"
 }
 ```
 
