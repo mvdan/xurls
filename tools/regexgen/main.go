@@ -63,7 +63,7 @@ func writeRegex(tlds []string) error {
 	return regexTmpl.Execute(f, struct {
 		Gtld, OtherScheme string
 	}{
-		Gtld: `(?i)(` + strings.Join(allTlds, `|`) + `)(?-i)`,
+		Gtld:        `(?i)(` + strings.Join(allTlds, `|`) + `)(?-i)`,
 		OtherScheme: `(?i)(` + strings.Join(schemes, `|`) + `)(?-i):`,
 	})
 }
