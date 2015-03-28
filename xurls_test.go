@@ -82,7 +82,7 @@ var alwaysPositive = []regexTestCase{
 	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
 }
 
-func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
+func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase) {
 	for _, c := range cases {
 		got := re.FindString(c.in)
 		var want string
@@ -91,17 +91,17 @@ func doTest(t *testing.T, re *regexp.Regexp, cases []regexTestCase) {
 			want = x
 		}
 		if got != want {
-			t.Errorf(`xurls.All.FindString("%s") got "%s", want "%s"`, c.in, got, want)
+			t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
 		}
 	}
 }
 
 func TestRegexes(t *testing.T) {
-	doTest(t, All, alwaysNegative)
-	doTest(t, AllStrict, alwaysNegative)
-	doTest(t, All, alwaysPositive)
-	doTest(t, AllStrict, alwaysPositive)
-	doTest(t, All, []regexTestCase{
+	doTest(t, "All", All, alwaysNegative)
+	doTest(t, "AllStrict", AllStrict, alwaysNegative)
+	doTest(t, "All", All, alwaysPositive)
+	doTest(t, "AllStrict", AllStrict, alwaysPositive)
+	doTest(t, "All", All, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},
@@ -160,7 +160,7 @@ func TestRegexes(t *testing.T) {
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	})
-	doTest(t, AllStrict, []regexTestCase{
+	doTest(t, "AllStrict", AllStrict, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},
