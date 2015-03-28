@@ -21,7 +21,7 @@ const (
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
 	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
 	path      = `(/` + pathCont + `?)?`
-	webURL    = hostName + `(:[0-9]{1,5})?` + path
+	webURL    = hostName + `(:[0-9]{1,5})?` + path + `(\b|$)`
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 
 	commonScheme = `[a-zA-Z.\-+]+://`
