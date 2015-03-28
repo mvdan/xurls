@@ -33,6 +33,7 @@ var constantTestCases = []regexTestCase{
 	{`foo`, nil},
 	{`foo:`, nil},
 	{`mailto:`, nil},
+	{`randomxmpp:foo`, nil},
 	{`foo://`, nil},
 	{`http://`, nil},
 	{`:foo`, nil},

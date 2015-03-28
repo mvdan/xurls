@@ -25,7 +25,7 @@ const (
 	email     = `[a-zA-Z0-9._%\-+]{1,256}@` + hostName
 
 	commonScheme = `[a-zA-Z.\-+]+://`
-	scheme       = `(` + commonScheme + `|` + otherScheme + `)`
+	scheme       = `(\b|^)(` + commonScheme + `|` + otherScheme + `)`
 	allStrict    = scheme + pathCont
 	all          = allStrict + `|` + webURL + `|` + email
 )
