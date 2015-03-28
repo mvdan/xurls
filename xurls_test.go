@@ -13,7 +13,7 @@ type regexTestCase struct {
 	want interface{}
 }
 
-var alwaysNegative = []regexTestCase{
+var constantTestCases = []regexTestCase{
 	{``, nil},
 	{` `, nil},
 	{`:`, nil},
@@ -44,9 +44,7 @@ var alwaysNegative = []regexTestCase{
 	{`/some/path`, nil},
 	{`localhost`, nil},
 	{`com`, nil},
-}
 
-var alwaysPositive = []regexTestCase{
 	{`http://foo`, `http://foo`},
 	{`https://localhost`, `https://localhost`},
 	{`mailto:foo`, `mailto:foo`},
@@ -97,10 +95,8 @@ func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase)
 }
 
 func TestRegexes(t *testing.T) {
-	doTest(t, "All", All, alwaysNegative)
-	doTest(t, "AllStrict", AllStrict, alwaysNegative)
-	doTest(t, "All", All, alwaysPositive)
-	doTest(t, "AllStrict", AllStrict, alwaysPositive)
+	doTest(t, "All", All, constantTestCases)
+	doTest(t, "AllStrict", AllStrict, constantTestCases)
 	doTest(t, "All", All, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
