@@ -21,6 +21,9 @@ func main() {
 }
 ```
 
+This is **not** a URL validation library. Extracted urls may well not be
+valid.
+
 ### Command-line utilities
 
 #### xurls
