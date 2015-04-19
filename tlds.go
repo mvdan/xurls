@@ -3,6 +3,10 @@
 package xurls
 
 // TLDs is a sorted list of all public top-level domains
+//
+// Sources:
+//  * https://data.iana.org/TLD/tlds-alpha-by-domain.txt
+//  * https://publicsuffix.org/list/effective_tld_names.dat
 var TLDs = []string{
 	`aaa`,
 	`abb`,
