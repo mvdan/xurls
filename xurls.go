@@ -44,7 +44,7 @@ func init() {
 }
 
 func StrictMatching(schemeExp string) *regexp.Regexp {
-	strictMatching := `(\b|^)` + schemeExp + pathCont
+	strictMatching := `(\b|^)(` + schemeExp + `)` + pathCont
 	re := regexp.MustCompile(strictMatching)
 	re.Longest()
 	return re
