@@ -174,3 +174,17 @@ func TestRegexes(t *testing.T) {
 		{`foo@bar.com`, nil},
 	})
 }
+
+func TestStrictMatching(t *testing.T) {
+	strictMatching := StrictMatching("http://|ftps?://|mailto:")
+	doTest(t, "StrictMatching", strictMatching, []regexTestCase{
+		{`foo.com`, nil},
+		{`foo@bar.com`, nil},
+		{`http://foo`, `http://foo`},
+		{`https://foo`, nil},
+		{`ftp://foo`, `ftp://foo`},
+		{`ftps://foo`, `ftps://foo`},
+		{`mailto:foo`, `mailto:foo`},
+		{`sms:123`, nil},
+	})
+}
