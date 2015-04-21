@@ -101,9 +101,9 @@ var constantTestCases = []regexTestCase{
 }
 
 func TestRegexes(t *testing.T) {
-	doTest(t, "All", All, constantTestCases)
+	doTest(t, "Relaxed", Relaxed, constantTestCases)
 	doTest(t, "Strict", Strict, constantTestCases)
-	doTest(t, "All", All, []regexTestCase{
+	doTest(t, "Relaxed", Relaxed, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},

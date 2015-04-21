@@ -12,13 +12,13 @@ import (
 	"github.com/mvdan/xurls"
 )
 
-var strict = flag.Bool("s", false, "only match urls with scheme (strict)")
+var relaxed = flag.Bool("r", false, "also match urls without scheme (relaxed)")
 
 func main() {
 	flag.Parse()
-	re := xurls.All
-	if *strict {
-		re = xurls.Strict
+	re := xurls.Strict
+	if *relaxed {
+		re = xurls.Relaxed
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
