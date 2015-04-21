@@ -27,18 +27,18 @@ const (
 
 	commonScheme = `[a-zA-Z.\-+]+://`
 	scheme       = `(\b|^)(` + commonScheme + `|` + otherScheme + `)`
-	allStrict    = scheme + pathCont
-	all          = allStrict + `|` + webURL + `|` + email
+	strict       = scheme + pathCont
+	all          = strict + `|` + webURL + `|` + email
 )
 
 var (
 	// All matches all the urls it can find
 	All = regexp.MustCompile(all)
-	// AllStrict matches only urls with a scheme to avoid false positives
-	AllStrict = regexp.MustCompile(allStrict)
+	// Strict matches only urls with a scheme to avoid false positives
+	Strict = regexp.MustCompile(strict)
 )
 
 func init() {
 	All.Longest()
-	AllStrict.Longest()
+	Strict.Longest()
 }

@@ -102,7 +102,7 @@ func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase)
 
 func TestRegexes(t *testing.T) {
 	doTest(t, "All", All, constantTestCases)
-	doTest(t, "AllStrict", AllStrict, constantTestCases)
+	doTest(t, "Strict", Strict, constantTestCases)
 	doTest(t, "All", All, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
@@ -164,7 +164,7 @@ func TestRegexes(t *testing.T) {
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	})
-	doTest(t, "AllStrict", AllStrict, []regexTestCase{
+	doTest(t, "Strict", Strict, []regexTestCase{
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},

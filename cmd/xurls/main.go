@@ -18,7 +18,7 @@ func main() {
 	flag.Parse()
 	re := xurls.All
 	if *strict {
-		re = xurls.AllStrict
+		re = xurls.Strict
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
