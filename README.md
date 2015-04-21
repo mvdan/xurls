@@ -7,8 +7,6 @@ Extract urls from plain text using regular expressions.
 Example usage:
 
 ```go
-package main
-
 import "github.com/mvdan/xurls"
 
 func main() {
