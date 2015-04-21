@@ -34,7 +34,7 @@ const (
 var (
 	// Relaxed matches all the urls it can find
 	Relaxed = regexp.MustCompile(relaxed)
-	// Strict matches only urls with a scheme to avoid false positives
+	// Strict only matches urls with a scheme to avoid false positives
 	Strict = regexp.MustCompile(strict)
 )
 
