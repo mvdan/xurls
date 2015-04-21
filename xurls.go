@@ -26,8 +26,8 @@ const (
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
 
 	commonScheme = `[a-zA-Z.\-+]+://`
-	scheme       = `(\b|^)(` + commonScheme + `|` + otherScheme + `)`
-	strict       = scheme + pathCont
+	scheme       = `(` + commonScheme + `|` + otherScheme + `)`
+	strict       = `(\b|^)` + scheme + pathCont
 	relaxed      = strict + `|` + webURL + `|` + email
 )
 
@@ -41,4 +41,11 @@ var (
 func init() {
 	Relaxed.Longest()
 	Strict.Longest()
+}
+
+func StrictMatching(schemeExp string) *regexp.Regexp {
+	strictMatching := `(\b|^)` + schemeExp + pathCont
+	re := regexp.MustCompile(strictMatching)
+	re.Longest()
+	return re
 }
