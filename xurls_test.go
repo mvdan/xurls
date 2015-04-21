@@ -13,6 +13,20 @@ type regexTestCase struct {
 	want interface{}
 }
 
+func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase) {
+	for _, c := range cases {
+		got := re.FindString(c.in)
+		var want string
+		switch x := c.want.(type) {
+		case string:
+			want = x
+		}
+		if got != want {
+			t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
+		}
+	}
+}
+
 var constantTestCases = []regexTestCase{
 	{``, nil},
 	{` `, nil},
@@ -84,20 +98,6 @@ var constantTestCases = []regexTestCase{
 	{`the http://foo.com!`, `http://foo.com`},
 	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
 	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
-}
-
-func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase) {
-	for _, c := range cases {
-		got := re.FindString(c.in)
-		var want string
-		switch x := c.want.(type) {
-		case string:
-			want = x
-		}
-		if got != want {
-			t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
-		}
-	}
 }
 
 func TestRegexes(t *testing.T) {
