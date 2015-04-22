@@ -21,14 +21,14 @@ const (
 	hostName  = `(` + domain + gtld + `|` + ipAddr + `)`
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
 	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
-	path      =  `(/` + pathCont + `?|\b|$)`
+	path      = `(/` + pathCont + `?|\b|$)`
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
 
-	commonScheme = `[a-zA-Z.\-+]+://`
-	scheme       = `(` + commonScheme + `|` + otherScheme + `)`
-	strict       = `(\b|^)` + scheme + pathCont
-	relaxed      = strict + `|` + webURL + `|` + email
+	comScheme = `[a-zA-Z.\-+]+://`
+	scheme    = `(\b|^)(` + comScheme + `|` + otherScheme + `)`
+	strict    = scheme + pathCont
+	relaxed   = strict + `|` + webURL + `|` + email
 )
 
 var (
