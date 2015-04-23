@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	matching = flag.String("m", "", "only match urls whose scheme matches a regexp (e.g. `https?://|mailto:`)")
-	relaxed  = flag.Bool("r", false, "also match urls without scheme (relaxed)")
+	matching = flag.String("m", "", "")
+	relaxed  = flag.Bool("r", false, "")
 )
 
 func init() {
