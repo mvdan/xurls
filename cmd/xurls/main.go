@@ -24,9 +24,9 @@ func init() {
 		}
 		p("Usage: xurls [-h]")
 		p()
-		p("   -m <regexp>  only match urls whose scheme matches a regexp")
-		p("                   example: \"https?://|mailto:\"")
-		p("   -r           also match urls without a scheme (relaxed)")
+		p("   -m <regexp>   only match urls whose scheme matches a regexp")
+		p("                    example: \"https?://|mailto:\"")
+		p("   -r            also match urls without a scheme (relaxed)")
 	}
 }
 
