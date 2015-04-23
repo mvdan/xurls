@@ -31,7 +31,9 @@ var TLDs = []string{
 `))
 
 func addFromIana(addTld func(tld string)) error {
-	resp, err := http.Get("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
+	url := "https://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+	log.Printf("Fetching %s", url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
@@ -47,7 +49,9 @@ func addFromIana(addTld func(tld string)) error {
 }
 
 func addFromPublicSuffix(addTld func(tld string)) error {
-	resp, err := http.Get("https://publicsuffix.org/list/effective_tld_names.dat")
+	url := "https://publicsuffix.org/list/effective_tld_names.dat"
+	log.Printf("Fetching %s", url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
