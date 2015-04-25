@@ -43,11 +43,14 @@ func init() {
 	Strict.Longest()
 }
 
-// StrictMatching matches urls like Strict but matching a specified scheme
-// regular expression
-func StrictMatching(schemeExp string) *regexp.Regexp {
+// StrictMatching produces a regexp that matches urls like Strict but matching
+// a specified scheme regular expression
+func StrictMatching(schemeExp string) (*regexp.Regexp, error) {
 	strictMatching := `(\b|^)(` + schemeExp + `)` + pathCont
-	re := regexp.MustCompile(strictMatching)
+	re, err := regexp.Compile(strictMatching)
+	if err != nil {
+		return nil, err
+	}
 	re.Longest()
-	return re
+	return re, nil
 }

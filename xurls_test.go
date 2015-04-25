@@ -175,8 +175,27 @@ func TestRegexes(t *testing.T) {
 	})
 }
 
+func TestStrictMatchingError(t *testing.T) {
+	for _, c := range []struct{
+		exp string
+		wantErr bool
+	}{
+		{`http://`, false},
+		{`https?://`, false},
+		{`http://|mailto:`, false},
+		{`http://(`, true},
+	} {
+		_, err := StrictMatching(c.exp)
+		if c.wantErr && err == nil {
+			t.Errorf(`StrictMatching("%s") did not error as expected`, c.exp)
+		} else if !c.wantErr && err != nil {
+			t.Errorf(`StrictMatching("%s") unexpectedly errored`, c.exp)
+		}
+	}
+}
+
 func TestStrictMatching(t *testing.T) {
-	strictMatching := StrictMatching("http://|ftps?://|mailto:")
+	strictMatching, _ := StrictMatching("http://|ftps?://|mailto:")
 	doTest(t, "StrictMatching", strictMatching, []regexTestCase{
 		{`foo.com`, nil},
 		{`foo@bar.com`, nil},

@@ -40,7 +40,12 @@ func main() {
 	if *relaxed {
 		re = xurls.Relaxed
 	} else if *matching != "" {
-		re = xurls.StrictMatching(*matching)
+		var err error
+		re, err = xurls.StrictMatching(*matching)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "invalid -m regular expression:", *matching)
+			os.Exit(2)
+		}
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(bufio.ScanWords)
