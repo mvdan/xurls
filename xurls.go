@@ -23,7 +23,7 @@ const (
 	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
 	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
 	path      = `(/` + pathCont + `?|\b|$)`
-	webURL    = hostName + `(:[0-9]{1,5})?` + path
+	webURL    = hostName + `(:[0-9]*)?` + path
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
 
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
