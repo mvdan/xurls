@@ -25,7 +25,7 @@ const (
 	webURL    = hostName + `(:[0-9]{1,5})?` + path
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
 
-	comScheme = `[a-zA-Z.\-+]+://`
+	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
 	strict    = `(\b|^)` + scheme + pathCont
 	relaxed   = strict + `|` + webURL + `|` + email
