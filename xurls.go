@@ -28,7 +28,7 @@ const (
 
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
-	strict    = `(\b|^)` + scheme + pathCont
+	strict    = `\b` + scheme + pathCont
 	relaxed   = strict + `|` + webURL + `|` + email
 )
 
@@ -47,7 +47,7 @@ func init() {
 // StrictMatching produces a regexp that matches urls like Strict but matching
 // a specified scheme regular expression
 func StrictMatching(schemeExp string) (*regexp.Regexp, error) {
-	strictMatching := `(\b|^)(` + schemeExp + `)` + pathCont
+	strictMatching := `\b(` + schemeExp + `)` + pathCont
 	re, err := regexp.Compile(strictMatching)
 	if err != nil {
 		return nil, err
