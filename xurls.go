@@ -20,7 +20,7 @@ const (
 	iri       = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain    = `(` + iri + `\.)+`
 	hostName  = `(` + domain + gtld + `|` + ipAddr + `)`
-	wellParen = `([` + pathChar + `]*(\([` + pathChar + `]*\))+)+`
+	wellParen = `([` + pathChar + `]*\([` + pathChar + `]*\))`
 	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
 	path      = `(/` + pathCont + `?|\b|$)`
 	webURL    = hostName + `(:[0-9]*)?` + path
