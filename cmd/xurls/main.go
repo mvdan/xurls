@@ -19,14 +19,11 @@ var (
 
 func init() {
 	flag.Usage = func() {
-		p := func(args ...interface{}) {
-			fmt.Fprintln(os.Stderr, args...)
-		}
-		p(`Usage: xurls [-h]`)
-		p()
-		p(`   -m <regexp>   only match urls whose scheme matches a regexp`)
-		p(`                    example: "https?://|mailto:"`)
-		p(`   -r            also match urls without a scheme (relaxed)`)
+		fmt.Fprintln(os.Stderr, `Usage: xurls [-h]`)
+		fmt.Fprintln(os.Stderr)
+		fmt.Fprintln(os.Stderr, `   -m <regexp>   only match urls whose scheme matches a regexp`)
+		fmt.Fprintln(os.Stderr, `                    example: "https?://|mailto:"`)
+		fmt.Fprintln(os.Stderr, `   -r            also match urls without a scheme (relaxed)`)
 	}
 }
 
@@ -41,8 +38,7 @@ func main() {
 		re = xurls.Relaxed
 	} else if *matching != "" {
 		var err error
-		re, err = xurls.StrictMatching(*matching)
-		if err != nil {
+		if re, err = xurls.StrictMatching(*matching); err != nil {
 			fmt.Fprintln(os.Stderr, "invalid -m regular expression:", *matching)
 			os.Exit(2)
 		}
@@ -51,8 +47,7 @@ func main() {
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
 		word := scanner.Text()
-		matches := re.FindAllString(word, -1)
-		for _, match := range matches {
+		for _, match := range re.FindAllString(word, -1) {
 			fmt.Println(match)
 		}
 	}
