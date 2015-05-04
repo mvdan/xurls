@@ -183,8 +183,8 @@ func TestRegexes(t *testing.T) {
 }
 
 func TestStrictMatchingError(t *testing.T) {
-	for _, c := range []struct{
-		exp string
+	for _, c := range []struct {
+		exp     string
 		wantErr bool
 	}{
 		{`http://`, false},
