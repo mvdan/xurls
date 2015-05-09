@@ -105,7 +105,6 @@ func writeTlds(tlds []string) error {
 }
 
 func main() {
-	log.Printf("Downloading TLD list...")
 	tlds, err := tldList()
 	if err != nil {
 		log.Fatalf("Could not get TLD list: %s", err)
