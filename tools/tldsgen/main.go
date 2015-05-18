@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"text/template"
 )
 
@@ -30,12 +31,21 @@ var TLDs = []string{
 {{end}}}
 `))
 
-func addFromIana(addTld func(tld string)) error {
+func cleanTld(tld string) string {
+	tld = strings.ToLower(tld)
+	if strings.HasPrefix(tld, "xn--") {
+		return ""
+	}
+	return tld
+}
+
+func fromIana(tldChan chan string, wg *sync.WaitGroup) {
 	url := "https://data.iana.org/TLD/tlds-alpha-by-domain.txt"
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		log.Printf("Error fetcihng %s: %v", url, err)
+		return
 	}
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
@@ -43,17 +53,22 @@ func addFromIana(addTld func(tld string)) error {
 	for scanner.Scan() {
 		line := scanner.Text()
 		tld := re.FindString(line)
-		addTld(tld)
+		tld = cleanTld(tld)
+		if tld == "" {
+			continue
+		}
+		tldChan <- tld
 	}
-	return nil
+	wg.Done()
 }
 
-func addFromPublicSuffix(addTld func(tld string)) error {
+func fromPublicSuffix(tldChan chan string, wg *sync.WaitGroup) {
 	url := "https://publicsuffix.org/list/effective_tld_names.dat"
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		log.Printf("Error fetcihng %s: %v", url, err)
+		return
 	}
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
@@ -61,33 +76,37 @@ func addFromPublicSuffix(addTld func(tld string)) error {
 	for scanner.Scan() {
 		line := scanner.Text()
 		tld := re.FindString(line)
-		addTld(tld)
+		tld = cleanTld(tld)
+		if tld == "" {
+			continue
+		}
+		tldChan <- tld
 	}
-	return nil
+	wg.Done()
 }
 
 func tldList() ([]string, error) {
+
+	tldChan := make(chan string)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go fromIana(tldChan, &wg)
+	go fromPublicSuffix(tldChan, &wg)
+
 	tlds := make(map[string]struct{})
-	addTld := func(tld string) {
-		if tld == "" {
-			return
+	go func() {
+		for tld := range tldChan {
+			tlds[tld] = struct{}{}
 		}
-		tld = strings.ToLower(tld)
-		if strings.HasPrefix(tld, "xn--") {
-			return
-		}
-		tlds[tld] = struct{}{}
-	}
-	if err := addFromIana(addTld); err != nil {
-		return nil, err
-	}
-	if err := addFromPublicSuffix(addTld); err != nil {
-		return nil, err
-	}
+	}()
+	wg.Wait()
+
 	list := make([]string, 0, len(tlds))
 	for tld := range tlds {
 		list = append(list, tld)
 	}
+
 	sort.Strings(list)
 	return list, nil
 }
