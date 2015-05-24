@@ -59,18 +59,17 @@ func main() {
 	args := flag.Args()
 	if len(args) == 0 {
 		scan(re, os.Stdin)
-	} else {
-		for _, path := range args {
-			if path == "-" {
-				scan(re, os.Stdin)
-				continue
-			}
-			file, err := os.Open(path)
-			if err != nil {
-				fmt.Fprintf(os.Stdout, "could not open file '%s': %v\n", path, err)
-			}
-			scan(re, file)
-			file.Close()
+	}
+	for _, path := range args {
+		if path == "-" {
+			scan(re, os.Stdin)
+			continue
 		}
+		file, err := os.Open(path)
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "could not open file '%s': %v\n", path, err)
+		}
+		scan(re, file)
+		file.Close()
 	}
 }
