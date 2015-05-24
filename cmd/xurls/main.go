@@ -7,7 +7,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"regexp"
 
 	"github.com/mvdan/xurls"
 )
@@ -27,6 +29,17 @@ func init() {
 	}
 }
 
+func scan(re *regexp.Regexp, r io.Reader) {
+	scanner := bufio.NewScanner(r)
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		word := scanner.Text()
+		for _, match := range re.FindAllString(word, -1) {
+			fmt.Println(match)
+		}
+	}
+}
+
 func main() {
 	flag.Parse()
 	if *relaxed && *matching != "" {
@@ -43,12 +56,21 @@ func main() {
 			os.Exit(2)
 		}
 	}
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Split(bufio.ScanWords)
-	for scanner.Scan() {
-		word := scanner.Text()
-		for _, match := range re.FindAllString(word, -1) {
-			fmt.Println(match)
+	args := flag.Args()
+	if len(args) == 0 {
+		scan(re, os.Stdin)
+	} else {
+		for _, path := range args {
+			if path == "-" {
+				scan(re, os.Stdin)
+				continue
+			}
+			file, err := os.Open(path)
+			if err != nil {
+				fmt.Fprintln(os.Stdout, "could not open file:", path)
+			}
+			scan(re, file)
+			file.Close()
 		}
 	}
 }
