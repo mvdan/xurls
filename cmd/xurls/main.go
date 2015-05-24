@@ -43,7 +43,7 @@ func scan(re *regexp.Regexp, r io.Reader) {
 func main() {
 	flag.Parse()
 	if *relaxed && *matching != "" {
-		fmt.Fprintln(os.Stderr, "-r and -m at the same time don't make much sense.")
+		fmt.Fprintf(os.Stderr, "-r and -m at the same time don't make much sense.\n")
 		os.Exit(1)
 	}
 	re := xurls.Strict
@@ -52,7 +52,7 @@ func main() {
 	} else if *matching != "" {
 		var err error
 		if re, err = xurls.StrictMatching(*matching); err != nil {
-			fmt.Fprintln(os.Stderr, "invalid -m regular expression:", *matching)
+			fmt.Fprintf(os.Stderr, "invalid regular expression '%s': %v\n", *matching, err)
 			os.Exit(2)
 		}
 	}
@@ -67,7 +67,7 @@ func main() {
 			}
 			file, err := os.Open(path)
 			if err != nil {
-				fmt.Fprintln(os.Stdout, "could not open file:", path)
+				fmt.Fprintf(os.Stdout, "could not open file '%s': %v\n", path, err)
 			}
 			scan(re, file)
 			file.Close()
