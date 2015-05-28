@@ -16,11 +16,7 @@ type regexTestCase struct {
 func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase) {
 	for _, c := range cases {
 		got := re.FindString(c.in)
-		var want string
-		switch x := c.want.(type) {
-		case string:
-			want = x
-		}
+		want, _ := c.want.(string)
 		if got != want {
 			t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
 		}
