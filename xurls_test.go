@@ -210,3 +210,37 @@ func TestStrictMatching(t *testing.T) {
 		{`sms:123`, nil},
 	})
 }
+
+func bench(b *testing.B, re *regexp.Regexp, str string) {
+        for i := 0; i < b.N; i++ {
+		re.FindAllString(str, -1)
+        }
+}
+
+func BenchmarkStrictEmpty(b *testing.B) {
+	bench(b, Strict, "foo")
+}
+
+func BenchmarkStrictSingle(b *testing.B) {
+	bench(b, Strict, "http://foo.foo foo.com")
+}
+
+func BenchmarkStrictMany(b *testing.B) {
+	bench(b, Strict, ` foo bar http://foo.foo
+	foo.com bitcoin:address ftp://
+	xmpp:foo@bar.com`)
+}
+
+func BenchmarkRelaxedEmpty(b *testing.B) {
+	bench(b, Relaxed, "foo")
+}
+
+func BenchmarkRelaxedSingle(b *testing.B) {
+	bench(b, Relaxed, "http://foo.foo foo.com")
+}
+
+func BenchmarkRelaxedMany(b *testing.B) {
+	bench(b, Relaxed, ` foo bar http://foo.foo
+	foo.com bitcoin:address ftp://
+	xmpp:foo@bar.com`)
+}
