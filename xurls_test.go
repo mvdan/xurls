@@ -212,9 +212,9 @@ func TestStrictMatching(t *testing.T) {
 }
 
 func bench(b *testing.B, re *regexp.Regexp, str string) {
-        for i := 0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		re.FindAllString(str, -1)
-        }
+	}
 }
 
 func BenchmarkStrictEmpty(b *testing.B) {
