@@ -5,6 +5,8 @@ package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -41,8 +43,12 @@ func cleanTld(tld string) string {
 func fetchFromURL(url, pat string) {
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
+	if err == nil && resp.StatusCode >= 400 {
+		err = errors.New(resp.Status)
+	}
 	if err != nil {
-		log.Printf("Error fetching %s: %v", url, err)
+		errChan <- fmt.Errorf("could not fetch %s: %v", url, err)
+		wg.Done()
 		return
 	}
 	defer resp.Body.Close()
@@ -62,12 +68,12 @@ func fetchFromURL(url, pat string) {
 
 var (
 	wg      sync.WaitGroup
-	tldChan chan string
+	tldChan = make(chan string)
+	errChan = make(chan error)
 )
 
 func tldList() ([]string, []string, error) {
 
-	tldChan = make(chan string)
 	wg.Add(2)
 
 	var urls []string
@@ -82,12 +88,23 @@ func tldList() ([]string, []string, error) {
 		`^[^/.]+$`)
 
 	tldSet := make(map[string]struct{})
+	anyError := false
 	go func() {
-		for tld := range tldChan {
-			tldSet[tld] = struct{}{}
+		for {
+			select {
+			case tld := <-tldChan:
+				tldSet[tld] = struct{}{}
+			case err := <-errChan:
+				log.Printf("%v", err)
+				anyError = true
+			}
 		}
 	}()
 	wg.Wait()
+
+	if anyError {
+		return nil, nil, errors.New("there were some errors while fetching the TLDs")
+	}
 
 	tlds := make([]string, 0, len(tldSet))
 	for tld := range tldSet {
