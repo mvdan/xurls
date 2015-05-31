@@ -23,9 +23,8 @@ package xurls
 
 // TLDs is a sorted list of all public top-level domains
 //
-// Sources:
-//  * https://data.iana.org/TLD/tlds-alpha-by-domain.txt
-//  * https://publicsuffix.org/list/effective_tld_names.dat
+// Sources:{{range $_, $value := .URLs}}
+//  * {{$value}}{{end}}
 var TLDs = []string{
 {{range $_, $value := .TLDs}}` + "\t`" + `{{$value}}` + "`" + `,
 {{end}}}
@@ -39,7 +38,7 @@ func cleanTld(tld string) string {
 	return tld
 }
 
-func fromURL(url, pat string) {
+func fetchFromURL(url, pat string) {
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -66,50 +65,60 @@ var (
 	tldChan chan string
 )
 
-func tldList() ([]string, error) {
+func tldList() ([]string, []string, error) {
 
 	tldChan = make(chan string)
 	wg.Add(2)
 
-	go fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt", `^[^#]+$`)
-	go fromURL("https://publicsuffix.org/list/effective_tld_names.dat", `^[^/.]+$`)
+	var urls []string
+	fromURL := func(url, pat string) {
+		urls = append(urls, url)
+		go fetchFromURL(url, pat)
+	}
 
-	tlds := make(map[string]struct{})
+	fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt",
+		`^[^#]+$`)
+	fromURL("https://publicsuffix.org/list/effective_tld_names.dat",
+		`^[^/.]+$`)
+
+	tldSet := make(map[string]struct{})
 	go func() {
 		for tld := range tldChan {
-			tlds[tld] = struct{}{}
+			tldSet[tld] = struct{}{}
 		}
 	}()
 	wg.Wait()
 
-	list := make([]string, 0, len(tlds))
-	for tld := range tlds {
-		list = append(list, tld)
+	tlds := make([]string, 0, len(tldSet))
+	for tld := range tldSet {
+		tlds = append(tlds, tld)
 	}
 
-	sort.Strings(list)
-	return list, nil
+	sort.Strings(tlds)
+	return tlds, urls, nil
 }
 
-func writeTlds(tlds []string) error {
+func writeTlds(tlds, urls []string) error {
 	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	return tldsTmpl.Execute(f, struct {
 		TLDs []string
+		URLs []string
 	}{
 		TLDs: tlds,
+		URLs: urls,
 	})
 }
 
 func main() {
-	tlds, err := tldList()
+	tlds, urls, err := tldList()
 	if err != nil {
 		log.Fatalf("Could not get TLD list: %s", err)
 	}
 	log.Printf("Generating %s...", path)
-	if err := writeTlds(tlds); err != nil {
+	if err := writeTlds(tlds, urls); err != nil {
 		log.Fatalf("Could not write path: %s", err)
 	}
 }
