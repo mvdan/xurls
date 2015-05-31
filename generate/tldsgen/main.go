@@ -42,7 +42,7 @@ func fetchFromURL(url, pat string) {
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Printf("Error fetcihng %s: %v", url, err)
+		log.Printf("Error fetching %s: %v", url, err)
 		return
 	}
 	defer resp.Body.Close()
