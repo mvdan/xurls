@@ -39,8 +39,7 @@ func cleanTld(tld string) string {
 	return tld
 }
 
-func fromIana(tldChan chan string, wg *sync.WaitGroup) {
-	url := "https://data.iana.org/TLD/tlds-alpha-by-domain.txt"
+func fromURL(url, pat string) {
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -49,7 +48,7 @@ func fromIana(tldChan chan string, wg *sync.WaitGroup) {
 	}
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
-	re := regexp.MustCompile(`^[^#]+$`)
+	re := regexp.MustCompile(pat)
 	for scanner.Scan() {
 		line := scanner.Text()
 		tld := re.FindString(line)
@@ -62,37 +61,18 @@ func fromIana(tldChan chan string, wg *sync.WaitGroup) {
 	wg.Done()
 }
 
-func fromPublicSuffix(tldChan chan string, wg *sync.WaitGroup) {
-	url := "https://publicsuffix.org/list/effective_tld_names.dat"
-	log.Printf("Fetching %s", url)
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Printf("Error fetcihng %s: %v", url, err)
-		return
-	}
-	defer resp.Body.Close()
-	scanner := bufio.NewScanner(resp.Body)
-	re := regexp.MustCompile(`^[^/.]+$`)
-	for scanner.Scan() {
-		line := scanner.Text()
-		tld := re.FindString(line)
-		tld = cleanTld(tld)
-		if tld == "" {
-			continue
-		}
-		tldChan <- tld
-	}
-	wg.Done()
-}
+var (
+	wg      sync.WaitGroup
+	tldChan chan string
+)
 
 func tldList() ([]string, error) {
 
-	tldChan := make(chan string)
-	var wg sync.WaitGroup
+	tldChan = make(chan string)
 	wg.Add(2)
 
-	go fromIana(tldChan, &wg)
-	go fromPublicSuffix(tldChan, &wg)
+	go fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt", `^[^#]+$`)
+	go fromURL("https://publicsuffix.org/list/effective_tld_names.dat", `^[^/.]+$`)
 
 	tlds := make(map[string]struct{})
 	go func() {
