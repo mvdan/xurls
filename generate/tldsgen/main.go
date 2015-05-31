@@ -23,10 +23,10 @@ package xurls
 
 // TLDs is a sorted list of all public top-level domains
 //
-// Sources:{{range $_, $value := .URLs}}
-//  * {{$value}}{{end}}
+// Sources:{{range $_, $url := .URLs}}
+//  * {{$url}}{{end}}
 var TLDs = []string{
-{{range $_, $value := .TLDs}}` + "\t`" + `{{$value}}` + "`" + `,
+{{range $_, $tld := .TLDs}}` + "\t`" + `{{$tld}}` + "`" + `,
 {{end}}}
 `))
 
