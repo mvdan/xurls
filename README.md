@@ -19,8 +19,7 @@ func main() {
 }
 ```
 
-This is **not** a URL validation library. Extracted urls may well not be
-valid.
+This is **not** a URL validation library.
 
 ### Command-line utilities
 
