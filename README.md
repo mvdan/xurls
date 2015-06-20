@@ -10,12 +10,12 @@ Example usage:
 import "github.com/mvdan/xurls"
 
 func main() {
-        xurls.Relaxed.FindString("Do gophers live in golang.org?")
-        // "golang.org"
-        xurls.Relaxed.FindAllString("foo.com is http://foo.com/.", -1)
-        // []string{"foo.com", "http://foo.com/"}
-        xurls.Strict.FindAllString("foo.com is http://foo.com/.", -1)
-        // []string{"http://foo.com/"}
+	xurls.Relaxed.FindString("Do gophers live in golang.org?")
+	// "golang.org"
+	xurls.Relaxed.FindAllString("foo.com is http://foo.com/.", -1)
+	// []string{"foo.com", "http://foo.com/"}
+	xurls.Strict.FindAllString("foo.com is http://foo.com/.", -1)
+	// []string{"http://foo.com/"}
 }
 ```
 
