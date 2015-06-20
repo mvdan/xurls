@@ -40,14 +40,22 @@ var schemes = []string{
 
 func writeRegex(tlds []string) error {
 	allTldsSet := make(map[string]struct{})
+	add := func(tld string) {
+		if _, e := allTldsSet[tld]; e {
+			log.Fatalf("Duplicate TLD: %s", tld)
+		}
+		allTldsSet[tld] = struct{}{}
+	}
 	for _, tldlist := range [...][]string{tlds, xurls.PseudoTLDs} {
 		for _, tld := range tldlist {
-			allTldsSet[tld] = struct{}{}
+			add(tld)
 			asciiTld, err := idna.ToASCII(tld)
 			if err != nil {
 				return err
 			}
-			allTldsSet[asciiTld] = struct{}{}
+			if asciiTld != tld {
+				add(asciiTld)
+			}
 		}
 	}
 	var allTlds []string
