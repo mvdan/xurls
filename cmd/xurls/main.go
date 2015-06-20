@@ -21,7 +21,8 @@ var (
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage: xurls [-h]\n\n")
+		fmt.Fprintf(os.Stderr, "Usage: xurls [-h] [files]\n\n")
+		fmt.Fprintf(os.Stderr, "If no files are given, it reads from standard input.\n\n")
 		fmt.Fprintf(os.Stderr, "   -m <regexp>   only match urls whose scheme matches a regexp\n")
 		fmt.Fprintf(os.Stderr, "                    example: 'https?://|mailto:'\n")
 		fmt.Fprintf(os.Stderr, "   -r            also match urls without a scheme (relaxed)\n")
