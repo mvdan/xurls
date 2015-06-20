@@ -13,9 +13,9 @@ func main() {
         xurls.Relaxed.FindString("Do gophers live in golang.org?")
         // "golang.org"
         xurls.Relaxed.FindAllString("foo.com is http://foo.com/.", -1)
-        // ["foo.com", "http://foo.com/"]
+        // []string{"foo.com", "http://foo.com/"}
         xurls.Strict.FindAllString("foo.com is http://foo.com/.", -1)
-        // ["http://foo.com/"]
+        // []string{"http://foo.com/"}
 }
 ```
 
