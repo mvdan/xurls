@@ -21,11 +21,10 @@ var (
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, `Usage: xurls [-h]`)
-		fmt.Fprintln(os.Stderr)
-		fmt.Fprintln(os.Stderr, `   -m <regexp>   only match urls whose scheme matches a regexp`)
-		fmt.Fprintln(os.Stderr, `                    example: "https?://|mailto:"`)
-		fmt.Fprintln(os.Stderr, `   -r            also match urls without a scheme (relaxed)`)
+		fmt.Fprintf(os.Stderr, "Usage: xurls [-h]\n\n")
+		fmt.Fprintf(os.Stderr, "   -m <regexp>   only match urls whose scheme matches a regexp\n")
+		fmt.Fprintf(os.Stderr, "                    example: 'https?://|mailto:'\n")
+		fmt.Fprintf(os.Stderr, "   -r            also match urls without a scheme (relaxed)\n")
 	}
 }
 
