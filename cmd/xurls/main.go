@@ -53,7 +53,7 @@ func main() {
 		var err error
 		if re, err = xurls.StrictMatching(*matching); err != nil {
 			fmt.Fprintf(os.Stderr, "invalid regular expression '%s': %v\n", *matching, err)
-			os.Exit(2)
+			os.Exit(1)
 		}
 	}
 	args := flag.Args()
@@ -68,6 +68,7 @@ func main() {
 		file, err := os.Open(path)
 		if err != nil {
 			fmt.Fprintf(os.Stdout, "could not open file '%s': %v\n", path, err)
+			os.Exit(1)
 		}
 		scan(re, file)
 		file.Close()
