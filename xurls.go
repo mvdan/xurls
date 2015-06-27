@@ -11,7 +11,7 @@ import "regexp"
 const (
 	letters   = "a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
 	iriChar   = letters + `0-9`
-	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'"()?!`
+	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'()?!`
 	endChar   = iriChar + `/\-+_@&$~*%`
 	octet     = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr  = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
