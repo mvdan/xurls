@@ -165,6 +165,7 @@ func TestRegexes(t *testing.T) {
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	})
 	doTest(t, "Strict", Strict, []regexTestCase{
+		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},
