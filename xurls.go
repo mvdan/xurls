@@ -13,7 +13,7 @@ const (
 	nonascii  = "\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
 	letters   = ascii + nonascii
 	iriChar   = letters + `0-9`
-	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'()?!`
+	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'?!`
 	endChar   = iriChar + `/\-+_@&$~*%`
 	octet     = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr  = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
@@ -23,8 +23,8 @@ const (
 	domain    = `(` + iri + `\.)+`
 	hostName  = `(` + domain + gtld + `|` + ipAddr + `)`
 	wellParen = `([` + pathChar + `]*\([` + pathChar + `]*\))`
-	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
-	path      = `(/` + pathCont + `?|\b|$)`
+	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])+`
+	path      = `(/|/` + pathCont + `?|\b|$)`
 	port      = `(:[0-9]*)?`
 	webURL    = hostName + port + path
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
