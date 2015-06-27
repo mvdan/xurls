@@ -9,7 +9,9 @@ import "regexp"
 //go:generate go run generate/regexgen/main.go
 
 const (
-	letters   = "a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
+	ascii     = "a-zA-Z"
+	nonascii  = "\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
+	letters   = ascii + nonascii
 	iriChar   = letters + `0-9`
 	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'()?!`
 	endChar   = iriChar + `/\-+_@&$~*%`
@@ -23,7 +25,8 @@ const (
 	wellParen = `([` + pathChar + `]*\([` + pathChar + `]*\))`
 	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])`
 	path      = `(/` + pathCont + `?|\b|$)`
-	webURL    = hostName + `(:[0-9]*)?` + path
+	port      = `(:[0-9]*)?`
+	webURL    = hostName + port + path
 	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
 
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
