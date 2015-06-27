@@ -132,10 +132,10 @@ func writeTlds(tlds, urls []string) error {
 func main() {
 	tlds, urls, err := tldList()
 	if err != nil {
-		log.Fatalf("Could not get TLD list: %s", err)
+		log.Fatalf("Could not get TLD list: %v", err)
 	}
 	log.Printf("Generating %s...", path)
 	if err := writeTlds(tlds, urls); err != nil {
-		log.Fatalf("Could not write path: %s", err)
+		log.Fatalf("Could not write path: %v", err)
 	}
 }

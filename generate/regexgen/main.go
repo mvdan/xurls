@@ -76,6 +76,6 @@ func writeRegex(tlds []string) error {
 func main() {
 	log.Printf("Generating %s...", path)
 	if err := writeRegex(xurls.TLDs); err != nil {
-		log.Fatalf("Could not write %s: %s", path, err)
+		log.Fatalf("Could not write %s: %v", path, err)
 	}
 }
