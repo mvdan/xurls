@@ -166,6 +166,7 @@ func TestRegexes(t *testing.T) {
 	})
 	doTest(t, "Strict", Strict, []regexTestCase{
 		{`http:// foo.com`, nil},
+		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},

@@ -9,9 +9,8 @@ import "regexp"
 //go:generate go run generate/regexgen/main.go
 
 const (
-	ascii     = "a-zA-Z"
-	nonascii  = "\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF"
-	letters   = ascii + nonascii
+	ascii     = `a-zA-Z`
+	letters   = `\p{L}`
 	iriChar   = letters + `0-9`
 	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'?!`
 	endChar   = iriChar + `/\-+_@&$~*%`
