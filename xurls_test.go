@@ -8,12 +8,12 @@ import (
 	"testing"
 )
 
-type regexTestCase struct {
+type testCase struct {
 	in   string
 	want interface{}
 }
 
-func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase) {
+func doTest(t *testing.T, name string, re *regexp.Regexp, cases []testCase) {
 	for _, c := range cases {
 		got := re.FindString(c.in)
 		want, _ := c.want.(string)
@@ -23,7 +23,7 @@ func doTest(t *testing.T, name string, re *regexp.Regexp, cases []regexTestCase)
 	}
 }
 
-var constantTestCases = []regexTestCase{
+var constantTestCases = []testCase{
 	{``, nil},
 	{` `, nil},
 	{`:`, nil},
@@ -110,7 +110,7 @@ var constantTestCases = []regexTestCase{
 func TestRegexes(t *testing.T) {
 	doTest(t, "Relaxed", Relaxed, constantTestCases)
 	doTest(t, "Strict", Strict, constantTestCases)
-	doTest(t, "Relaxed", Relaxed, []regexTestCase{
+	doTest(t, "Relaxed", Relaxed, []testCase{
 		{`foo.a`, nil},
 		{`foo.com`, `foo.com`},
 		{`foo.com bar.com`, `foo.com`},
@@ -170,7 +170,7 @@ func TestRegexes(t *testing.T) {
 		{`foo+test@bar.com`, `foo+test@bar.com`},
 		{`foo+._%-@bar.com`, `foo+._%-@bar.com`},
 	})
-	doTest(t, "Strict", Strict, []regexTestCase{
+	doTest(t, "Strict", Strict, []testCase{
 		{`http:// foo.com`, nil},
 		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
@@ -204,7 +204,7 @@ func TestStrictMatchingError(t *testing.T) {
 
 func TestStrictMatching(t *testing.T) {
 	strictMatching, _ := StrictMatching("http://|ftps?://|mailto:")
-	doTest(t, "StrictMatching", strictMatching, []regexTestCase{
+	doTest(t, "StrictMatching", strictMatching, []testCase{
 		{`foo.com`, nil},
 		{`foo@bar.com`, nil},
 		{`http://foo`, `http://foo`},
