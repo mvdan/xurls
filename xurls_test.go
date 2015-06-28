@@ -87,6 +87,8 @@ var constantTestCases = []regexTestCase{
 	{`http://a.b/a.,:;-+_()?@&=#$~!*%'a`, `http://a.b/a.,:;-+_()?@&=#$~!*%'a`},
 	{`http://foo.com/path_(more)`, `http://foo.com/path_(more)`},
 	{`http://foo.com/path_(even)-(more)`, `http://foo.com/path_(even)-(more)`},
+	{`http://foo.com/path_(even)(more)`, `http://foo.com/path_(even)(more)`},
+	{`http://foo.com/path_(even_(nested))`, `http://foo.com/path_(even_(nested))`},
 	{`http://foo.com/path#fragment`, `http://foo.com/path#fragment`},
 	{`http://test.foo.com/`, `http://test.foo.com/`},
 	{`http://foo.com/path`, `http://foo.com/path`},

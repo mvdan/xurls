@@ -22,8 +22,8 @@ const (
 	iri       = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain    = `(` + iri + `\.)+`
 	hostName  = `(` + domain + gtld + `|` + ipAddr + `)`
-	wellParen = `([` + pathChar + `]*\([` + pathChar + `]*\))`
-	pathCont  = `(` + wellParen + `|[` + pathChar + `]*[` + endChar + `])+`
+	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
+	pathCont  = `([` + pathChar + `]*(` + wellParen + `|[` + endChar + `])+)+`
 	path      = `(/|/` + pathCont + `?|\b|$)`
 	port      = `(:[0-9]*)?`
 	webURL    = hostName + port + path
