@@ -12,7 +12,7 @@ const (
 	letter    = `\p{L}`
 	number    = `\p{N}`
 	iriChar   = letter + number
-	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'?!`
+	pathChar  = iriChar + `/\-+_@&=#$~*%.,:;'?!` + `\p{Sc}\p{Sk}\p{So}`
 	endChar   = iriChar + `/\-+_@&$~*%`
 	octet     = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr  = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
