@@ -99,6 +99,7 @@ var constantTestCases = []testCase{
 	{`http://1.1.1.1/path`, `http://1.1.1.1/path`},
 	{`http://1080::8:800:200c:417a/path`, `http://1080::8:800:200c:417a/path`},
 	{`http://中国.中国/foo中国`, `http://中国.中国/foo中国`},
+	{`http://xn-foo.xn--p1acf/path`, `http://xn-foo.xn--p1acf/path`},
 	{`http://✪foo.bar/pa✪th`, `http://✪foo.bar/pa✪th`},
 	{`✪http://✪foo.bar/pa✪th✪`, `http://✪foo.bar/pa✪th`},
 	{`what is http://foo.com?`, `http://foo.com`},
