@@ -106,6 +106,7 @@ var constantTestCases = []testCase{
 	{`the http://foo.com!`, `http://foo.com`},
 	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
 	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
+	{`http://foo.com/@"style="color:red"onmouseover=func()`, `http://foo.com/`},
 }
 
 func TestRegexes(t *testing.T) {
