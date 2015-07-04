@@ -51,6 +51,7 @@ var TLDs = []string{
 	`anquan`,
 	`ao`,
 	`apartments`,
+	`app`,
 	`aq`,
 	`aquarelle`,
 	`ar`,
