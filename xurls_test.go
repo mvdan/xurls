@@ -103,6 +103,7 @@ var constantTestCases = []testCase{
 	{`http://✪foo.bar/pa✪th`, `http://✪foo.bar/pa✪th`},
 	{`✪http://✪foo.bar/pa✪th✪`, `http://✪foo.bar/pa✪th`},
 	{`what is http://foo.com?`, `http://foo.com`},
+	{`what is http://foo.com/path?`, `http://foo.com/path`},
 	{`the http://foo.com!`, `http://foo.com`},
 	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
 	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
