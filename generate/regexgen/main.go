@@ -31,6 +31,7 @@ const ({{ range $key, $value := . }}
 // well-known ones.
 var schemes = []string{
 	`bitcoin`,
+	`file`,
 	`magnet`,
 	`mailto`,
 	`sms`,
