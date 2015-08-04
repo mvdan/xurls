@@ -120,6 +120,7 @@ func writeTlds(tlds, urls []string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	return tldsTmpl.Execute(f, struct {
 		TLDs []string
 		URLs []string
