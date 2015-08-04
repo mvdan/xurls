@@ -46,6 +46,8 @@ var constantTestCases = []testCase{
 	{`randomxmpp:foo`, nil},
 	{`foo://`, nil},
 	{`http://`, nil},
+	{`http:// foo`, nil},
+	{`http:// foo`, nil},
 	{`:foo`, nil},
 	{`://foo`, nil},
 	{`foo:bar`, nil},
@@ -175,7 +177,6 @@ func TestRegexes(t *testing.T) {
 	})
 	doTest(t, "Strict", Strict, []testCase{
 		{`http:// foo.com`, nil},
-		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
 		{`foo.com`, nil},
 		{`foo.com/`, nil},
