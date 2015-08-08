@@ -35,9 +35,9 @@ const (
 )
 
 var (
-	// Relaxed matches all the urls it can find
+	// Relaxed matches all the urls it can find.
 	Relaxed = regexp.MustCompile(relaxed)
-	// Strict only matches urls with a scheme to avoid false positives
+	// Strict only matches urls with a scheme to avoid false positives.
 	Strict = regexp.MustCompile(strict)
 )
 
@@ -46,8 +46,8 @@ func init() {
 	Strict.Longest()
 }
 
-// StrictMatching produces a regexp that matches urls like Strict but matching
-// a specified scheme regular expression
+// StrictMatching produces a regexp that matches urls like Strict but whose
+// scheme matches the given regular expression.
 func StrictMatching(schemeExp string) (*regexp.Regexp, error) {
 	strictMatching := `\b(?i)(` + schemeExp + `)(?-i)` + pathCont
 	re, err := regexp.Compile(strictMatching)

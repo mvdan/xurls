@@ -2,7 +2,7 @@
 
 package xurls
 
-// TLDs is a sorted list of all public top-level domains
+// TLDs is a sorted list of all public top-level domains.
 //
 // Sources:
 //  * https://data.iana.org/TLD/tlds-alpha-by-domain.txt

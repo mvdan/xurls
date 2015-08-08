@@ -1,6 +1,6 @@
 package xurls
 
-// PseudoTLDs is a sorted list of some widely used unofficial TLDs
+// PseudoTLDs is a sorted list of some widely used unofficial TLDs.
 //
 // Sources:
 //  * https://en.wikipedia.org/wiki/Pseudo-top-level_domain
