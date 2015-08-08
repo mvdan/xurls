@@ -26,19 +26,6 @@ const ({{ range $key, $value := . }}
 )
 `))
 
-// These schemes may be followed by just ":" instead of "://", so instead of
-// allowing for arbitrary schemes we're limiting the regex to just a few
-// well-known ones.
-var schemes = []string{
-	`bitcoin`,
-	`file`,
-	`magnet`,
-	`mailto`,
-	`sms`,
-	`tel`,
-	`xmpp`,
-}
-
 func writeRegex(tlds []string) error {
 	allTldsSet := make(map[string]struct{})
 	add := func(tld string) {
@@ -71,7 +58,7 @@ func writeRegex(tlds []string) error {
 	defer f.Close()
 	return regexTmpl.Execute(f, map[string]string{
 		"gtld       ": `(?i)(` + strings.Join(allTlds, `|`) + `)(?-i)`,
-		"otherScheme": `(?i)(` + strings.Join(schemes, `|`) + `)(?-i):`,
+		"otherScheme": `(?i)(` + strings.Join(xurls.Schemes, `|`) + `)(?-i):`,
 	})
 }
 
