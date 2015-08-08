@@ -49,7 +49,7 @@ func init() {
 // StrictMatching produces a regexp that matches urls like Strict but matching
 // a specified scheme regular expression
 func StrictMatching(schemeExp string) (*regexp.Regexp, error) {
-	strictMatching := `\b(` + schemeExp + `)` + pathCont
+	strictMatching := `\b(?i)(` + schemeExp + `)(?-i)` + pathCont
 	re, err := regexp.Compile(strictMatching)
 	if err != nil {
 		return nil, err

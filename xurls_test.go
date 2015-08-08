@@ -216,10 +216,12 @@ func TestStrictMatching(t *testing.T) {
 		{`foo.com`, nil},
 		{`foo@bar.com`, nil},
 		{`http://foo`, `http://foo`},
+		{`Http://foo`, `Http://foo`},
 		{`https://foo`, nil},
 		{`ftp://foo`, `ftp://foo`},
 		{`ftps://foo`, `ftps://foo`},
 		{`mailto:foo`, `mailto:foo`},
+		{`MAILTO:foo`, `MAILTO:foo`},
 		{`sms:123`, nil},
 	})
 }
