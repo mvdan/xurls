@@ -118,6 +118,7 @@ var constantTestCases = []testCase{
 	{`http://foo.com/path_(even)(more)`, `http://foo.com/path_(even)(more)`},
 	{`http://foo.com/path_(even_(nested))`, `http://foo.com/path_(even_(nested))`},
 	{`(http://foo.com/path_(even_(nested)))`, `http://foo.com/path_(even_(nested))`},
+	{`http://foo.com/path[bracket]`, `http://foo.com/path[bracket]`},
 	{`http://foo.com/path#fragment`, `http://foo.com/path#fragment`},
 	{`http://test.foo.com/`, `http://test.foo.com/`},
 	{`http://foo.com/path`, `http://foo.com/path`},
