@@ -89,7 +89,7 @@ var constantTestCases = []testCase{
 	{`"http://foo.com/bar'`, `http://foo.com/bar`},
 	{`"http://foo.com/bar'more`, `http://foo.com/bar'more`},
 	{`"http://foo.com/bar"`, `http://foo.com/bar`},
-	{`http://a.b/a.,:;-+_()?@|&=#$~!*%'a`, `http://a.b/a.,:;-+_()?@|&=#$~!*%'a`},
+	{`http://a.b/a0/-+_&~*%@|=#.,:;'?![]()a`, `http://a.b/a0/-+_&~*%@|=#.,:;'?![]()a`},
 	{`http://foo.bar/path/`, `http://foo.bar/path/`},
 	{`http://foo.bar/path-`, `http://foo.bar/path-`},
 	{`http://foo.bar/path+`, `http://foo.bar/path+`},
