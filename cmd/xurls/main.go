@@ -51,7 +51,7 @@ func main() {
 		re = xurls.Relaxed
 	} else if *matching != "" {
 		var err error
-		if re, err = xurls.StrictMatching(*matching); err != nil {
+		if re, err = xurls.StrictMatchingScheme(*matching); err != nil {
 			fmt.Fprintf(os.Stderr, "invalid regular expression '%s': %v\n", *matching, err)
 			os.Exit(1)
 		}

@@ -219,7 +219,7 @@ func TestRegexes(t *testing.T) {
 	})
 }
 
-func TestStrictMatchingError(t *testing.T) {
+func TestStrictMatchingSchemeError(t *testing.T) {
 	for _, c := range []struct {
 		exp     string
 		wantErr bool
@@ -229,18 +229,18 @@ func TestStrictMatchingError(t *testing.T) {
 		{`http://|mailto:`, false},
 		{`http://(`, true},
 	} {
-		_, err := StrictMatching(c.exp)
+		_, err := StrictMatchingScheme(c.exp)
 		if c.wantErr && err == nil {
-			t.Errorf(`StrictMatching("%s") did not error as expected`, c.exp)
+			t.Errorf(`StrictMatchingScheme("%s") did not error as expected`, c.exp)
 		} else if !c.wantErr && err != nil {
-			t.Errorf(`StrictMatching("%s") unexpectedly errored`, c.exp)
+			t.Errorf(`StrictMatchingScheme("%s") unexpectedly errored`, c.exp)
 		}
 	}
 }
 
-func TestStrictMatching(t *testing.T) {
-	strictMatching, _ := StrictMatching("http://|ftps?://|mailto:")
-	doTest(t, "StrictMatching", strictMatching, []testCase{
+func TestStrictMatchingScheme(t *testing.T) {
+	strictMatching, _ := StrictMatchingScheme("http://|ftps?://|mailto:")
+	doTest(t, "StrictMatchingScheme", strictMatching, []testCase{
 		{`foo.com`, nil},
 		{`foo@bar.com`, nil},
 		{`http://foo`, `http://foo`},
