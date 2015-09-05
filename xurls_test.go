@@ -89,7 +89,7 @@ var constantTestCases = []testCase{
 	{`"http://foo.com/bar'`, `http://foo.com/bar`},
 	{`"http://foo.com/bar'more`, `http://foo.com/bar'more`},
 	{`"http://foo.com/bar"`, `http://foo.com/bar`},
-	{`http://a.b/a0/-+_&~*%@|=#.,:;'?![]()a`, `http://a.b/a0/-+_&~*%@|=#.,:;'?![]()a`},
+	{`http://a.b/a0/-+_&~*%=@|#.,:;'?![]()a`, `http://a.b/a0/-+_&~*%=@|#.,:;'?![]()a`},
 	{`http://foo.bar/path/`, `http://foo.bar/path/`},
 	{`http://foo.bar/path-`, `http://foo.bar/path-`},
 	{`http://foo.bar/path+`, `http://foo.bar/path+`},
@@ -98,11 +98,11 @@ var constantTestCases = []testCase{
 	{`http://foo.bar/path~`, `http://foo.bar/path~`},
 	{`http://foo.bar/path*`, `http://foo.bar/path*`},
 	{`http://foo.bar/path%`, `http://foo.bar/path%`},
+	{`http://foo.bar/path=`, `http://foo.bar/path=`},
 	{`http://foo.bar/path$`, `http://foo.bar/path$`},
 	{`http://foo.bar/path€`, `http://foo.bar/path€`},
 	{`http://foo.bar/path@`, `http://foo.bar/path`},
 	{`http://foo.bar/path|`, `http://foo.bar/path`},
-	{`http://foo.bar/path=`, `http://foo.bar/path`},
 	{`http://foo.bar/path#`, `http://foo.bar/path`},
 	{`http://foo.bar/path.`, `http://foo.bar/path`},
 	{`http://foo.bar/path,`, `http://foo.bar/path`},
@@ -144,6 +144,7 @@ var constantTestCases = []testCase{
 	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
 	{`ftp://user@foo.bar`, `ftp://user@foo.bar`},
 	{`http://foo.com/@"style="color:red"onmouseover=func()`, `http://foo.com/`},
+	{`http://foo.com/base64-bCBwbGVhcw==`, `http://foo.com/base64-bCBwbGVhcw==`},
 }
 
 func TestRegexes(t *testing.T) {
