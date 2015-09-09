@@ -13,8 +13,8 @@ const (
 	letter    = `\p{L}`
 	number    = `\p{N}`
 	iriChar   = letter + number
-	pathChar  = iriChar + `/\-+_&~*%=@|#.,:;'?!` + `\p{Sc}\p{Sk}\p{So}`
-	endChar   = iriChar + `/\-+_&~*%=` + `\p{Sc}`
+	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + `\p{Sc}\p{Sk}\p{So}`
+	endChar   = iriChar + `/\-+_&~*%=#` + `\p{Sc}`
 	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
 	wellBrack = `\[[` + pathChar + `]*(\[[` + pathChar + `]*\][` + pathChar + `]*)*\]`
 	wellAll   = wellParen + `|` + wellBrack
