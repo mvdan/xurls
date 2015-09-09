@@ -15,26 +15,27 @@ const (
 	iriChar   = letter + number
 	pathChar  = iriChar + `/\-+_&~*%=@|#.,:;'?!` + `\p{Sc}\p{Sk}\p{So}`
 	endChar   = iriChar + `/\-+_&~*%=` + `\p{Sc}`
-	octet     = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
-	ipv4Addr  = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
-	ipv6Addr  = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
-	ipAddr    = `(` + ipv4Addr + `|` + ipv6Addr + `)`
-	iri       = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
-	domain    = `(` + iri + `\.)+`
-	hostName  = `(` + domain + gtld + `|` + ipAddr + `)`
 	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
 	wellBrack = `\[[` + pathChar + `]*(\[[` + pathChar + `]*\][` + pathChar + `]*)*\]`
 	wellAll   = wellParen + `|` + wellBrack
 	pathCont  = `([` + pathChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
-	path      = `(/|/` + pathCont + `?|\b|$)`
-	port      = `(:[0-9]*)?`
-	webURL    = hostName + port + path
-	email     = `[a-zA-Z0-9._%\-+]+@` + hostName
-
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
-	strict    = `\b` + scheme + pathCont
-	relaxed   = strict + `|` + webURL + `|` + email
+
+	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
+	domain   = `(` + iri + `\.)+`
+	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
+	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
+	ipv6Addr = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
+	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
+	hostName = `(` + domain + gtld + `|` + ipAddr + `)`
+	port     = `(:[0-9]*)?`
+	path     = `(/|/` + pathCont + `?|\b|$)`
+	webURL   = hostName + port + path
+	email    = `[a-zA-Z0-9._%\-+]+@` + hostName
+
+	strict  = `\b` + scheme + pathCont
+	relaxed = strict + `|` + webURL + `|` + email
 )
 
 var (
