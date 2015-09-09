@@ -34,8 +34,8 @@ const (
 	webURL   = hostName + port + path
 	email    = `[a-zA-Z0-9._%\-+]+@` + hostName
 
-	strict  = `\b` + scheme + pathCont
-	relaxed = strict + `|` + webURL + `|` + email
+	strict  = `(\b` + scheme + pathCont + `)`
+	relaxed = `(` + strict + `|` + webURL + `|` + email + `)`
 )
 
 var (
@@ -53,7 +53,7 @@ func init() {
 // StrictMatchingScheme produces a regexp that matches urls like Strict but
 // whose scheme matches the given regular expression.
 func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
-	strictMatching := `\b(?i)(` + exp + `)(?-i)` + pathCont
+	strictMatching := `(\b(?i)(` + exp + `)(?-i)` + pathCont + `)`
 	re, err := regexp.Compile(strictMatching)
 	if err != nil {
 		return nil, err
