@@ -14,9 +14,8 @@ const (
 	number    = `\p{N}`
 	iriChar   = letter + number
 	currency  = `\p{Sc}`
-	modifier  = `\p{Sk}`
 	otherSymb = `\p{So}`
-	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + currency + modifier + otherSymb
+	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + currency + otherSymb
 	endChar   = iriChar + `/\-+_&~*%=#` + currency
 	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
 	wellBrack = `\[[` + pathChar + `]*(\[[` + pathChar + `]*\][` + pathChar + `]*)*\]`
