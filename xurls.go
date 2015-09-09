@@ -13,8 +13,11 @@ const (
 	letter    = `\p{L}`
 	number    = `\p{N}`
 	iriChar   = letter + number
-	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + `\p{Sc}\p{Sk}\p{So}`
-	endChar   = iriChar + `/\-+_&~*%=#` + `\p{Sc}`
+	currency  = `\p{Sc}`
+	modifier  = `\p{Sk}`
+	otherSymb = `\p{So}`
+	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + currency + modifier + otherSymb
+	endChar   = iriChar + `/\-+_&~*%=#` + currency
 	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
 	wellBrack = `\[[` + pathChar + `]*(\[[` + pathChar + `]*\][` + pathChar + `]*)*\]`
 	wellAll   = wellParen + `|` + wellBrack
