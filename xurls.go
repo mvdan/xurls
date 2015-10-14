@@ -15,12 +15,12 @@ const (
 	iriChar   = letter + number
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
-	pathChar  = iriChar + `/\-+_&~*%=#@.,:;'?!|` + currency + otherSymb
 	endChar   = iriChar + `/\-+_&~*%=#` + currency
-	wellParen = `\([` + pathChar + `]*(\([` + pathChar + `]*\)[` + pathChar + `]*)*\)`
-	wellBrack = `\[[` + pathChar + `]*(\[[` + pathChar + `]*\][` + pathChar + `]*)*\]`
+	midChar   = endChar + `@.,:;'?!|` + otherSymb
+	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
+	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
 	wellAll   = wellParen + `|` + wellBrack
-	pathCont  = `([` + pathChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
+	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
 
