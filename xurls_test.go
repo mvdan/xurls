@@ -13,7 +13,6 @@ type testCase struct {
 	want interface{}
 }
 
-// "", nil and false all return empty string
 func wantStr(in string, want interface{}) string {
 	switch x := want.(type) {
 	case string:
