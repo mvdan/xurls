@@ -30,11 +30,12 @@ const (
 	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
 	ipv6Addr = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
 	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
-	hostName = `(` + domain + gtld + `|` + ipAddr + `)`
+	site     = domain + gtld
+	hostName = `(` + site + `|` + ipAddr + `)`
 	port     = `(:[0-9]*)?`
 	path     = `(/|/` + pathCont + `?|\b|$)`
 	webURL   = hostName + port + path
-	email    = `[a-zA-Z0-9._%\-+]+@` + hostName
+	email    = `[a-zA-Z0-9._%\-+]+@` + site
 
 	strict  = `(\b` + scheme + pathCont + `)`
 	relaxed = `(` + strict + `|` + webURL + `|` + email + `)`
