@@ -220,6 +220,7 @@ func TestRegexes(t *testing.T) {
 		{`foo@bar`, nil},
 		{`foo@bar.a`, nil},
 		{`foo@bar.com`, true},
+		{`foo@sub.bar.com`, true},
 		{`foo@bar.com bar@bar.com`, `foo@bar.com`},
 		{`foo@bar.onion`, true},
 		{`foo@中国.中国`, true},
