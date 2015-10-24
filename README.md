@@ -6,8 +6,6 @@ Extract urls from text using regular expressions.
 
 	go get github.com/mvdan/xurls
 
-Example usage:
-
 ```go
 import "github.com/mvdan/xurls"
 
@@ -21,9 +19,7 @@ func main() {
 }
 ```
 
-### Command-line utilities
-
-#### xurls
+#### cmd/xurls
 
 Reads text and prints one url per line.
 
