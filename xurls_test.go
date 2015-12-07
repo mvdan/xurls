@@ -218,16 +218,9 @@ func TestRegexes(t *testing.T) {
 
 		{`foo@bar`, nil},
 		{`foo@bar.a`, nil},
-		{`foo@bar.com`, true},
-		{`foo@sub.bar.com`, true},
-		{`foo@bar.com bar@bar.com`, `foo@bar.com`},
-		{`foo@bar.onion`, true},
-		{`foo@中国.中国`, true},
-		{`foo@test.bar.com`, true},
-		{`FOO@TEST.BAR.COM`, true},
-		{`foo@bar.com/path`, `foo@bar.com`},
-		{`foo+test@bar.com`, true},
-		{`foo+._%-@bar.com`, true},
+		{`foo@bar.com`, "bar.com"},
+		{`foo@sub.bar.com`, "sub.bar.com"},
+		{`foo@中国.中国`, "中国.中国"},
 	})
 	doTest(t, "Strict", Strict, []testCase{
 		{`http:// foo.com`, nil},

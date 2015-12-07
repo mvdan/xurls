@@ -35,10 +35,9 @@ const (
 	port     = `(:[0-9]*)?`
 	path     = `(/|/` + pathCont + `?|\b|$)`
 	webURL   = hostName + port + path
-	email    = `[a-zA-Z0-9._%\-+]+@` + site
 
 	strict  = `(\b` + scheme + pathCont + `)`
-	relaxed = `(` + strict + `|` + webURL + `|` + email + `)`
+	relaxed = `(` + strict + `|` + webURL + `)`
 )
 
 var (
