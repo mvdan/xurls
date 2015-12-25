@@ -41,6 +41,7 @@ func scan(re *regexp.Regexp, r io.Reader) {
 			fmt.Println(match)
 		}
 	}
+	return scanner.Err()
 }
 
 func main() {
