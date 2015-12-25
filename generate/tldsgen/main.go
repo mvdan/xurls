@@ -6,7 +6,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -41,14 +40,14 @@ func cleanTld(tld string) string {
 }
 
 func fetchFromURL(url, pat string) {
+	defer wg.Done()
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err == nil && resp.StatusCode >= 400 {
 		err = errors.New(resp.Status)
 	}
 	if err != nil {
-		errChan <- fmt.Errorf("could not fetch %s: %v", url, err)
-		wg.Done()
+		errChan <- err
 		return
 	}
 	defer resp.Body.Close()
@@ -63,7 +62,9 @@ func fetchFromURL(url, pat string) {
 		}
 		tldChan <- tld
 	}
-	wg.Done()
+	if err := scanner.Err(); err != nil {
+		errChan <- err
+	}
 }
 
 var (
@@ -73,15 +74,12 @@ var (
 )
 
 func tldList() ([]string, []string, error) {
-
-	wg.Add(2)
-
 	var urls []string
 	fromURL := func(url, pat string) {
 		urls = append(urls, url)
+		wg.Add(1)
 		go fetchFromURL(url, pat)
 	}
-
 	fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt",
 		`^[^#]+$`)
 	fromURL("https://publicsuffix.org/list/effective_tld_names.dat",

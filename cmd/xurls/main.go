@@ -7,7 +7,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"regexp"
 
@@ -32,7 +31,16 @@ func init() {
 	}
 }
 
-func scan(re *regexp.Regexp, r io.Reader) {
+func scanPath(re *regexp.Regexp, path string) error {
+	r := os.Stdin
+	if path != "-" {
+		f, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		r = f
+	}
 	scanner := bufio.NewScanner(r)
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
@@ -47,8 +55,7 @@ func scan(re *regexp.Regexp, r io.Reader) {
 func main() {
 	flag.Parse()
 	if *relaxed && *matching != "" {
-		fmt.Fprintf(os.Stderr, "-r and -m at the same time don't make much sense.\n")
-		os.Exit(1)
+		errExit(fmt.Errorf("-r and -m at the same time don't make much sense"))
 	}
 	re := xurls.Strict
 	if *relaxed {
@@ -56,25 +63,21 @@ func main() {
 	} else if *matching != "" {
 		var err error
 		if re, err = xurls.StrictMatchingScheme(*matching); err != nil {
-			fmt.Fprintf(os.Stderr, "invalid regular expression '%s': %v\n", *matching, err)
-			os.Exit(1)
+			errExit(err)
 		}
 	}
 	args := flag.Args()
 	if len(args) == 0 {
-		scan(re, os.Stdin)
+		args = []string{"-"}
 	}
 	for _, path := range args {
-		if path == "-" {
-			scan(re, os.Stdin)
-			continue
+		if err := scanPath(re, path); err != nil {
+			errExit(err)
 		}
-		file, err := os.Open(path)
-		if err != nil {
-			fmt.Fprintf(os.Stdout, "could not open file '%s': %v\n", path, err)
-			os.Exit(1)
-		}
-		scan(re, file)
-		file.Close()
 	}
+}
+
+func errExit(err error) {
+	fmt.Fprintf(os.Stderr, "%v\n", err)
+	os.Exit(1)
 }
