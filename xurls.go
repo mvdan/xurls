@@ -19,7 +19,8 @@ const (
 	midChar   = endChar + `@.,:;'?!|` + otherSymb
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
 	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
-	wellAll   = wellParen + `|` + wellBrack
+	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
+	wellAll   = wellParen + `|` + wellBrack + `|` + wellBrace
 	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
