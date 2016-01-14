@@ -1264,7 +1264,6 @@ var TLDs = []string{
 	`town`,
 	`toyota`,
 	`toys`,
-	`tp`,
 	`tr`,
 	`trade`,
 	`trading`,
