@@ -15,8 +15,8 @@ const (
 	iriChar   = letter + number
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
-	endChar   = iriChar + `/\-+_&~*%=#` + currency
-	midChar   = endChar + `@.,:;'?!|` + otherSymb
+	endChar   = iriChar + `/\-+_&~*%=#` + currency + otherSymb
+	midChar   = endChar + `@.,:;'?!|`
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
 	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`

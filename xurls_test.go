@@ -155,6 +155,7 @@ var constantTestCases = []testCase{
 	{`http://foo.com:8080/path`, true},
 	{`http://1.1.1.1/path`, true},
 	{`http://1080::8:800:200c:417a/path`, true},
+	{`http://中国.中国/中国`, true},
 	{`http://中国.中国/foo中国`, true},
 	{`http://xn-foo.xn--p1acf/path`, true},
 	{`what is http://foo.com?`, `http://foo.com`},
@@ -166,6 +167,7 @@ var constantTestCases = []testCase{
 	{`ftp://user@foo.bar`, true},
 	{`http://foo.com/@"style="color:red"onmouseover=func()`, `http://foo.com/`},
 	{`http://foo.com/base64-bCBwbGVhcw==`, true},
+	{`http://foo.com/🐼`, true},
 }
 
 func TestRegexes(t *testing.T) {
