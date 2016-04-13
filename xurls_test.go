@@ -4,7 +4,6 @@
 package xurls
 
 import (
-	"fmt"
 	"regexp"
 	"testing"
 )
@@ -310,14 +309,4 @@ func BenchmarkRelaxedMany(b *testing.B) {
 	bench(b, Relaxed, ` foo bar http://foo.foo
 	foo.com bitcoin:address ftp://
 	xmpp:foo@bar.com`)
-}
-
-func ExampleStrict() {
-	fmt.Println(Relaxed.FindString("Do gophers live in http://golang.org?"))
-	// Output: http://golang.org
-}
-
-func ExampleRelaxedAll() {
-	fmt.Println(Relaxed.FindAllString("foo.com is http://foo.com/.", -1))
-	// Output: [foo.com http://foo.com/]
 }
