@@ -5,7 +5,7 @@
 
 Extract urls from text using regular expressions.
 
-	go get github.com/mvdan/xurls
+	go get -u github.com/mvdan/xurls
 
 ```go
 import "github.com/mvdan/xurls"
@@ -32,7 +32,7 @@ BenchmarkRelaxedMany-4             10000            130251 ns/op
 
 #### cmd/xurls
 
-	go get github.com/mvdan/xurls/cmd/xurls
+	go get -u github.com/mvdan/xurls/cmd/xurls
 
 ```shell
 $ echo "Do gophers live in http://golang.org?" | xurls
