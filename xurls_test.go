@@ -4,6 +4,7 @@
 package xurls
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 )
@@ -26,12 +27,14 @@ func wantStr(in string, want interface{}) string {
 }
 
 func doTest(t *testing.T, name string, re *regexp.Regexp, cases []testCase) {
-	for _, c := range cases {
-		got := re.FindString(c.in)
-		want := wantStr(c.in, c.want)
-		if got != want {
-			t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
-		}
+	for i, c := range cases {
+		t.Run(fmt.Sprintf("%s/%03d", name, i), func(t *testing.T) {
+			got := re.FindString(c.in)
+			want := wantStr(c.in, c.want)
+			if got != want {
+				t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
+			}
+		})
 	}
 }
 
@@ -173,7 +176,7 @@ var constantTestCases = []testCase{
 func TestRegexes(t *testing.T) {
 	doTest(t, "Relaxed", Relaxed, constantTestCases)
 	doTest(t, "Strict", Strict, constantTestCases)
-	doTest(t, "Relaxed", Relaxed, []testCase{
+	doTest(t, "Relaxed2", Relaxed, []testCase{
 		{`foo.a`, nil},
 		{`foo.com`, true},
 		{`foo.com bar.com`, `foo.com`},
@@ -230,7 +233,7 @@ func TestRegexes(t *testing.T) {
 		{`foo@sub.bar.com`, "sub.bar.com"},
 		{`foo@中国.中国`, "中国.中国"},
 	})
-	doTest(t, "Strict", Strict, []testCase{
+	doTest(t, "Strict2", Strict, []testCase{
 		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
 		{`foo.com`, nil},
