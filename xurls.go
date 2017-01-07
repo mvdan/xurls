@@ -11,8 +11,9 @@ import "regexp"
 
 const (
 	letter    = `\p{L}`
+	mark      = `\p{M}`
 	number    = `\p{N}`
-	iriChar   = letter + number
+	iriChar   = letter + mark + number
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
 	endChar   = iriChar + `/\-+_&~*%=#` + currency + otherSymb

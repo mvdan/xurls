@@ -160,6 +160,7 @@ var constantTestCases = []testCase{
 	{`http://1080::8:800:200c:417a/path`, true},
 	{`http://中国.中国/中国`, true},
 	{`http://中国.中国/foo中国`, true},
+	{`http://उदाहरण.परीकषा`, true},
 	{`http://xn-foo.xn--p1acf/path`, true},
 	{`what is http://foo.com?`, `http://foo.com`},
 	{`go visit http://foo.com/path.`, `http://foo.com/path`},
