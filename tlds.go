@@ -942,7 +942,6 @@ var TLDs = []string{
 	`orange`,
 	`org`,
 	`organic`,
-	`orientexpress`,
 	`origins`,
 	`osaka`,
 	`otsuka`,
