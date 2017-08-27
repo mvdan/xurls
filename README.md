@@ -1,14 +1,14 @@
 # xurls
 
-[![GoDoc](https://godoc.org/github.com/mvdan/xurls?status.svg)](https://godoc.org/github.com/mvdan/xurls)
+[![GoDoc](https://godoc.org/mvdan.cc/xurls?status.svg)](https://godoc.org/mvdan.cc/xurls)
 [![Travis](https://travis-ci.org/mvdan/xurls.svg?branch=master)](https://travis-ci.org/mvdan/xurls)
 
 Extract urls from text using regular expressions.
 
-	go get -u github.com/mvdan/xurls
+	go get -u mvdan.cc/xurls
 
 ```go
-import "github.com/mvdan/xurls"
+import "mvdan.cc/xurls"
 
 func main() {
 	xurls.Relaxed.FindString("Do gophers live in golang.org?")
@@ -32,7 +32,7 @@ BenchmarkRelaxedMany-4             10000            130251 ns/op
 
 #### cmd/xurls
 
-	go get -u github.com/mvdan/xurls/cmd/xurls
+	go get -u mvdan.cc/xurls/cmd/xurls
 
 ```shell
 $ echo "Do gophers live in http://golang.org?" | xurls
