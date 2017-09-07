@@ -43,7 +43,7 @@ const (
 	strict  = `(\b` + scheme + pathCont + `)`
 	relaxed = `(` + strict + `|` + webURL + `)`
 
-	semiStrict = `(\b` + stdScheme + pathCont + `)`
+	semiStrict = `(` + stdScheme + pathCont + `)`
 	semiRelaxed = `(` + semiStrict + `|` + webURL + `)`
 )
 
@@ -52,6 +52,11 @@ var (
 	Relaxed = regexp.MustCompile(relaxed)
 	// Strict only matches urls with a scheme to avoid false positives.
 	Strict = regexp.MustCompile(strict)
+	// Relaxed matches all the urls it can find.
+	SemiRelaxed = regexp.MustCompile(semiRelaxed)
+	// Strict only matches urls with a scheme to avoid false positives.
+	SemiStrict = regexp.MustCompile(semiStrict)
+
 )
 
 func init() {
