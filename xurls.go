@@ -7,6 +7,7 @@ package xurls // import "mvdan.cc/xurls"
 import "regexp"
 
 //go:generate go run generate/tldsgen/main.go
+//go:generate go run generate/schemesgen/main.go
 //go:generate go run generate/regexgen/main.go
 
 const (
@@ -43,7 +44,7 @@ const (
 	strict  = `(\b` + scheme + pathCont + `)`
 	relaxed = `(` + strict + `|` + webURL + `)`
 
-	semiStrict = `(` + stdScheme + pathCont + `)`
+	semiStrict  = `(` + stdScheme + pathCont + `)`
 	semiRelaxed = `(` + semiStrict + `|` + webURL + `)`
 )
 
@@ -56,7 +57,6 @@ var (
 	SemiRelaxed = regexp.MustCompile(semiRelaxed)
 	// Strict only matches urls with a scheme to avoid false positives.
 	SemiStrict = regexp.MustCompile(semiStrict)
-
 )
 
 func init() {
