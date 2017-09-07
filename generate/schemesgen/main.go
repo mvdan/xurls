@@ -4,14 +4,14 @@
 package main
 
 import (
-	"net/http"
-	"io/ioutil"
-	"io"
-	"text/template"
-	"os"
-	"log"
 	"encoding/csv"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
 	"strings"
+	"text/template"
 )
 
 const path = "standard_schemes.go"
@@ -30,11 +30,14 @@ var StdSchemes = []string{
 `))
 
 func schemeList() []string {
-	resp, _ := http.Get("https://www.iana.org/assignments/uri-schemes/uri-schemes-1.csv")
-	file, _ := ioutil.ReadAll(resp.Body)
-	r := csv.NewReader(strings.NewReader(string(file)))
+	resp, err := http.Get("https://www.iana.org/assignments/uri-schemes/uri-schemes-1.csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	r := csv.NewReader(resp.Body)
 	r.Read() //ignore headers
-	schemes := make([]string,0)
+	schemes := make([]string, 0)
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -43,7 +46,7 @@ func schemeList() []string {
 		if err != nil {
 			log.Fatal(err)
 		}
-		schemes = append(schemes,record[0])
+		schemes = append(schemes, record[0])
 	}
 	return schemes
 }
