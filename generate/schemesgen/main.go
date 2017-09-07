@@ -6,11 +6,9 @@ package main
 import (
 	"encoding/csv"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"text/template"
 )
 
