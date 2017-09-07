@@ -26,6 +26,7 @@ const (
 	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
+	stdScheme = `(` + stdSchemes + `|` + otherScheme + `)`
 
 	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(` + iri + `\.)+`
@@ -41,6 +42,9 @@ const (
 
 	strict  = `(\b` + scheme + pathCont + `)`
 	relaxed = `(` + strict + `|` + webURL + `)`
+
+	semiStrict = `(\b` + stdScheme + pathCont + `)`
+	semiRelaxed = `(` + semiStrict + `|` + webURL + `)`
 )
 
 var (

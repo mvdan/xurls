@@ -61,6 +61,7 @@ func writeRegex(tlds []string) error {
 	return regexTmpl.Execute(f, map[string]string{
 		"gtld       ": `(?i)(` + strings.Join(allTlds, `|`) + `)(?-i)`,
 		"otherScheme": `(?i)(` + strings.Join(xurls.SchemesNoAuthority, `|`) + `)(?-i):`,
+		"stdSchemes" : `(?i)(` + strings.Join(xurls.StdSchemes, `|`) + `)(?-i):`,
 	})
 }
 
