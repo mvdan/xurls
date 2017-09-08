@@ -7,6 +7,7 @@ package xurls // import "mvdan.cc/xurls"
 import "regexp"
 
 //go:generate go run generate/tldsgen/main.go
+//go:generate go run generate/schemesgen/main.go
 //go:generate go run generate/regexgen/main.go
 
 const (
@@ -26,6 +27,7 @@ const (
 	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
 	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 	scheme    = `(` + comScheme + `|` + otherScheme + `)`
+	stdScheme = `(` + stdSchemes + `|` + otherScheme + `)`
 
 	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(` + iri + `\.)+`
@@ -41,6 +43,9 @@ const (
 
 	strict  = `(\b` + scheme + pathCont + `)`
 	relaxed = `(` + strict + `|` + webURL + `)`
+
+	knownSchemesStrict  = `(` + stdScheme + pathCont + `)`
+	knownSchemesRelaxed = `(` + knownSchemesStrict + `|` + webURL + `)`
 )
 
 var (
@@ -48,11 +53,17 @@ var (
 	Relaxed = regexp.MustCompile(relaxed)
 	// Strict only matches urls with a scheme to avoid false positives.
 	Strict = regexp.MustCompile(strict)
+	// Known Schemes Relaxed matches all the urls it can find with known schemes
+	KnownSchemesRelaxed = regexp.MustCompile(knownSchemesRelaxed)
+	// Known Schemes Strict only matches urls with a known scheme to avoid false positives.
+	KnownSchemesStrict = regexp.MustCompile(knownSchemesStrict)
 )
 
 func init() {
 	Relaxed.Longest()
 	Strict.Longest()
+	KnownSchemesRelaxed.Longest()
+	KnownSchemesStrict.Longest()
 }
 
 // StrictMatchingScheme produces a regexp that matches urls like Strict but
