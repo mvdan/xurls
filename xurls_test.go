@@ -175,9 +175,9 @@ var constantTestCases = []testCase{
 }
 
 func TestRegexes(t *testing.T) {
-	doTest(t, "Relaxed", Relaxed, constantTestCases)
-	doTest(t, "Strict", Strict, constantTestCases)
-	doTest(t, "Relaxed2", Relaxed, []testCase{
+	doTest(t, "Relaxed", Relaxed(), constantTestCases)
+	doTest(t, "Strict", Strict(), constantTestCases)
+	doTest(t, "Relaxed2", Relaxed(), []testCase{
 		{`foo.a`, nil},
 		{`foo.com`, true},
 		{`foo.com bar.com`, `foo.com`},
@@ -234,7 +234,7 @@ func TestRegexes(t *testing.T) {
 		{`foo@sub.bar.com`, "sub.bar.com"},
 		{`foo@中国.中国`, "中国.中国"},
 	})
-	doTest(t, "Strict2", Strict, []testCase{
+	doTest(t, "Strict2", Strict(), []testCase{
 		{`http:// foo.com`, nil},
 		{`foo.a`, nil},
 		{`foo.com`, nil},
@@ -288,29 +288,29 @@ func bench(b *testing.B, re *regexp.Regexp, str string) {
 }
 
 func BenchmarkStrictEmpty(b *testing.B) {
-	bench(b, Strict, "foo")
+	bench(b, Strict(), "foo")
 }
 
 func BenchmarkStrictSingle(b *testing.B) {
-	bench(b, Strict, "http://foo.foo foo.com")
+	bench(b, Strict(), "http://foo.foo foo.com")
 }
 
 func BenchmarkStrictMany(b *testing.B) {
-	bench(b, Strict, ` foo bar http://foo.foo
+	bench(b, Strict(), ` foo bar http://foo.foo
 	foo.com bitcoin:address ftp://
 	xmpp:foo@bar.com`)
 }
 
 func BenchmarkRelaxedEmpty(b *testing.B) {
-	bench(b, Relaxed, "foo")
+	bench(b, Relaxed(), "foo")
 }
 
 func BenchmarkRelaxedSingle(b *testing.B) {
-	bench(b, Relaxed, "http://foo.foo foo.com")
+	bench(b, Relaxed(), "http://foo.foo foo.com")
 }
 
 func BenchmarkRelaxedMany(b *testing.B) {
-	bench(b, Relaxed, ` foo bar http://foo.foo
+	bench(b, Relaxed(), ` foo bar http://foo.foo
 	foo.com bitcoin:address ftp://
 	xmpp:foo@bar.com`)
 }

@@ -48,16 +48,16 @@ const (
 	knownSchemesRelaxed = knownSchemesStrict + `|` + webURL
 )
 
-var (
-	// Relaxed matches all the urls it can find.
-	Relaxed = regexp.MustCompile(relaxed)
-	// Strict only matches urls with a scheme to avoid false positives.
-	Strict = regexp.MustCompile(strict)
-)
+func Relaxed() *regexp.Regexp {
+	re := regexp.MustCompile(relaxed)
+	re.Longest()
+	return re
+}
 
-func init() {
-	Relaxed.Longest()
-	Strict.Longest()
+func Strict() *regexp.Regexp {
+	re := regexp.MustCompile(strict)
+	re.Longest()
+	return re
 }
 
 // StrictMatchingScheme produces a regexp that matches urls like Strict but

@@ -10,8 +10,9 @@ import (
 )
 
 func Example() {
-	fmt.Println(xurls.Relaxed.FindString("Do gophers live in http://golang.org?"))
-	fmt.Println(xurls.Relaxed.FindAllString("foo.com is http://foo.com/.", -1))
+	urlsRe := xurls.Relaxed()
+	fmt.Println(urlsRe.FindString("Do gophers live in http://golang.org?"))
+	fmt.Println(urlsRe.FindAllString("foo.com is http://foo.com/.", -1))
 	// Output:
 	// http://golang.org
 	// [foo.com http://foo.com/]
