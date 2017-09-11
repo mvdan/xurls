@@ -4,11 +4,13 @@
 // Package xurls extracts urls from plain text using regular expressions.
 package xurls // import "mvdan.cc/xurls"
 
-import "regexp"
+import (
+	"bytes"
+	"regexp"
+)
 
 //go:generate go run generate/tldsgen/main.go
 //go:generate go run generate/schemesgen/main.go
-//go:generate go run generate/regexgen/main.go
 
 const (
 	letter    = `\p{L}`
@@ -25,9 +27,7 @@ const (
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
 	wellAll   = wellParen + `|` + wellBrack + `|` + wellBrace
 	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
-	comScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
-	scheme    = `(` + comScheme + `|` + otherScheme + `)`
-	stdScheme = `(` + stdSchemes + `|` + otherScheme + `)`
+	anyScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 
 	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(` + iri + `\.)+`
@@ -35,27 +35,54 @@ const (
 	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
 	ipv6Addr = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
 	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
-	site     = domain + gtld
-	hostName = `(` + site + `|` + ipAddr + `)`
 	port     = `(:[0-9]*)?`
-	path     = `(/|/` + pathCont + `?|\b|$)`
-	webURL   = hostName + port + path
-
-	strict  = scheme + pathCont
-	relaxed = strict + `|` + webURL
-
-	knownSchemesStrict  = stdScheme + pathCont
-	knownSchemesRelaxed = knownSchemesStrict + `|` + webURL
 )
 
+// SchemesNoAuthority is a sorted list of some well-known url schemes that are
+// followed by ":" instead of "://".
+var SchemesNoAuthority = []string{
+	`bitcoin`, // Bitcoin
+	`file`,    // Files
+	`magnet`,  // Torrent magnets
+	`mailto`,  // Mail
+	`sms`,     // SMS
+	`tel`,     // Telephone
+	`xmpp`,    // XMPP
+}
+
+func anyOf(strs ...string) string {
+	var b bytes.Buffer
+	b.WriteByte('(')
+	for i, s := range strs {
+		if i != 0 {
+			b.WriteByte('|')
+		}
+		b.WriteString(regexp.QuoteMeta(s))
+	}
+	b.WriteByte(')')
+	return b.String()
+}
+
+func strictExp() string {
+	schemes := `(` + anyOf(Schemes...) + `://|` + anyOf(SchemesNoAuthority...) + `:)`
+	return `(?i)` + schemes + `(?-i)` + pathCont
+}
+
+func relaxedExp() string {
+	site := domain + `(?i)` + anyOf(append(TLDs, PseudoTLDs...)...) + `(?-i)`
+	hostName := `(` + site + `|` + ipAddr + `)`
+	webURL := hostName + port + `(/|/` + pathCont + `?|\b|$)`
+	return strictExp() + `|` + webURL
+}
+
 func Relaxed() *regexp.Regexp {
-	re := regexp.MustCompile(relaxed)
+	re := regexp.MustCompile(relaxedExp())
 	re.Longest()
 	return re
 }
 
 func Strict() *regexp.Regexp {
-	re := regexp.MustCompile(strict)
+	re := regexp.MustCompile(strictExp())
 	re.Longest()
 	return re
 }

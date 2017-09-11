@@ -81,9 +81,6 @@ var constantTestCases = []testCase{
 	{`http://FOO`, true},
 	{`http://FAÀ`, true},
 	{`https://localhost`, true},
-	{`git+https://localhost`, true},
-	{`foo.bar://localhost`, true},
-	{`foo-bar://localhost`, true},
 	{`mailto:foo`, true},
 	{`MAILTO:foo`, true},
 	{`sms:123`, true},
@@ -172,6 +169,7 @@ var constantTestCases = []testCase{
 	{`http://foo.com/base64-bCBwbGVhcw==`, true},
 	{`http://foo.com/🐼`, true},
 	{`https://shmibbles.me/tmp/自殺でも？.png`, true},
+	{`randomtexthttp://foo.bar/etc`, "http://foo.bar/etc"},
 }
 
 func TestRegexes(t *testing.T) {
