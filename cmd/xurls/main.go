@@ -57,14 +57,16 @@ func main() {
 	if *relaxed && *matching != "" {
 		errExit(fmt.Errorf("-r and -m at the same time don't make much sense"))
 	}
-	re := xurls.Strict
+	var re *regexp.Regexp
 	if *relaxed {
-		re = xurls.Relaxed
+		re = xurls.Relaxed()
 	} else if *matching != "" {
 		var err error
 		if re, err = xurls.StrictMatchingScheme(*matching); err != nil {
 			errExit(err)
 		}
+	} else {
+		re = xurls.Strict()
 	}
 	args := flag.Args()
 	if len(args) == 0 {
