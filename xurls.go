@@ -27,7 +27,6 @@ const (
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
 	wellAll   = wellParen + `|` + wellBrack + `|` + wellBrace
 	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
-	anyScheme = `[a-zA-Z][a-zA-Z.\-+]*://`
 
 	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(` + iri + `\.)+`
@@ -37,6 +36,10 @@ const (
 	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
 	port     = `(:[0-9]*)?`
 )
+
+// AnyScheme can be passed to StrictMatchingScheme to match any possibly
+// valid scheme.
+var AnyScheme = `([a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
 // followed by ":" instead of "://".

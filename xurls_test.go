@@ -279,6 +279,16 @@ func TestStrictMatchingScheme(t *testing.T) {
 	})
 }
 
+func TestStrictMatchingSchemeAny(t *testing.T) {
+	strictMatching, _ := StrictMatchingScheme(AnyScheme)
+	doTest(t, "StrictMatchingScheme", strictMatching, []testCase{
+		{`http://foo`, true},
+		{`git+https://foo`, true},
+		{`randomtexthttp://foo.bar/etc`, true},
+		{`mailto:foo`, true},
+	})
+}
+
 func bench(b *testing.B, re *regexp.Regexp, str string) {
 	for i := 0; i < b.N; i++ {
 		re.FindAllString(str, -1)
