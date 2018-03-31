@@ -753,6 +753,7 @@ var TLDs = []string{
 	`living`,
 	`lixil`,
 	`lk`,
+	`llc`,
 	`loan`,
 	`loans`,
 	`locker`,
