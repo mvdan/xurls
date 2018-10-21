@@ -6,13 +6,13 @@ package xurls_test
 import (
 	"fmt"
 
-	"mvdan.cc/xurls"
+	"mvdan.cc/xurls/v2"
 )
 
 func Example() {
-	urlsRe := xurls.Relaxed()
-	fmt.Println(urlsRe.FindString("Do gophers live in http://golang.org?"))
-	fmt.Println(urlsRe.FindAllString("foo.com is http://foo.com/.", -1))
+	rx := xurls.Relaxed()
+	fmt.Println(rx.FindString("Do gophers live in http://golang.org?"))
+	fmt.Println(rx.FindAllString("foo.com is http://foo.com/.", -1))
 	// Output:
 	// http://golang.org
 	// [foo.com http://foo.com/]
