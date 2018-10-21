@@ -149,6 +149,7 @@ var Schemes = []string{
 	`ms-restoretabcompanion`,
 	`ms-screenclip`,
 	`ms-screensketch`,
+	`ms-search`,
 	`ms-search-repair`,
 	`ms-secondary-screen-controller`,
 	`ms-secondary-screen-setup`,
