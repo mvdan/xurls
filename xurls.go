@@ -37,8 +37,8 @@ const (
 	port     = `(:[0-9]*)?`
 )
 
-// AnyScheme can be passed to StrictMatchingScheme to match any possibly
-// valid scheme.
+// AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
+// scheme, and not just the known ones.
 var AnyScheme = `([a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
@@ -78,20 +78,24 @@ func relaxedExp() string {
 	return strictExp() + `|` + webURL
 }
 
-func Relaxed() *regexp.Regexp {
-	re := regexp.MustCompile(relaxedExp())
-	re.Longest()
-	return re
-}
-
+// Strict produces a regexp that matches any URL with a scheme in either the
+// Schemes or SchemesNoAuthority lists.
 func Strict() *regexp.Regexp {
 	re := regexp.MustCompile(strictExp())
 	re.Longest()
 	return re
 }
 
-// StrictMatchingScheme produces a regexp that matches urls like Strict but
-// whose scheme matches the given regular expression.
+// Relaxed produces a regexp that matches any URL matched by Strict, plus any
+// URL with no scheme.
+func Relaxed() *regexp.Regexp {
+	re := regexp.MustCompile(relaxedExp())
+	re.Longest()
+	return re
+}
+
+// StrictMatchingScheme produces a regexp similar to Strict, but requiring that
+// the scheme match the given regular expression. See AnyScheme too.
 func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
 	strictMatching := `(?i)(` + exp + `)(?-i)` + pathCont
 	re, err := regexp.Compile(strictMatching)
