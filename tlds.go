@@ -24,7 +24,6 @@ var TLDs = []string{
 	`accountant`,
 	`accountants`,
 	`aco`,
-	`active`,
 	`actor`,
 	`ad`,
 	`adac`,
