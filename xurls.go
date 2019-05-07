@@ -105,3 +105,18 @@ func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
 	re.Longest()
 	return re, nil
 }
+
+// RelaxedMatchingScheme produces a regexp similar to Relaxed, but requiring
+// that the scheme match the given regular expression. See AnyScheme too.
+func RelaxedMatchingScheme(exp string) (*regexp.Regexp, error) {
+	site := domain + `(?i)` + anyOf(append(TLDs, PseudoTLDs...)...) + `(?-i)`
+	hostName := `(` + site + `|` + ipAddr + `)`
+	webURL := hostName + port + `(/|/` + pathCont + `?|\b|$)`
+	relaxedMatching := `(?i)(` + exp + `)(?-i)` + pathCont + `|` + webURL
+	re, err := regexp.Compile(relaxedMatching)
+	if err != nil {
+		return nil, err
+	}
+	re.Longest()
+	return re, nil
+}

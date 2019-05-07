@@ -289,6 +289,51 @@ func TestStrictMatchingSchemeAny(t *testing.T) {
 	})
 }
 
+func TestRelaxedMatchingSchemeError(t *testing.T) {
+	for _, c := range []struct {
+		exp     string
+		wantErr bool
+	}{
+		{`http://`, false},
+		{`https?://`, false},
+		{`http://|mailto:`, false},
+		{`http://(`, true},
+	} {
+		_, err := RelaxedMatchingScheme(c.exp)
+		if c.wantErr && err == nil {
+			t.Errorf(`RelaxedMatchingScheme("%s") did not error as expected`, c.exp)
+		} else if !c.wantErr && err != nil {
+			t.Errorf(`RelaxedMatchingScheme("%s") unexpectedly errored`, c.exp)
+		}
+	}
+}
+
+func TestRelaxedMatchingScheme(t *testing.T) {
+	relaxedMatching, _ := RelaxedMatchingScheme("http://|ftps?://|mailto:")
+	doTest(t, "RelaxedMatchingScheme", relaxedMatching, []testCase{
+		{`foo.com`, true},
+		{`foo@bar.com`, "bar.com"},
+		{`http://foo`, true},
+		{`Http://foo`, true},
+		{`https://foo`, nil},
+		{`ftp://foo`, true},
+		{`ftps://foo`, true},
+		{`mailto:foo`, true},
+		{`MAILTO:foo`, true},
+		{`sms:123`, nil},
+	})
+}
+
+func TestRelaxedMatchingSchemeAny(t *testing.T) {
+	relaxedMatching, _ := RelaxedMatchingScheme(AnyScheme)
+	doTest(t, "RelaxedMatchingScheme", relaxedMatching, []testCase{
+		{`http://foo`, true},
+		{`git+https://foo`, true},
+		{`randomtexthttp://foo.bar/etc`, true},
+		{`mailto:foo`, true},
+	})
+}
+
 func bench(b *testing.B, re *regexp.Regexp, str string) {
 	for i := 0; i < b.N; i++ {
 		re.FindAllString(str, -1)
