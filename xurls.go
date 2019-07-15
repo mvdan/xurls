@@ -72,7 +72,9 @@ func strictExp() string {
 }
 
 func relaxedExp() string {
-	site := domain + `(?i)` + anyOf(append(TLDs, PseudoTLDs...)...) + `(?-i)`
+	punycode := `xn--[a-z0-9-]+`
+	knownTLDs := anyOf(append(TLDs, PseudoTLDs...)...)
+	site := domain + `(?i)(` + punycode + `|` + knownTLDs + `)(?-i)`
 	hostName := `(` + site + `|` + ipAddr + `)`
 	webURL := hostName + port + `(/|/` + pathCont + `?|\b|$)`
 	return strictExp() + `|` + webURL
