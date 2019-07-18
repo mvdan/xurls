@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 
@@ -41,15 +42,19 @@ func scanPath(re *regexp.Regexp, path string) error {
 		defer f.Close()
 		r = f
 	}
-	scanner := bufio.NewScanner(r)
-	scanner.Split(bufio.ScanWords)
-	for scanner.Scan() {
-		word := scanner.Text()
-		for _, match := range re.FindAllString(word, -1) {
-			fmt.Println(match)
+	bufr := bufio.NewReader(r)
+	for {
+		line, err := bufr.ReadBytes('\n')
+		for _, match := range re.FindAll(line, -1) {
+			fmt.Printf("%s\n", match)
+		}
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return err
 		}
 	}
-	return scanner.Err()
+	return nil
 }
 
 func main() {

@@ -34,7 +34,7 @@ func schemeList() []string {
 	}
 	defer resp.Body.Close()
 	r := csv.NewReader(resp.Body)
-	r.Read() //ignore headers
+	r.Read() // ignore headers
 	schemes := make([]string, 0)
 	for {
 		record, err := r.Read()
