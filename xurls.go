@@ -21,7 +21,7 @@ const (
 	otherSymb = `\p{So}`
 	endChar   = iriChar + `/\-+_&~*%=#` + currency + otherSymb
 	otherPunc = `\p{Po}`
-	midChar   = endChar + `|` + otherPunc
+	midChar   = endChar + otherPunc
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
 	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
