@@ -76,7 +76,7 @@ func relaxedExp() string {
 	knownTLDs := anyOf(append(TLDs, PseudoTLDs...)...)
 	site := domain + `(?i)(` + punycode + `|` + knownTLDs + `)(?-i)`
 	hostName := `(` + site + `|` + ipAddr + `)`
-	webURL := hostName + port + `(/|/` + pathCont + `?|\b|$)`
+	webURL := hostName + port + `(/|/` + pathCont + `?|\b|(?m)$)`
 	return strictExp() + `|` + webURL
 }
 

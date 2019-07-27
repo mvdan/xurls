@@ -29,10 +29,13 @@ func wantStr(in string, want interface{}) string {
 func doTest(t *testing.T, name string, re *regexp.Regexp, cases []testCase) {
 	for i, c := range cases {
 		t.Run(fmt.Sprintf("%s/%03d", name, i), func(t *testing.T) {
-			got := re.FindString(c.in)
 			want := wantStr(c.in, c.want)
-			if got != want {
-				t.Errorf(`%s.FindString("%s") got "%s", want "%s"`, name, c.in, got, want)
+			for _, surround := range []string{"", "\n"} {
+				in := surround + c.in + surround
+				got := re.FindString(in)
+				if got != want {
+					t.Errorf(`FindString(%q) got %q, want %q`, in, got, want)
+				}
 			}
 		})
 	}
