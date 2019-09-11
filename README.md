@@ -1,9 +1,8 @@
 # xurls
 
 [![GoDoc](https://godoc.org/mvdan.cc/xurls?status.svg)](https://godoc.org/mvdan.cc/xurls)
-[![Travis](https://travis-ci.org/mvdan/xurls.svg?branch=master)](https://travis-ci.org/mvdan/xurls)
 
-Extract urls from text using regular expressions. Requires Go 1.10.3 or later.
+Extract urls from text using regular expressions. Requires Go 1.12 or later.
 
 ```go
 import "mvdan.cc/xurls/v2"
