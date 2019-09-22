@@ -23,6 +23,7 @@ var Schemes = []string{
 	`android`,
 	`appdata`,
 	`apt`,
+	`ark`,
 	`attachment`,
 	`aw`,
 	`barion`,
