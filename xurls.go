@@ -19,9 +19,9 @@ const (
 	iriChar   = letter + mark + number
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
-	endChar   = iriChar + `/\-+_&~*%=#` + currency + otherSymb
+	endChar   = iriChar + `/\-+&~%=#` + currency + otherSymb
 	otherPunc = `\p{Po}`
-	midChar   = endChar + otherPunc
+	midChar   = endChar + "_*" + otherPunc
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
 	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
