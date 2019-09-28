@@ -1154,6 +1154,7 @@ var TLDs = []string{
 	`song`,
 	`sony`,
 	`soy`,
+	`spa`,
 	`space`,
 	`sport`,
 	`spot`,
