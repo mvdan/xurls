@@ -1388,6 +1388,9 @@ var TLDs = []string{
 	`zone`,
 	`zuerich`,
 	`zw`,
+}
+
+var NonASCIITLDs = []string{
 	`ελ`,
 	`бг`,
 	`бел`,

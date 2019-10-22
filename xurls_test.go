@@ -196,6 +196,8 @@ func TestRegexes(t *testing.T) {
 		{`中国.中国`, true},
 		{`中国.中国/foo中国`, true},
 		{`test.联通`, true},
+		{`test.бел`, true},
+		{`test.бел test`, `test.бел`},
 		{`test.xn--8y0a063a`, true},
 		{`test.xn--8y0a063a/foobar`, true},
 		{`test.xn-foo`, nil},
