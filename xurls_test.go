@@ -188,7 +188,9 @@ func TestRegexes(t *testing.T) {
 		{`foo.com bar.com`, `foo.com`},
 		{`foo.com-foo`, `foo.com`},
 		{`foo.company`, true},
-		{`foo.comrandom`, nil},
+		// We can't use \b to not match foo.com here, because that
+		// does't work for non-ASCII TLDs.
+		{`foo.comrandom`, `foo.com`},
 		{`foo.example`, true},
 		{`foo.i2p`, true},
 		{`foo.local`, true},
@@ -196,6 +198,7 @@ func TestRegexes(t *testing.T) {
 		{`中国.中国`, true},
 		{`中国.中国/foo中国`, true},
 		{`test.联通`, true},
+		{`test.联通 extra`, `test.联通`},
 		{`test.xn--8y0a063a`, true},
 		{`test.xn--8y0a063a/foobar`, true},
 		{`test.xn-foo`, nil},
