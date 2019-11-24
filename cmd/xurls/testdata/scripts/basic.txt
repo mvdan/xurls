@@ -7,7 +7,7 @@ stdout 'https://foo.com'
 
 ! xurls missing
 ! stdout .
-stderr 'no such file'
+stderr 'open missing'
 
 xurls input
 stdout 'https://foo.com'
