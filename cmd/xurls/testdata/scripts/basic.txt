@@ -1,0 +1,33 @@
+stdin input
+xurls
+stdout 'https://foo.com'
+! stdout 'bar.com'
+! stdout 'custom://some-data'
+! stderr .
+
+! xurls missing
+! stdout .
+stderr 'no such file'
+
+xurls input
+stdout 'https://foo.com'
+! stdout 'bar.com'
+! stdout 'custom://some-data'
+! stderr .
+
+xurls -r input
+stdout 'https://foo.com'
+stdout 'bar.com'
+! stdout 'custom://some-data'
+! stderr .
+
+xurls -m 'custom://' input
+! stdout 'https://foo.com'
+! stdout 'bar.com'
+stdout 'custom://some-data'
+! stderr .
+
+-- input --
+First, a link with a scheme, https://foo.com.
+Then, one without a scheme, like bar.com.
+Also, a link with a custom scheme, custom://some-data.

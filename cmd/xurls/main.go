@@ -57,10 +57,13 @@ func scanPath(re *regexp.Regexp, path string) error {
 	return nil
 }
 
-func main() {
+func main() { os.Exit(main1()) }
+
+func main1() int {
 	flag.Parse()
 	if *relaxed && *matching != "" {
-		errExit(fmt.Errorf("-r and -m at the same time don't make much sense"))
+		fmt.Fprintln(os.Stderr, "-r and -m at the same time don't make much sense")
+		return 1
 	}
 	var re *regexp.Regexp
 	if *relaxed {
@@ -68,7 +71,8 @@ func main() {
 	} else if *matching != "" {
 		var err error
 		if re, err = xurls.StrictMatchingScheme(*matching); err != nil {
-			errExit(err)
+			fmt.Fprintln(os.Stderr, err)
+			return 1
 		}
 	} else {
 		re = xurls.Strict()
@@ -79,12 +83,9 @@ func main() {
 	}
 	for _, path := range args {
 		if err := scanPath(re, path); err != nil {
-			errExit(err)
+			fmt.Fprintln(os.Stderr, err)
+			return 1
 		}
 	}
-}
-
-func errExit(err error) {
-	fmt.Fprintln(os.Stderr, err)
-	os.Exit(1)
+	return 0
 }
