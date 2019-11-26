@@ -102,7 +102,7 @@ var constantTestCases = []testCase{
 	{`,http://foo.com/bar,more`, `http://foo.com/bar,more`},
 	{`*http://foo.com/bar*`, `http://foo.com/bar`},
 	{`*http://foo.com/bar*more`, `http://foo.com/bar*more`},
-	{`_http://foo.com/bar_`, `http://foo.com/bar`},
+	{`_http://foo.com/bar_`, `http://foo.com/bar_`},
 	{`_http://foo.com/bar_more`, `http://foo.com/bar_more`},
 	{`(http://foo.com/bar)`, `http://foo.com/bar`},
 	{`(http://foo.com/bar)more`, `http://foo.com/bar`},
