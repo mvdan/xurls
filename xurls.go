@@ -19,7 +19,7 @@ const (
 	iriChar   = letter + mark + number
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
-	endChar   = iriChar + `/\-+&~%=#` + currency + otherSymb
+	endChar   = iriChar + `/\-_+&~%=#` + currency + otherSymb
 	otherPunc = `\p{Po}`
 	midChar   = endChar + "_*" + otherPunc
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
