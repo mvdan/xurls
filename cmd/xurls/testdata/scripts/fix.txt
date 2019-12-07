@@ -1,0 +1,55 @@
+expand nothing
+cp nothing nothing.orig
+
+expand redirects
+expand redirects.golden
+cp redirects redirects.orig
+
+expand broken
+expand broken.golden
+cp broken broken.orig
+
+xurls -fix nothing
+! stdout .
+! stderr .
+cmp nothing nothing.orig
+
+stdin redirects
+xurls -fix
+cmp stdout redirects.golden
+cmp redirects redirects.orig
+! stderr .
+
+xurls -fix redirects
+stdout '^redirects$'
+! stderr .
+cmp redirects redirects.golden
+
+! xurls -fix broken
+stdout '^broken$'
+stderr '1 broken urls'
+stderr '/404'
+cmp broken broken.golden
+
+-- nothing --
+No redirect: ${SERVER}/plain
+-- redirects --
+No redirect: ${SERVER}/plain
+One redirect: ${SERVER}/redir-1
+Two redirects: ${SERVER}/redir-2
+Redirect with fragment: ${SERVER}/redir-1#foo
+
+Three links in one line: ${SERVER}/redir-1 + ${SERVER}//redir-1 + ${SERVER}///redir-1
+-- redirects.golden --
+No redirect: ${SERVER}/plain
+One redirect: ${SERVER}/plain
+Two redirects: ${SERVER}/plain
+Redirect with fragment: ${SERVER}/plain#foo
+
+Three links in one line: ${SERVER}/plain + ${SERVER}/plain + ${SERVER}/plain
+-- broken --
+One redirect: ${SERVER}/redir-1
+404 error: ${SERVER}/404
+-- broken.golden --
+One redirect: ${SERVER}/plain
+404 error: ${SERVER}/404
