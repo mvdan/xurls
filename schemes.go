@@ -238,6 +238,7 @@ var Schemes = []string{
 	`pttp`,
 	`qb`,
 	`query`,
+	`quic-transport`,
 	`redis`,
 	`rediss`,
 	`reload`,
