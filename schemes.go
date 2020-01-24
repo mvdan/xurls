@@ -226,6 +226,7 @@ var Schemes = []string{
 	`pack`,
 	`palm`,
 	`paparazzi`,
+	`payment`,
 	`payto`,
 	`pkcs11`,
 	`platform`,

@@ -722,7 +722,6 @@ var TLDs = []string{
 	`lexus`,
 	`lgbt`,
 	`li`,
-	`liaison`,
 	`lidl`,
 	`life`,
 	`lifeinsurance`,
