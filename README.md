@@ -18,7 +18,12 @@ func main() {
 }
 ```
 
-Note that the funcs compile regexes, so avoid calling them repeatedly.
+Since API is centered around [regexp.Regexp](https://golang.org/pkg/regexp/#Regexp),
+many other methods are available, such as finding the [byte indexes](https://golang.org/pkg/regexp/#Regexp.FindAllIndex)
+for all matches.
+
+Note that calling the exposed functions means compiling a regular expression, so
+repeated calls should be avoided.
 
 #### cmd/xurls
 
