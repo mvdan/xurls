@@ -2,7 +2,7 @@
 
 [![GoDoc](https://godoc.org/mvdan.cc/xurls?status.svg)](https://godoc.org/mvdan.cc/xurls)
 
-Extract urls from text using regular expressions. Requires Go 1.12 or later.
+Extract urls from text using regular expressions. Requires Go 1.13 or later.
 
 ```go
 import "mvdan.cc/xurls/v2"
