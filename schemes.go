@@ -66,6 +66,7 @@ var Schemes = []string{
 	`dpp`,
 	`drm`,
 	`drop`,
+	`dtmi`,
 	`dtn`,
 	`dvb`,
 	`ed2k`,
