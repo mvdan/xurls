@@ -62,7 +62,7 @@ func TestScripts(t *testing.T) {
 				for _, arg := range args {
 					data := ts.ReadFile(arg)
 					data = os.Expand(data, ts.Getenv)
-					err := ioutil.WriteFile(ts.MkAbs(arg), []byte(data), 0666)
+					err := ioutil.WriteFile(ts.MkAbs(arg), []byte(data), 0o666)
 					ts.Check(err)
 				}
 			},

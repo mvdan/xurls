@@ -124,7 +124,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		// Overwrite the file, if we weren't reading stdin. Report its
 		// path too.
 		fmt.Println(path)
-		if err := ioutil.WriteFile(path, fixedBuf.Bytes(), 0666); err != nil {
+		if err := ioutil.WriteFile(path, fixedBuf.Bytes(), 0o666); err != nil {
 			return err
 		}
 	}
