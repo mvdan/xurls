@@ -1179,7 +1179,6 @@ var TLDs = []string{
 	`sx`,
 	`sy`,
 	`sydney`,
-	`symantec`,
 	`systems`,
 	`sz`,
 	`tab`,
