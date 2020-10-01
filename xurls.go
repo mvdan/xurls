@@ -9,8 +9,9 @@ import (
 	"regexp"
 )
 
-//go:generate go run generate/tldsgen/main.go
-//go:generate go run generate/schemesgen/main.go
+//go:generate go run ./generate/tldsgen
+//go:generate go run ./generate/schemesgen
+//go:generate go run ./generate/unicodegen
 
 const (
 	letter    = `\p{L}`
@@ -20,8 +21,7 @@ const (
 	currency  = `\p{Sc}`
 	otherSymb = `\p{So}`
 	endChar   = iriChar + `/\-_+&~%=#` + currency + otherSymb
-	otherPunc = `\p{Po}`
-	midChar   = endChar + "_*" + otherPunc
+	midChar   = endChar + "_*" + otherPuncMinusDoubleQuote
 	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
 	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
 	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
