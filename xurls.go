@@ -51,6 +51,8 @@ var SchemesNoAuthority = []string{
 	`sms`,     // SMS
 	`tel`,     // Telephone
 	`xmpp`,    // XMPP
+	`cid`,     // Content-ID
+	`mid`,     // Message-ID
 }
 
 func anyOf(strs ...string) string {

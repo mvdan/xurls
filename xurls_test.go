@@ -89,6 +89,8 @@ var constantTestCases = []testCase{
 	{`sms:123`, true},
 	{`xmpp:foo@bar`, true},
 	{`bitcoin:Addr23?amount=1&message=foo`, true},
+	{`cid:foo-32x32.v2_fe0f1423.png`, true},
+	{`mid:960830.1639@XIson.com`, true},
 	{`http://foo.com`, true},
 	{`http://foo.co.uk`, true},
 	{`http://foo.random`, true},
