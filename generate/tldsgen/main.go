@@ -6,6 +6,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -39,7 +40,7 @@ func cleanTld(tld string) string {
 	return tld
 }
 
-func fetchFromURL(url, pat string) {
+func fetchFromURL(wg *sync.WaitGroup, url, pat string, tldSet map[string]bool) {
 	defer wg.Done()
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
@@ -47,8 +48,7 @@ func fetchFromURL(url, pat string) {
 		err = errors.New(resp.Status)
 	}
 	if err != nil {
-		errChan <- err
-		return
+		panic(fmt.Errorf("%s: %s", url, err))
 	}
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
@@ -60,49 +60,25 @@ func fetchFromURL(url, pat string) {
 		if tld == "" {
 			continue
 		}
-		tldChan <- tld
+		tldSet[tld] = true
 	}
 	if err := scanner.Err(); err != nil {
-		errChan <- err
+		panic(fmt.Errorf("%s: %s", url, err))
 	}
 }
 
-var (
-	wg      sync.WaitGroup
-	tldChan = make(chan string)
-	errChan = make(chan error)
-)
-
-func tldList() ([]string, []string, error) {
+func tldList() ([]string, []string) {
 	var urls []string
+	var wg sync.WaitGroup
+	tldSet := make(map[string]bool)
 	fromURL := func(url, pat string) {
 		urls = append(urls, url)
 		wg.Add(1)
-		go fetchFromURL(url, pat)
+		go fetchFromURL(&wg, url, pat, tldSet)
 	}
-	fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt",
-		`^[^#]+$`)
-	fromURL("https://publicsuffix.org/list/effective_tld_names.dat",
-		`^[^/.]+$`)
-
-	tldSet := make(map[string]struct{})
-	anyError := false
-	go func() {
-		for {
-			select {
-			case tld := <-tldChan:
-				tldSet[tld] = struct{}{}
-			case err := <-errChan:
-				log.Printf("%v", err)
-				anyError = true
-			}
-		}
-	}()
+	fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt", `^[^#]+$`)
+	fromURL("https://publicsuffix.org/list/effective_tld_names.dat", `^[^/.]+$`)
 	wg.Wait()
-
-	if anyError {
-		return nil, nil, errors.New("there were some errors while fetching the TLDs")
-	}
 
 	tlds := make([]string, 0, len(tldSet))
 	for tld := range tldSet {
@@ -110,13 +86,13 @@ func tldList() ([]string, []string, error) {
 	}
 
 	sort.Strings(tlds)
-	return tlds, urls, nil
+	return tlds, urls
 }
 
 func writeTlds(tlds, urls []string) error {
 	f, err := os.Create(path)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	defer f.Close()
 	return tldsTmpl.Execute(f, struct {
@@ -129,12 +105,7 @@ func writeTlds(tlds, urls []string) error {
 }
 
 func main() {
-	tlds, urls, err := tldList()
-	if err != nil {
-		log.Fatalf("Could not get TLD list: %v", err)
-	}
+	tlds, urls := tldList()
 	log.Printf("Generating %s...", path)
-	if err := writeTlds(tlds, urls); err != nil {
-		log.Fatalf("Could not write path: %v", err)
-	}
+	writeTlds(tlds, urls)
 }
