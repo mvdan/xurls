@@ -267,6 +267,7 @@ var Schemes = []string{
 	`rtsps`,
 	`rtspu`,
 	`secondlife`,
+	`secret-token`,
 	`service`,
 	`session`,
 	`sftp`,

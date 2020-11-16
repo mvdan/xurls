@@ -622,7 +622,6 @@ var TLDs = []string{
 	`insurance`,
 	`insure`,
 	`int`,
-	`intel`,
 	`international`,
 	`intuit`,
 	`investments`,
