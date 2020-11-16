@@ -42,17 +42,31 @@ const (
 var AnyScheme = `([a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
-// followed by ":" instead of "://".
+// followed by ":" instead of "://". The list includes both officially
+// registered and unofficial schemes.
 var SchemesNoAuthority = []string{
 	`bitcoin`, // Bitcoin
+	`cid`,     // Content-ID
 	`file`,    // Files
 	`magnet`,  // Torrent magnets
 	`mailto`,  // Mail
+	`mid`,     // Message-ID
 	`sms`,     // SMS
 	`tel`,     // Telephone
 	`xmpp`,    // XMPP
-	`cid`,     // Content-ID
-	`mid`,     // Message-ID
+}
+
+// SchemesUnofficial is a sorted list of some well-known url schemes which
+// aren't officially registered just yet. They tend to correspond to software.
+//
+// Mostly collected from https://en.wikipedia.org/wiki/List_of_URI_schemes#Unofficial_but_common_URI_schemes.
+var SchemesUnofficial = []string{
+	`jdbc`,       // Java database Connectivity
+	`postgres`,   // PostgreSQL (short form)
+	`postgresql`, // PostgreSQL
+	`slack`,      // Slack
+	`zoommtg`,    // Zoom (desktop)
+	`zoomus`,     // Zoom (mobile)
 }
 
 func anyOf(strs ...string) string {
@@ -69,7 +83,7 @@ func anyOf(strs ...string) string {
 }
 
 func strictExp() string {
-	schemes := `(` + anyOf(Schemes...) + `://|` + anyOf(SchemesNoAuthority...) + `:)`
+	schemes := `((` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + anyOf(SchemesNoAuthority...) + `:)`
 	return `(?i)` + schemes + `(?-i)` + pathCont
 }
 

@@ -181,6 +181,10 @@ var constantTestCases = []testCase{
 	{`http://foo.com/🐼`, true},
 	{`https://shmibbles.me/tmp/自殺でも？.png`, true},
 	{`randomtexthttp://foo.bar/etc`, "http://foo.bar/etc"},
+	{`postgres://user:pass@host.com:5432/path?k=v#f`, true},
+	{`postgres://user:pass@host.com:5432/path?k=v#f`, true},
+	{`zoommtg://zoom.us/join?confno=1234&pwd=xxx`, true},
+	{`zoomus://zoom.us/join?confno=1234&pwd=xxx`, true},
 }
 
 func TestRegexes(t *testing.T) {
