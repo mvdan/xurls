@@ -325,6 +325,7 @@ var Schemes = []string{
 	`vscode-insiders`,
 	`vsls`,
 	`wais`,
+	`wcr`,
 	`webcal`,
 	`wifi`,
 	`wpid`,
