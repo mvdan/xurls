@@ -1,6 +1,6 @@
 # xurls
 
-[![GoDoc](https://godoc.org/mvdan.cc/xurls?status.svg)](https://godoc.org/mvdan.cc/xurls)
+[![Go Reference](https://pkg.go.dev/badge/mvdan.cc/xurls/v2.svg)](https://pkg.go.dev/mvdan.cc/xurls/v2)
 
 Extract urls from text using regular expressions. Requires Go 1.13 or later.
 
