@@ -5,8 +5,8 @@
 package xurls
 
 import (
-	"bytes"
 	"regexp"
+	"strings"
 )
 
 //go:generate go run ./generate/tldsgen
@@ -70,7 +70,7 @@ var SchemesUnofficial = []string{
 }
 
 func anyOf(strs ...string) string {
-	var b bytes.Buffer
+	var b strings.Builder
 	b.WriteByte('(')
 	for i, s := range strs {
 		if i != 0 {
