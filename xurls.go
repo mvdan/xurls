@@ -93,7 +93,8 @@ func relaxedExp() string {
 	site := domain + `(?i)(` + punycode + `|` + knownTLDs + `)(?-i)`
 	hostName := `(` + site + `|` + ipAddr + `)`
 	webURL := hostName + port + `(/|/` + pathCont + `)?`
-	return strictExp() + `|` + webURL
+	email := `[a-zA-Z0-9._%\-+]+@` + site
+	return strictExp() + `|` + webURL + `|` + email
 }
 
 // Strict produces a regexp that matches any URL with a scheme in either the
@@ -105,7 +106,7 @@ func Strict() *regexp.Regexp {
 }
 
 // Relaxed produces a regexp that matches any URL matched by Strict, plus any
-// URL with no scheme.
+// URL with no scheme or email address.
 func Relaxed() *regexp.Regexp {
 	re := regexp.MustCompile(relaxedExp())
 	re.Longest()
