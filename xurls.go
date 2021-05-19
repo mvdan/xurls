@@ -7,6 +7,7 @@ package xurls
 import (
 	"regexp"
 	"strings"
+	"unicode/utf8"
 )
 
 //go:generate go run ./generate/tldsgen
@@ -88,9 +89,22 @@ func strictExp() string {
 }
 
 func relaxedExp() string {
+	var asciiTLDs, unicodeTLDs []string
+	for i, tld := range TLDs {
+		if tld[0] >= utf8.RuneSelf {
+			asciiTLDs = TLDs[:i:i]
+			unicodeTLDs = TLDs[i+1:]
+			break
+		}
+	}
 	punycode := `xn--[a-z0-9-]+`
-	knownTLDs := anyOf(append(TLDs, PseudoTLDs...)...)
-	site := domain + `(?i)(` + punycode + `|` + knownTLDs + `)(?-i)`
+
+	// Use \b to make sure ASCII TLDs are immediately followed by a word break.
+	// We can't do that with unicode TLDs, as they don't see following
+	// whitespace as a word break.
+	tlds := `(?i)(` + punycode + `|` + anyOf(append(asciiTLDs, PseudoTLDs...)...) + `\b|` + anyOf(unicodeTLDs...) + `)(?-i)`
+	site := domain + tlds
+
 	hostName := `(` + site + `|` + ipAddr + `)`
 	webURL := hostName + port + `(/|/` + pathCont + `)?`
 	email := `[a-zA-Z0-9._%\-+]+@` + site
