@@ -93,7 +93,7 @@ func relaxedExp() string {
 	for i, tld := range TLDs {
 		if tld[0] >= utf8.RuneSelf {
 			asciiTLDs = TLDs[:i:i]
-			unicodeTLDs = TLDs[i+1:]
+			unicodeTLDs = TLDs[i:]
 			break
 		}
 	}
