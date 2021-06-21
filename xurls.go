@@ -62,12 +62,14 @@ var SchemesNoAuthority = []string{
 //
 // Mostly collected from https://en.wikipedia.org/wiki/List_of_URI_schemes#Unofficial_but_common_URI_schemes.
 var SchemesUnofficial = []string{
-	`jdbc`,       // Java database Connectivity
-	`postgres`,   // PostgreSQL (short form)
-	`postgresql`, // PostgreSQL
-	`slack`,      // Slack
-	`zoommtg`,    // Zoom (desktop)
-	`zoomus`,     // Zoom (mobile)
+	`gemini`,        // gemini
+	`jdbc`,          // Java database Connectivity
+	`moz-extension`, // Firefox extension
+	`postgres`,      // PostgreSQL (short form)
+	`postgresql`,    // PostgreSQL
+	`slack`,         // Slack
+	`zoommtg`,       // Zoom (desktop)
+	`zoomus`,        // Zoom (mobile)
 }
 
 func anyOf(strs ...string) string {
