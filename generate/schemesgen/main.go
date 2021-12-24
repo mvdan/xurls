@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -43,6 +44,9 @@ func schemeList() []string {
 		}
 		if err != nil {
 			log.Fatal(err)
+		}
+		if strings.Contains(record[0], "OBSOLETE") {
+			continue // skip obsolete schemes; note the scheme column is abused
 		}
 		schemes = append(schemes, record[0])
 	}
