@@ -9,7 +9,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -51,14 +50,14 @@ func scanPath(re *regexp.Regexp, path string) error {
 		}
 		defer f.Close()
 	}
-	bufr := bufio.NewReader(f)
+	scanner := bufio.NewScanner(f)
 	var fixedBuf bytes.Buffer
 	anyFixed := false
 	var broken []string
-	for {
-		line, err := bufr.ReadBytes('\n')
+	for scanner.Scan() {
+		line := scanner.Text() + "\n"
 		offset := 0
-		for _, pair := range re.FindAllIndex(line, -1) {
+		for _, pair := range re.FindAllStringIndex(line, -1) {
 			// The indexes are based on the original line.
 			pair[0] += offset
 			pair[1] += offset
@@ -67,7 +66,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 				fmt.Printf("%s\n", match)
 				continue
 			}
-			origURL, err := url.Parse(string(match))
+			origURL, err := url.Parse(match)
 			if err != nil {
 				continue
 			}
@@ -103,16 +102,13 @@ func scanPath(re *regexp.Regexp, path string) error {
 					continue
 				}
 				if resp.StatusCode >= 400 {
-					broken = append(broken, string(match))
+					broken = append(broken, match)
 				}
 				resp.Body.Close()
 			}
-			if fixed != string(match) {
+			if fixed != match {
 				// Replace the url, and update the offset.
-				// Use a three-index slice, to not append in place.
-				newLine := line[:pair[0]:pair[0]]
-				newLine = append(newLine, fixed...)
-				newLine = append(newLine, line[pair[1]:]...)
+				newLine := line[:pair[0]] + fixed + line[pair[1]:]
 				offset += len(newLine) - len(line)
 				line = newLine
 				anyFixed = true
@@ -120,14 +116,12 @@ func scanPath(re *regexp.Regexp, path string) error {
 		}
 		if *fix {
 			if path == "-" {
-				os.Stdout.Write(line)
+				os.Stdout.WriteString(line)
 			} else {
-				fixedBuf.Write(line)
+				fixedBuf.WriteString(line)
 			}
 		}
-		if err == io.EOF {
-			break
-		} else if err != nil {
+		if err := scanner.Err(); err != nil {
 			return err
 		}
 	}
