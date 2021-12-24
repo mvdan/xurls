@@ -37,6 +37,13 @@ func TestScripts(t *testing.T) {
 			mux.HandleFunc("/redir-2", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/redir-1", http.StatusMovedPermanently)
 			})
+
+			mux.HandleFunc("/redir-longer", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/redir-longtarget", http.StatusMovedPermanently)
+			})
+			mux.HandleFunc("/redir-longtarget", func(w http.ResponseWriter, r *http.Request) {
+				fmt.Fprintf(w, "long target")
+			})
 			ln, err := net.Listen("tcp", ":0")
 			if err != nil {
 				return err

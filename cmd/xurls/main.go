@@ -98,7 +98,8 @@ func scanPath(re *regexp.Regexp, path string) error {
 			}
 			if fixed != string(match) {
 				// Replace the url, and update the offset.
-				newLine := line[:pair[0]]
+				// Use a three-index slice, to not append in place.
+				newLine := line[:pair[0]:pair[0]]
 				newLine = append(newLine, fixed...)
 				newLine = append(newLine, line[pair[1]:]...)
 				offset += len(newLine) - len(line)
