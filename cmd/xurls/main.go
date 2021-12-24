@@ -67,23 +67,34 @@ func scanPath(re *regexp.Regexp, path string) error {
 				fmt.Printf("%s\n", match)
 				continue
 			}
-			u, err := url.Parse(string(match))
+			origURL, err := url.Parse(string(match))
 			if err != nil {
 				continue
 			}
-			fixed := u.String()
-			switch u.Scheme {
+			fixed := origURL.String()
+			switch origURL.Scheme {
 			case "http", "https":
 				// See if the URL redirects somewhere.
+				// Only apply a fix if the redirect chain is permanent.
+				allPermanent := true
 				client := &http.Client{
 					Timeout: 10 * time.Second,
 					CheckRedirect: func(req *http.Request, via []*http.Request) error {
 						if len(via) >= 10 {
 							return errors.New("stopped after 10 redirects")
 						}
-						// Keep the fragment around.
-						req.URL.Fragment = u.Fragment
-						fixed = req.URL.String()
+						switch req.Response.StatusCode {
+						case http.StatusMovedPermanently, http.StatusPermanentRedirect:
+						default:
+							allPermanent = false
+						}
+						if allPermanent {
+							// Inherit the fragment if empty.
+							if req.URL.Fragment == "" {
+								req.URL.Fragment = origURL.Fragment
+							}
+							fixed = req.URL.String()
+						}
 						return nil
 					},
 				}

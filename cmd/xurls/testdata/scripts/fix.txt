@@ -37,20 +37,38 @@ No redirect: ${SERVER}/plain
 No redirect: ${SERVER}/plain
 One redirect: ${SERVER}/redir-1
 Two redirects: ${SERVER}/redir-2
-Redirect with fragment: ${SERVER}/redir-1#foo
+Redirect inherits fragment: ${SERVER}/redir-1#foo
+Redirect replaces fragment: ${SERVER}/redir-fragment#foo
 
 Three links in one line: ${SERVER}/redir-1 + ${SERVER}//redir-1 + ${SERVER}///redir-1
 
 Redirect to a longer path ${SERVER}/redir-longer with trailing text
+
+Permanent redirect codes:
+* ${SERVER}/redir-301
+* ${SERVER}/redir-308
+
+Temporary redirect codes:
+* ${SERVER}/redir-302
+* ${SERVER}/redir-307
 -- redirects.golden --
 No redirect: ${SERVER}/plain
 One redirect: ${SERVER}/plain
 Two redirects: ${SERVER}/plain
-Redirect with fragment: ${SERVER}/plain#foo
+Redirect inherits fragment: ${SERVER}/plain#foo
+Redirect replaces fragment: ${SERVER}/plain#bar
 
 Three links in one line: ${SERVER}/plain + ${SERVER}/plain + ${SERVER}/plain
 
 Redirect to a longer path ${SERVER}/redir-longtarget with trailing text
+
+Permanent redirect codes:
+* ${SERVER}/plain
+* ${SERVER}/plain
+
+Temporary redirect codes:
+* ${SERVER}/redir-302
+* ${SERVER}/redir-307
 -- broken --
 One redirect: ${SERVER}/redir-1
 404 error: ${SERVER}/404
