@@ -26,9 +26,10 @@ stdout '^redirects$'
 cmp redirects redirects.golden
 
 ! xurls -fix broken
-stdout '^broken$'
-stderr '1 broken urls'
-stderr '/404'
+stdout -count=1 '^broken$'
+stderr -count=1 '4 broken urls'
+stderr -count=2 '/404'
+stderr -count=2 '/500'
 cmp broken broken.golden
 
 -- nothing --
@@ -71,7 +72,9 @@ Temporary redirect codes:
 * ${SERVER}/redir-307
 -- broken --
 One redirect: ${SERVER}/redir-1
-404 error: ${SERVER}/404
+404 errors: ${SERVER}/404 ${SERVER}/404
+500 errors: ${SERVER}/500 ${SERVER}/500
 -- broken.golden --
 One redirect: ${SERVER}/plain
-404 error: ${SERVER}/404
+404 errors: ${SERVER}/404 ${SERVER}/404
+500 errors: ${SERVER}/500 ${SERVER}/500

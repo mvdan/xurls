@@ -60,6 +60,14 @@ func TestScripts(t *testing.T) {
 			mux.HandleFunc("/redir-308", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", 308)
 			})
+
+			mux.HandleFunc("/404", func(w http.ResponseWriter, r *http.Request) {
+				http.Error(w, "", 404)
+			})
+			mux.HandleFunc("/500", func(w http.ResponseWriter, r *http.Request) {
+				http.Error(w, "", 500)
+			})
+
 			ln, err := net.Listen("tcp", ":0")
 			if err != nil {
 				return err

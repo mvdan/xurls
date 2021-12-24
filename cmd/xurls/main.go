@@ -9,12 +9,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
 	"regexp"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"mvdan.cc/xurls/v2"
@@ -41,102 +43,124 @@ func init() {
 }
 
 func scanPath(re *regexp.Regexp, path string) error {
-	f := os.Stdin
+	in := os.Stdin
+	out := io.Writer(os.Stdout)
+	var outBuf *bytes.Buffer
 	if path != "-" {
 		var err error
-		f, err = os.Open(path)
+		in, err = os.Open(path)
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		if *fix {
+			outBuf = new(bytes.Buffer)
+			out = outBuf
+		}
+		defer in.Close()
 	}
-	scanner := bufio.NewScanner(f)
-	var fixedBuf bytes.Buffer
-	anyFixed := false
-	var broken []string
+
+	// A maximum of 32 parallel requests.
+	maxWeight := int64(32)
+	seq := newSequencer(maxWeight, out, os.Stderr)
+
+	scanner := bufio.NewScanner(in)
+
+	// Doesn't need to be part of reporterState as order doesn't matter.
+	var atomicFixedCount uint32
+
 	for scanner.Scan() {
 		line := scanner.Text() + "\n"
-		offset := 0
-		for _, pair := range re.FindAllStringIndex(line, -1) {
-			// The indexes are based on the original line.
-			pair[0] += offset
-			pair[1] += offset
-			match := line[pair[0]:pair[1]]
-			if !*fix {
+		matches := re.FindAllStringIndex(line, -1)
+		if !*fix {
+			for _, pair := range matches {
+				match := line[pair[0]:pair[1]]
 				fmt.Printf("%s\n", match)
-				continue
 			}
-			origURL, err := url.Parse(match)
-			if err != nil {
-				continue
-			}
-			fixed := origURL.String()
-			switch origURL.Scheme {
-			case "http", "https":
-				// See if the URL redirects somewhere.
-				// Only apply a fix if the redirect chain is permanent.
-				allPermanent := true
-				client := &http.Client{
-					Timeout: 10 * time.Second,
-					CheckRedirect: func(req *http.Request, via []*http.Request) error {
-						if len(via) >= 10 {
-							return errors.New("stopped after 10 redirects")
-						}
-						switch req.Response.StatusCode {
-						case http.StatusMovedPermanently, http.StatusPermanentRedirect:
-						default:
-							allPermanent = false
-						}
-						if allPermanent {
-							// Inherit the fragment if empty.
-							if req.URL.Fragment == "" {
-								req.URL.Fragment = origURL.Fragment
-							}
-							fixed = req.URL.String()
-						}
-						return nil
-					},
-				}
-				resp, err := client.Get(fixed)
+			continue
+		}
+		weight := int64(len(matches))
+		if weight > maxWeight {
+			weight = maxWeight
+		}
+		seq.Add(weight, func(r *reporter) error {
+			offsetWithinLine := 0
+			for _, pair := range re.FindAllStringIndex(line, -1) {
+				// The indexes are based on the original line.
+				pair[0] += offsetWithinLine
+				pair[1] += offsetWithinLine
+				match := line[pair[0]:pair[1]]
+				origURL, err := url.Parse(match)
 				if err != nil {
 					continue
 				}
-				if resp.StatusCode >= 400 {
-					broken = append(broken, match)
+				fixed := origURL.String()
+				switch origURL.Scheme {
+				case "http", "https":
+					// See if the URL redirects somewhere.
+					// Only apply a fix if the redirect chain is permanent.
+					allPermanent := true
+					client := &http.Client{
+						Timeout: 10 * time.Second,
+						CheckRedirect: func(req *http.Request, via []*http.Request) error {
+							if len(via) >= 10 {
+								return errors.New("stopped after 10 redirects")
+							}
+							switch req.Response.StatusCode {
+							case http.StatusMovedPermanently, http.StatusPermanentRedirect:
+							default:
+								allPermanent = false
+							}
+							if allPermanent {
+								// Inherit the fragment if empty.
+								if req.URL.Fragment == "" {
+									req.URL.Fragment = origURL.Fragment
+								}
+								fixed = req.URL.String()
+							}
+							return nil
+						},
+					}
+					resp, err := client.Get(fixed)
+					if err != nil {
+						continue
+					}
+					if resp.StatusCode >= 400 {
+						r.appendBroken(match)
+					}
+					resp.Body.Close()
 				}
-				resp.Body.Close()
+				if fixed != match {
+					// Replace the url, and update offsetWithinLine.
+					newLine := line[:pair[0]] + fixed + line[pair[1]:]
+					offsetWithinLine += len(newLine) - len(line)
+					line = newLine
+					atomic.AddUint32(&atomicFixedCount, 1)
+				}
 			}
-			if fixed != match {
-				// Replace the url, and update the offset.
-				newLine := line[:pair[0]] + fixed + line[pair[1]:]
-				offset += len(newLine) - len(line)
-				line = newLine
-				anyFixed = true
-			}
-		}
-		if *fix {
-			if path == "-" {
-				os.Stdout.WriteString(line)
-			} else {
-				fixedBuf.WriteString(line)
-			}
-		}
+			io.WriteString(r, line)
+			return nil
+		})
 		if err := scanner.Err(); err != nil {
 			return err
 		}
 	}
-	if anyFixed && path != "-" {
-		f.Close()
+	state := seq.finalState()
+	if state.exitCode != 0 {
+		panic("we aren't using sequencer for any errors")
+	}
+	// Note that all goroutines have stopped at this point.
+	if atomicFixedCount > 0 && path != "-" {
+		in.Close()
 		// Overwrite the file, if we weren't reading stdin. Report its
 		// path too.
 		fmt.Println(path)
-		if err := ioutil.WriteFile(path, fixedBuf.Bytes(), 0o666); err != nil {
+		if err := ioutil.WriteFile(path, outBuf.Bytes(), 0o666); err != nil {
 			return err
 		}
 	}
-	if len(broken) > 0 {
-		return fmt.Errorf("found %d broken urls in %q:\n%s", len(broken),
-			path, strings.Join(broken, "\n"))
+	if len(state.brokenURLs) > 0 {
+		return fmt.Errorf("found %d broken urls in %q:\n%s", len(state.brokenURLs),
+			path, strings.Join(state.brokenURLs, "\n"))
 	}
 	return nil
 }
