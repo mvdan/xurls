@@ -15,20 +15,29 @@ import (
 //go:generate go run ./generate/unicodegen
 
 const (
-	letter    = `\p{L}`
-	mark      = `\p{M}`
-	number    = `\p{N}`
-	iriChar   = letter + mark + number
-	currency  = `\p{Sc}`
-	otherSymb = `\p{So}`
-	endChar   = iriChar + `/\-_+&~%=#` + currency + otherSymb
-	midChar   = endChar + "_*" + otherPuncMinusDoubleQuote
-	wellParen = `\([` + midChar + `]*(\([` + midChar + `]*\)[` + midChar + `]*)*\)`
-	wellBrack = `\[[` + midChar + `]*(\[[` + midChar + `]*\][` + midChar + `]*)*\]`
-	wellBrace = `\{[` + midChar + `]*(\{[` + midChar + `]*\}[` + midChar + `]*)*\}`
-	wellAll   = wellParen + `|` + wellBrack + `|` + wellBrace
-	pathCont  = `([` + midChar + `]*(` + wellAll + `|[` + endChar + `])+)+`
+	// pathCont is based on https://www.rfc-editor.org/rfc/rfc3987#section-2.2
+	// but does not match separators anywhere or most puncutation in final position,
+	// to avoid creating asymmetries like
+	// `Did you know that **<a href="...">https://example.com/**</a> is reserved for documentation?`
+	// from `Did you know that **https://example.com/** is reserved for documentation?`.
+	subDelimChar        = `!$&'()*+,;=`
+	midSubDelimChar     = `!$&'*+,;=`
+	endSubDelimChar     = `$&+=`
+	midIPathSegmentChar = `a-zA-Z0-9\-._~` + `%` + midSubDelimChar + `:@` + allowedUcsChar
+	endIPathSegmentChar = `a-zA-Z0-9\-_~` + `%` + endSubDelimChar + allowedUcsCharMinusPunc
+	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
+	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
+	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
+	wellParen           = `\([` + midIChar + `]*(\([` + midIChar + `]*\)[` + midIChar + `]*)*\)`
+	wellBrack           = `\[[` + midIChar + `]*(\[[` + midIChar + `]*\][` + midIChar + `]*)*\]`
+	wellBrace           = `\{[` + midIChar + `]*(\{[` + midIChar + `]*\}[` + midIChar + `]*)*\}`
+	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
+	pathCont            = `([` + midIChar + `]*(` + wellAll + `|[` + endIChar + `])+)+`
 
+	letter   = `\p{L}`
+	mark     = `\p{M}`
+	number   = `\p{N}`
+	iriChar  = letter + mark + number
 	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(` + iri + `\.)+`
 	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`

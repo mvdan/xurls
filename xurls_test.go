@@ -178,6 +178,7 @@ var constantTestCases = []testCase{
 	{`https://test.foo.bar/path?a=b`, `https://test.foo.bar/path?a=b`},
 	{`ftp://user@foo.bar`, true},
 	{`http://foo.com/base64-bCBwbGVhcw==`, true},
+	{`http://foo.com/–`, true},
 	{`http://foo.com/🐼`, true},
 	{`https://shmibbles.me/tmp/自殺でも？.png`, true},
 	{`randomtexthttp://foo.bar/etc`, "http://foo.bar/etc"},
