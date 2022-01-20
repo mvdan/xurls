@@ -86,7 +86,7 @@ var relaxedRe = regexp.MustCompile(relaxedExp())
 
 func anyOf(strs ...string) string {
 	var b strings.Builder
-	b.WriteByte('(')
+	b.WriteString("(?:")
 	for i, s := range strs {
 		if i != 0 {
 			b.WriteByte('|')
@@ -98,7 +98,7 @@ func anyOf(strs ...string) string {
 }
 
 func strictExp() string {
-	schemes := `((` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + anyOf(SchemesNoAuthority...) + `:)`
+	schemes := `(?:(?:` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + anyOf(SchemesNoAuthority...) + `:)`
 	return `(?i)` + schemes + `(?-i)` + pathCont
 }
 
@@ -116,11 +116,11 @@ func relaxedExp() string {
 	// Use \b to make sure ASCII TLDs are immediately followed by a word break.
 	// We can't do that with unicode TLDs, as they don't see following
 	// whitespace as a word break.
-	tlds := `(?i)(` + punycode + `|` + anyOf(append(asciiTLDs, PseudoTLDs...)...) + `\b|` + anyOf(unicodeTLDs...) + `)(?-i)`
+	tlds := `(?i)(?:` + punycode + `|` + anyOf(append(asciiTLDs, PseudoTLDs...)...) + `\b|` + anyOf(unicodeTLDs...) + `)(?-i)`
 	site := domain + tlds
 
-	hostName := `(` + site + `|` + ipAddr + `)`
-	webURL := hostName + port + `(/|/` + pathCont + `)?`
+	hostName := `(?:` + site + `|` + ipAddr + `)`
+	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
 	email := `[a-zA-Z0-9._%\-+]+@` + site
 	return strictExp() + `|` + webURL + `|` + email
 }
