@@ -28,23 +28,23 @@ const (
 	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
 	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
 	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
-	wellParen           = `\(([` + midIChar + `]|\([` + midIChar + `]*\))*\)`
-	wellBrack           = `\[([` + midIChar + `]|\[[` + midIChar + `]*\])*\]`
-	wellBrace           = `\{([` + midIChar + `]|\{[` + midIChar + `]*\})*\}`
+	wellParen           = `\((?:[` + midIChar + `]|\([` + midIChar + `]*\))*\)`
+	wellBrack           = `\[(?:[` + midIChar + `]|\[[` + midIChar + `]*\])*\]`
+	wellBrace           = `\{(?:[` + midIChar + `]|\{[` + midIChar + `]*\})*\}`
 	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
-	pathCont            = `([` + midIChar + `]*(` + wellAll + `|[` + endIChar + `]))+`
+	pathCont            = `(?:[` + midIChar + `]*(?:` + wellAll + `|[` + endIChar + `]))+`
 
 	letter   = `\p{L}`
 	mark     = `\p{M}`
 	number   = `\p{N}`
 	iriChar  = letter + mark + number
-	iri      = `[` + iriChar + `]([` + iriChar + `\-]*[` + iriChar + `])?`
-	domain   = `(` + iri + `\.)+`
+	iri      = `[` + iriChar + `](?:[` + iriChar + `\-]*[` + iriChar + `])?`
+	domain   = `(?:` + iri + `\.)+`
 	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
-	ipv6Addr = `([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:([0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(:[0-9a-fA-F]{1,4}){0,2})|(:[0-9a-fA-F]{1,4}){0,3})|(:[0-9a-fA-F]{1,4}){0,4})|:(:[0-9a-fA-F]{1,4}){0,5})((:[0-9a-fA-F]{1,4}){2}|:(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])(\.(25[0-5]|(2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(([0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){7}:`
-	ipAddr   = `(` + ipv4Addr + `|` + ipv6Addr + `)`
-	port     = `(:[0-9]*)?`
+	ipv6Addr = `(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(?::[0-9a-fA-F]{1,4}){0,2})|(?::[0-9a-fA-F]{1,4}){0,3})|(?::[0-9a-fA-F]{1,4}){0,4})|:(?::[0-9a-fA-F]{1,4}){0,5})(?:(?::[0-9a-fA-F]{1,4}){2}|:(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])(?:\.(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(?:(?:[0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){7}:`
+	ipAddr   = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
+	port     = `(?::[0-9]*)?`
 )
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
