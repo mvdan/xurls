@@ -81,6 +81,9 @@ var SchemesUnofficial = []string{
 	`zoomus`,        // Zoom (mobile)
 }
 
+var strictRe = regexp.MustCompile(strictExp())
+var relaxedRe = regexp.MustCompile(relaxedExp())
+
 func anyOf(strs ...string) string {
 	var b strings.Builder
 	b.WriteByte('(')
@@ -125,17 +128,15 @@ func relaxedExp() string {
 // Strict produces a regexp that matches any URL with a scheme in either the
 // Schemes or SchemesNoAuthority lists.
 func Strict() *regexp.Regexp {
-	re := regexp.MustCompile(strictExp())
-	re.Longest()
-	return re
+	strictRe.Longest()
+	return strictRe.Copy()
 }
 
 // Relaxed produces a regexp that matches any URL matched by Strict, plus any
 // URL with no scheme or email address.
 func Relaxed() *regexp.Regexp {
-	re := regexp.MustCompile(relaxedExp())
-	re.Longest()
-	return re
+	relaxedRe.Longest()
+	return relaxedRe.Copy()
 }
 
 // StrictMatchingScheme produces a regexp similar to Strict, but requiring that
