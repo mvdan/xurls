@@ -28,11 +28,11 @@ const (
 	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
 	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
 	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
-	wellParen           = `\([` + midIChar + `]*(\([` + midIChar + `]*\)[` + midIChar + `]*)*\)`
-	wellBrack           = `\[[` + midIChar + `]*(\[[` + midIChar + `]*\][` + midIChar + `]*)*\]`
-	wellBrace           = `\{[` + midIChar + `]*(\{[` + midIChar + `]*\}[` + midIChar + `]*)*\}`
+	wellParen           = `\(([` + midIChar + `]|\([` + midIChar + `]*\))*\)`
+	wellBrack           = `\[([` + midIChar + `]|\[[` + midIChar + `]*\])*\]`
+	wellBrace           = `\{([` + midIChar + `]|\{[` + midIChar + `]*\})*\}`
 	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
-	pathCont            = `([` + midIChar + `]*(` + wellAll + `|[` + endIChar + `])+)+`
+	pathCont            = `([` + midIChar + `]*(` + wellAll + `|[` + endIChar + `]))+`
 
 	letter   = `\p{L}`
 	mark     = `\p{M}`
