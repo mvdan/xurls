@@ -41,7 +41,7 @@ const (
 	iriChar  = letter + mark + number
 	iri      = `[` + iriChar + `](?:[` + iriChar + `\-]*[` + iriChar + `])?`
 	domain   = `(?:` + iri + `\.)+`
-	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
+	octet    = `(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
 	ipv6Addr = `(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(?::[0-9a-fA-F]{1,4}){0,2})|(?::[0-9a-fA-F]{1,4}){0,3})|(?::[0-9a-fA-F]{1,4}){0,4})|:(?::[0-9a-fA-F]{1,4}){0,5})(?:(?::[0-9a-fA-F]{1,4}){2}|:(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])(?:\.(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(?:(?:[0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){7}:`
 	ipAddr   = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
@@ -50,7 +50,7 @@ const (
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
 // scheme, and not just the known ones.
-var AnyScheme = `([a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
+var AnyScheme = `(?:[a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
 // followed by ":" instead of "://". The list includes both officially
@@ -160,7 +160,7 @@ func Relaxed() *regexp.Regexp {
 // StrictMatchingScheme produces a regexp similar to Strict, but requiring that
 // the scheme match the given regular expression. See AnyScheme too.
 func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
-	strictMatching := `(?i)(` + exp + `)(?-i)` + pathCont
+	strictMatching := `(?i)(?:` + exp + `)(?-i)` + pathCont
 	re, err := regexp.Compile(strictMatching)
 	if err != nil {
 		return nil, err
