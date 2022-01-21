@@ -76,6 +76,23 @@ const (
 		`)`
 	ipAddr = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
 	port   = `(?::[0-9]*)?`
+
+	// authority is based on https://www.rfc-editor.org/rfc/rfc3987#section-2.2
+	// but with the same limitations as pathCont and a special exclusion of
+	// single-label domain names that are valid as an IPv6 address chomp
+	// to avoid creating output like `<a href="...">https://2001</a>:db8::1`
+	// from `2001:db8::1` while still matching names like `localhost`.
+	iUserinfo             = `[` + unreservedChar + `%` + subDelimChar + `:` + allowedUcsChar + `]*`
+	nameLabelSafeChar     = `a-zA-Z0-9\-_~`
+	iMidLabelChar         = nameLabelSafeChar + `%` + midSubDelimChar + allowedUcsChar
+	iEndLabelChar         = nameLabelSafeChar + `%` + endSubDelimChar + allowedUcsCharMinusPunc
+	iEndLabelCharMinusHex = `g-zG-Z\-_~%` + endSubDelimChar + allowedUcsCharMinusPunc
+	iRegNamePrefix        = `(?:[` + iMidLabelChar + `]{4,}[` + iEndLabelChar + `]\.?|` +
+		`[` + iMidLabelChar + `]{0,3}[` + iEndLabelCharMinusHex + `]\.?|` +
+		h4 + `\.)`
+	iRegName  = iRegNamePrefix + `(?:[` + iMidLabelChar + `]*[` + iEndLabelChar + `](?:\.[` + iMidLabelChar + `]*[` + iEndLabelChar + `])*\.?)?`
+	iHost     = `(?:\[` + ipv6Addr + `\]|` + ipv4Addr + `|` + iRegName + `)`
+	authority = `(?:` + iUserinfo + `@)?` + iHost + port
 )
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
@@ -139,8 +156,10 @@ func anyOf(strs ...string) string {
 }
 
 func strictExp() string {
-	schemes := `(?:(?:` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + anyOf(SchemesNoAuthority...) + `:)`
-	return `(?i)` + schemes + `(?-i)` + pathCont
+	withAuthority := `(?:(?i)` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://` +
+		authority + `(?:/` + pathCont + `|/)?`
+	noAuthority := `(?:(?i)` + anyOf(SchemesNoAuthority...) + `):` + pathCont
+	return withAuthority + `|` + noAuthority
 }
 
 func relaxedExp() string {
@@ -161,10 +180,10 @@ func relaxedExp() string {
 
 	domain := subdomain + tlds
 
-	hostName := `(?:` + domain + `|` + ipAddr + `)`
+	hostName := `(?:` + domain + `|\[` + ipv6Addr + `\]|` + ipv4Addr + `)`
 	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
 	email := `[a-zA-Z0-9._%\-+]+@` + domain
-	return strictExp() + `|` + webURL + `|` + email
+	return strictExp() + `|` + webURL + `|` + ipAddr + `|` + email
 }
 
 // Strict produces a regexp that matches any URL with a scheme in either the
