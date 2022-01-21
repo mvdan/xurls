@@ -6,6 +6,7 @@ package xurls
 import (
 	"fmt"
 	"regexp"
+	"sync"
 	"testing"
 )
 
@@ -319,36 +320,64 @@ func TestStrictMatchingSchemeAny(t *testing.T) {
 	})
 }
 
-func bench(b *testing.B, re *regexp.Regexp, str string) {
-	for i := 0; i < b.N; i++ {
-		re.FindAllString(str, -1)
-	}
+func bench(b *testing.B, re func() *regexp.Regexp, str string) {
+	b.ReportAllocs()
+	b.SetBytes(int64(len(str)))
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			re().FindAllString(str, -1)
+		}
+	})
 }
 
-func BenchmarkStrictEmpty(b *testing.B) {
-	bench(b, Strict(), "foo")
+const inputNone = `
+foo bar
+yaml: "as well"
+some more plaintext
+which does not contain any urls.
+`
+
+const inputMany = `
+foo bar http://foo.foo https://192.168.1.1/path
+foo.com bitcoin:address ftp://
+xmpp:foo@bar.com
+`
+
+func BenchmarkStrict_none(b *testing.B) {
+	bench(b, Strict, inputNone)
 }
 
-func BenchmarkStrictSingle(b *testing.B) {
-	bench(b, Strict(), "http://foo.foo foo.com")
+func BenchmarkStrict_many(b *testing.B) {
+	bench(b, Strict, inputMany)
 }
 
-func BenchmarkStrictMany(b *testing.B) {
-	bench(b, Strict(), ` foo bar http://foo.foo
-	foo.com bitcoin:address ftp://
-	xmpp:foo@bar.com`)
+func BenchmarkRelaxed_none(b *testing.B) {
+	bench(b, Relaxed, inputNone)
 }
 
-func BenchmarkRelaxedEmpty(b *testing.B) {
-	bench(b, Relaxed(), "foo")
+func BenchmarkRelaxed_many(b *testing.B) {
+	bench(b, Relaxed, inputMany)
 }
 
-func BenchmarkRelaxedSingle(b *testing.B) {
-	bench(b, Relaxed(), "http://foo.foo foo.com")
+var rxMatchingScheme *regexp.Regexp
+var rxMatchingSchemeOnce sync.Once
+
+func matchingScheme() *regexp.Regexp {
+	rxMatchingSchemeOnce.Do(func() {
+		rx, err := StrictMatchingScheme("https?://")
+		if err != nil {
+			panic(err)
+		}
+		rxMatchingScheme = rx
+	})
+	return rxMatchingScheme
 }
 
-func BenchmarkRelaxedMany(b *testing.B) {
-	bench(b, Relaxed(), ` foo bar http://foo.foo
-	foo.com bitcoin:address ftp://
-	xmpp:foo@bar.com`)
+func BenchmarkStrictMatchingScheme_none(b *testing.B) {
+	bench(b, matchingScheme, inputNone)
+}
+
+func BenchmarkStrictMatchingScheme_many(b *testing.B) {
+	bench(b, matchingScheme, inputMany)
 }
