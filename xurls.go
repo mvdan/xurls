@@ -82,18 +82,19 @@ var SchemesUnofficial = []string{
 	`zoomus`,        // Zoom (mobile)
 }
 
-var strictRe *regexp.Regexp
-var strictInit sync.Once
-var setStrictRe = func() {
-	strictRe = regexp.MustCompile(strictExp())
-	strictRe.Longest()
-}
-var relaxedRe *regexp.Regexp
-var relaxedInit sync.Once
-var setRelaxedRe = func() {
-	relaxedRe = regexp.MustCompile(relaxedExp())
-	relaxedRe.Longest()
-}
+// The regular expressions are compiled when the API is first called.
+// Any subsequent calls will use the same regular expression pointers.
+//
+// We do not need to make a copy of them for each API call,
+// as Copy is now only useful if one copy calls Longest but not another,
+// and we always call Longest after compiling the regular expression.
+var (
+	strictRe   *regexp.Regexp
+	strictInit sync.Once
+
+	relaxedRe   *regexp.Regexp
+	relaxedInit sync.Once
+)
 
 func anyOf(strs ...string) string {
 	var b strings.Builder
@@ -139,15 +140,21 @@ func relaxedExp() string {
 // Strict produces a regexp that matches any URL with a scheme in either the
 // Schemes or SchemesNoAuthority lists.
 func Strict() *regexp.Regexp {
-	strictInit.Do(setStrictRe)
-	return strictRe.Copy()
+	strictInit.Do(func() {
+		strictRe = regexp.MustCompile(strictExp())
+		strictRe.Longest()
+	})
+	return strictRe
 }
 
 // Relaxed produces a regexp that matches any URL matched by Strict, plus any
 // URL with no scheme or email address.
 func Relaxed() *regexp.Regexp {
-	relaxedInit.Do(setRelaxedRe)
-	return relaxedRe.Copy()
+	relaxedInit.Do(func() {
+		relaxedRe = regexp.MustCompile(relaxedExp())
+		relaxedRe.Longest()
+	})
+	return relaxedRe
 }
 
 // StrictMatchingScheme produces a regexp similar to Strict, but requiring that
