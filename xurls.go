@@ -49,8 +49,8 @@ const (
 	// ipv6Addr is based on https://datatracker.ietf.org/doc/html/rfc4291#section-2.2
 	// with a specific alternative for each valid count of leading 16-bit hexadecimal "chomps"
 	// that have not been replaced with a `::` elision.
-	h4       = `[0-9a-fA-F]{1,4}`
-	ipv6Addr = `(?:` +
+	h4                 = `[0-9a-fA-F]{1,4}`
+	ipv6AddrMinusEmpty = `(?:` +
 		// 7 colon-terminated chomps, followed by a final chomp or the rest of an elision.
 		`(?:` + h4 + `:){7}(?:` + h4 + `|:)|` +
 		// 6 chomps, followed by an IPv4 address or elision with final chomp or final elision.
@@ -74,8 +74,9 @@ const (
 		// `:` is an intentionally omitted alternative, to avoid matching `::`.
 		`:(?:(?::` + h4 + `){0,5}:` + ipv4Addr + `|(?::` + h4 + `){1,7})` +
 		`)`
-	ipAddr = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
-	port   = `(?::[0-9]*)?`
+	ipv6Addr         = `(?:` + ipv6AddrMinusEmpty + `|::)`
+	ipAddrMinusEmpty = `(?:` + ipv4Addr + `|` + ipv6AddrMinusEmpty + `)`
+	port             = `(?::[0-9]*)?`
 
 	// authority is based on https://www.rfc-editor.org/rfc/rfc3987#section-2.2
 	// but with the same limitations as pathCont and a special exclusion of
@@ -183,7 +184,7 @@ func relaxedExp() string {
 	hostName := `(?:` + domain + `|\[` + ipv6Addr + `\]|` + ipv4Addr + `)`
 	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
 	email := `[a-zA-Z0-9._%\-+]+@` + domain
-	return strictExp() + `|` + webURL + `|` + ipAddr + `|` + email
+	return strictExp() + `|` + webURL + `|` + ipAddrMinusEmpty + `|` + email
 }
 
 // Strict produces a regexp that matches any URL with a scheme in either the
