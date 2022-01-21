@@ -43,9 +43,37 @@ const (
 	domain   = `(?:` + iri + `\.)+`
 	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
 	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
-	ipv6Addr = `(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:(?:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{0,4}|:[0-9a-fA-F]{1,4})?|(?::[0-9a-fA-F]{1,4}){0,2})|(?::[0-9a-fA-F]{1,4}){0,3})|(?::[0-9a-fA-F]{1,4}){0,4})|:(?::[0-9a-fA-F]{1,4}){0,5})(?:(?::[0-9a-fA-F]{1,4}){2}|:(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])(?:\.(?:25[0-5]|(?:2[0-4]|1[0-9]|[1-9])?[0-9])){3})|(?:(?:[0-9a-fA-F]{1,4}:){1,6}|:):[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){7}:`
-	ipAddr   = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
-	port     = `(?::[0-9]*)?`
+
+	// ipv6Addr is based on https://datatracker.ietf.org/doc/html/rfc4291#section-2.2
+	// with a specific alternative for each valid count of leading 16-bit hexadecimal "chomps"
+	// that have not been replaced with a `::` elision.
+	h4       = `[0-9a-fA-F]{1,4}`
+	ipv6Addr = `(?:` +
+		// 7 colon-terminated chomps, followed by a final chomp or the rest of an elision.
+		`(?:` + h4 + `:){7}(?:` + h4 + `|:)|` +
+		// 6 chomps, followed by an IPv4 address or elision with final chomp or final elision.
+		`(?:` + h4 + `:){6}(?:` + ipv4Addr + `|:` + h4 + `|:)|` +
+		// 5 chomps, followed by an elision with optional IPv4 or up to 2 final chomps.
+		`(?:` + h4 + `:){5}(?::` + ipv4Addr + `|(?::` + h4 + `){1,2}|:)|` +
+		// 4 chomps, followed by an elision with optional IPv4 (optionally preceded by a chomp) or
+		// up to 3 final chomps.
+		`(?:` + h4 + `:){4}(?:(?::` + h4 + `){0,1}:` + ipv4Addr + `|(?::` + h4 + `){1,3}|:)|` +
+		// 3 chomps, followed by an elision with optional IPv4 (preceded by up to 2 chomps) or
+		// up to 4 final chomps.
+		`(?:` + h4 + `:){3}(?:(?::` + h4 + `){0,2}:` + ipv4Addr + `|(?::` + h4 + `){1,4}|:)|` +
+		// 2 chomps, followed by an elision with optional IPv4 (preceded by up to 3 chomps) or
+		// up to 5 final chomps.
+		`(?:` + h4 + `:){2}(?:(?::` + h4 + `){0,3}:` + ipv4Addr + `|(?::` + h4 + `){1,5}|:)|` +
+		// 1 chomp, followed by an elision with optional IPv4 (preceded by up to 4 chomps) or
+		// up to 6 final chomps.
+		`(?:` + h4 + `:){1}(?:(?::` + h4 + `){0,4}:` + ipv4Addr + `|(?::` + h4 + `){1,6}|:)|` +
+		// elision, followed by optional IPv4 (preceded by up to 5 chomps) or
+		// up to 7 final chomps.
+		// `:` is an intentionally omitted alternative, to avoid matching `::`.
+		`:(?:(?::` + h4 + `){0,5}:` + ipv4Addr + `|(?::` + h4 + `){1,7})` +
+		`)`
+	ipAddr = `(?:` + ipv4Addr + `|` + ipv6Addr + `)`
+	port   = `(?::[0-9]*)?`
 )
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
