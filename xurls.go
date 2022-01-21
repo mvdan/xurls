@@ -21,11 +21,13 @@ const (
 	// to avoid creating asymmetries like
 	// `Did you know that **<a href="...">https://example.com/**</a> is reserved for documentation?`
 	// from `Did you know that **https://example.com/** is reserved for documentation?`.
+	unreservedChar      = `a-zA-Z0-9\-._~`
+	endUnreservedChar   = `a-zA-Z0-9\-_~`
 	subDelimChar        = `!$&'()*+,;=`
 	midSubDelimChar     = `!$&'*+,;=`
 	endSubDelimChar     = `$&+=`
-	midIPathSegmentChar = `a-zA-Z0-9\-._~` + `%` + midSubDelimChar + `:@` + allowedUcsChar
-	endIPathSegmentChar = `a-zA-Z0-9\-_~` + `%` + endSubDelimChar + allowedUcsCharMinusPunc
+	midIPathSegmentChar = unreservedChar + `%` + midSubDelimChar + `:@` + allowedUcsChar
+	endIPathSegmentChar = endUnreservedChar + `%` + endSubDelimChar + allowedUcsCharMinusPunc
 	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
 	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
 	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
@@ -35,14 +37,14 @@ const (
 	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
 	pathCont            = `(?:[` + midIChar + `]*(?:` + wellAll + `|[` + endIChar + `]))+`
 
-	letter   = `\p{L}`
-	mark     = `\p{M}`
-	number   = `\p{N}`
-	iriChar  = letter + mark + number
-	iri      = `[` + iriChar + `](?:[` + iriChar + `\-]*[` + iriChar + `])?`
-	domain   = `(?:` + iri + `\.)+`
-	octet    = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
-	ipv4Addr = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
+	letter    = `\p{L}`
+	mark      = `\p{M}`
+	number    = `\p{N}`
+	iriChar   = letter + mark + number
+	iri       = `[` + iriChar + `](?:[` + iriChar + `\-]*[` + iriChar + `])?`
+	subdomain = `(?:` + iri + `\.)+`
+	octet     = `(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]|[0-9])`
+	ipv4Addr  = `\b` + octet + `\.` + octet + `\.` + octet + `\.` + octet + `\b`
 
 	// ipv6Addr is based on https://datatracker.ietf.org/doc/html/rfc4291#section-2.2
 	// with a specific alternative for each valid count of leading 16-bit hexadecimal "chomps"
@@ -155,12 +157,13 @@ func relaxedExp() string {
 	// Use \b to make sure ASCII TLDs are immediately followed by a word break.
 	// We can't do that with unicode TLDs, as they don't see following
 	// whitespace as a word break.
-	tlds := `(?i)(?:` + punycode + `|` + anyOf(append(asciiTLDs, PseudoTLDs...)...) + `\b|` + anyOf(unicodeTLDs...) + `)(?-i)`
-	site := domain + tlds
+	tlds := `(?:(?i)` + punycode + `|` + anyOf(append(asciiTLDs, PseudoTLDs...)...) + `\b|` + anyOf(unicodeTLDs...) + `)`
 
-	hostName := `(?:` + site + `|` + ipAddr + `)`
+	domain := subdomain + tlds
+
+	hostName := `(?:` + domain + `|` + ipAddr + `)`
 	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
-	email := `[a-zA-Z0-9._%\-+]+@` + site
+	email := `[a-zA-Z0-9._%\-+]+@` + domain
 	return strictExp() + `|` + webURL + `|` + email
 }
 
