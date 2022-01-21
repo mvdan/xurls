@@ -7,6 +7,7 @@ package xurls
 import (
 	"regexp"
 	"strings"
+	"sync"
 	"unicode/utf8"
 )
 
@@ -81,8 +82,18 @@ var SchemesUnofficial = []string{
 	`zoomus`,        // Zoom (mobile)
 }
 
-var strictRe = regexp.MustCompile(strictExp())
-var relaxedRe = regexp.MustCompile(relaxedExp())
+var strictRe *regexp.Regexp
+var strictInit sync.Once
+var setStrictRe = func() {
+	strictRe = regexp.MustCompile(strictExp())
+	strictRe.Longest()
+}
+var relaxedRe *regexp.Regexp
+var relaxedInit sync.Once
+var setRelaxedRe = func() {
+	relaxedRe = regexp.MustCompile(relaxedExp())
+	relaxedRe.Longest()
+}
 
 func anyOf(strs ...string) string {
 	var b strings.Builder
@@ -128,14 +139,14 @@ func relaxedExp() string {
 // Strict produces a regexp that matches any URL with a scheme in either the
 // Schemes or SchemesNoAuthority lists.
 func Strict() *regexp.Regexp {
-	strictRe.Longest()
+	strictInit.Do(setStrictRe)
 	return strictRe.Copy()
 }
 
 // Relaxed produces a regexp that matches any URL matched by Strict, plus any
 // URL with no scheme or email address.
 func Relaxed() *regexp.Regexp {
-	relaxedRe.Longest()
+	relaxedInit.Do(setRelaxedRe)
 	return relaxedRe.Copy()
 }
 
