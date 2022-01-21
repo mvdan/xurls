@@ -21,7 +21,6 @@ const (
 	// to avoid creating asymmetries like
 	// `Did you know that **<a href="...">https://example.com/**</a> is reserved for documentation?`
 	// from `Did you know that **https://example.com/** is reserved for documentation?`.
-	subDelimChar        = `!$&'()*+,;=`
 	midSubDelimChar     = `!$&'*+,;=`
 	endSubDelimChar     = `$&+=`
 	midIPathSegmentChar = `a-zA-Z0-9\-._~` + `%` + midSubDelimChar + `:@` + allowedUcsChar
