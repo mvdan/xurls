@@ -299,6 +299,7 @@ func TestRegexes(t *testing.T) {
 
 		// An IP address in URI host position must be bracketed unless it is IPv4.
 		// https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2
+		// TODO: Implement this restriction, ideally without matching the `http://1080` prefix.
 		//{`http://1080::8:800:200c:417a/path`, `1080::8:800:200c:417a`},
 
 		{`foo.com:8080`, true},
@@ -353,6 +354,7 @@ func TestRegexes(t *testing.T) {
 
 		// An IP address in URI host position must be bracketed unless it is IPv4.
 		// https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2
+		// TODO: Implement this restriction, ideally without matching the `http://1080` prefix.
 		//{`http://1080::8:800:200c:417a/path`, nil},
 	})
 }
