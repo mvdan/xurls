@@ -22,8 +22,8 @@ Since API is centered around [regexp.Regexp](https://golang.org/pkg/regexp/#Rege
 many other methods are available, such as finding the [byte indexes](https://golang.org/pkg/regexp/#Regexp.FindAllIndex)
 for all matches.
 
-Note that calling the exposed functions means compiling a regular expression, so
-repeated calls should be avoided.
+The regular expressions are compiled when the API is first called.
+Any subsequent calls will use the same regular expression pointers.
 
 #### cmd/xurls
 
