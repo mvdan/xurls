@@ -94,7 +94,6 @@ var Schemes = []string{
 	`fm`,
 	`ftp`,
 	`fuchsia-pkg`,
-	`gemini`,
 	`geo`,
 	`gg`,
 	`git`,
