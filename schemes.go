@@ -211,6 +211,7 @@ var Schemes = []string{
 	`ms-settings-wifi`,
 	`ms-settings-workplace`,
 	`ms-spd`,
+	`ms-stickers`,
 	`ms-sttoverlay`,
 	`ms-transit-to`,
 	`ms-useractivityset`,
