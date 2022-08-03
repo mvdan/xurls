@@ -444,8 +444,10 @@ func BenchmarkRelaxed_many(b *testing.B) {
 	bench(b, Relaxed, inputMany)
 }
 
-var rxMatchingScheme *regexp.Regexp
-var rxMatchingSchemeOnce sync.Once
+var (
+	rxMatchingScheme     *regexp.Regexp
+	rxMatchingSchemeOnce sync.Once
+)
 
 func matchingScheme() *regexp.Regexp {
 	rxMatchingSchemeOnce.Do(func() {
