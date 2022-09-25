@@ -21,8 +21,7 @@ package xurls
 
 // Schemes is a sorted list of all IANA assigned schemes.
 //
-// Source:
-//   https://www.iana.org/assignments/uri-schemes/uri-schemes-1.csv
+// Source: https://www.iana.org/assignments/uri-schemes/uri-schemes-1.csv
 var Schemes = []string{
 {{range $scheme := .Schemes}}` + "\t`" + `{{$scheme}}` + "`" + `,
 {{end}}}
