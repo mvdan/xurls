@@ -22,10 +22,10 @@ func TestMain(m *testing.M) {
 	}))
 }
 
-func TestScripts(t *testing.T) {
+func TestScript(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, testscript.Params{
-		Dir: filepath.Join("testdata", "scripts"),
+		Dir: filepath.Join("testdata", "script"),
 		Setup: func(env *testscript.Env) error {
 			mux := http.NewServeMux()
 			mux.HandleFunc("/plain", func(w http.ResponseWriter, r *http.Request) {
