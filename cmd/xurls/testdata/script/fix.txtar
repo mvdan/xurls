@@ -9,23 +9,23 @@ expand broken
 expand broken.golden
 cp broken broken.orig
 
-xurls -fix nothing
+exec xurls -fix nothing
 ! stdout .
 ! stderr .
 cmp nothing nothing.orig
 
 stdin redirects
-xurls -fix
+exec xurls -fix
 cmp stdout redirects.golden
 cmp redirects redirects.orig
 ! stderr .
 
-xurls -fix redirects
+exec xurls -fix redirects
 stdout '^redirects$'
 ! stderr .
 cmp redirects redirects.golden
 
-! xurls -fix broken
+! exec xurls -fix broken
 stdout -count=1 '^broken$'
 stderr -count=1 '4 broken urls'
 stderr -count=2 '/404'

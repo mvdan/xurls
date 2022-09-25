@@ -25,7 +25,8 @@ func TestMain(m *testing.M) {
 func TestScript(t *testing.T) {
 	t.Parallel()
 	testscript.Run(t, testscript.Params{
-		Dir: filepath.Join("testdata", "script"),
+		Dir:                 filepath.Join("testdata", "script"),
+		RequireExplicitExec: true,
 		Setup: func(env *testscript.Env) error {
 			mux := http.NewServeMux()
 			mux.HandleFunc("/plain", func(w http.ResponseWriter, r *http.Request) {

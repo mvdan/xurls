@@ -1,27 +1,27 @@
 stdin input
-xurls
+exec xurls
 stdout 'https://foo.com'
 ! stdout 'bar.com'
 ! stdout 'custom://some-data'
 ! stderr .
 
-! xurls missing
+! exec xurls missing
 ! stdout .
 stderr 'open missing'
 
-xurls input
+exec xurls input
 stdout 'https://foo.com'
 ! stdout 'bar.com'
 ! stdout 'custom://some-data'
 ! stderr .
 
-xurls -r input
+exec xurls -r input
 stdout 'https://foo.com'
 stdout 'bar.com'
 ! stdout 'custom://some-data'
 ! stderr .
 
-xurls -m 'custom://' input
+exec xurls -m 'custom://' input
 ! stdout 'https://foo.com'
 ! stdout 'bar.com'
 stdout 'custom://some-data'
