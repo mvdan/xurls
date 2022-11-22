@@ -125,7 +125,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 						continue
 					}
 					if resp.StatusCode >= 400 {
-						r.appendBroken(match)
+						r.appendBroken(match, resp.StatusCode)
 					}
 					resp.Body.Close()
 				}
@@ -159,8 +159,12 @@ func scanPath(re *regexp.Regexp, path string) error {
 		}
 	}
 	if len(state.brokenURLs) > 0 {
-		return fmt.Errorf("found %d broken urls in %q:\n%s", len(state.brokenURLs),
-			path, strings.Join(state.brokenURLs, "\n"))
+		var s strings.Builder
+		fmt.Fprintf(&s, "found %d broken urls in %q:\n", len(state.brokenURLs), path)
+		for _, broken := range state.brokenURLs {
+			fmt.Fprintf(&s, "  * %d: %s\n", broken.statusCode, broken.url)
+		}
+		return errors.New(s.String())
 	}
 	return nil
 }
