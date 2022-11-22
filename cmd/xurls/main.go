@@ -68,6 +68,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 	maxWeight := int64(32)
 	seq := newSequencer(maxWeight, out, os.Stderr)
 
+	userAgent := fmt.Sprintf("mvdan.cc/xurls %s", readVersion())
 	scanner := bufio.NewScanner(in)
 
 	// Doesn't need to be part of reporterState as order doesn't matter.
@@ -125,7 +126,12 @@ func scanPath(re *regexp.Regexp, path string) error {
 							return nil
 						},
 					}
-					resp, err := client.Head(fixed)
+					req, err := http.NewRequest(http.MethodHead, fixed, nil)
+					if err != nil {
+						continue
+					}
+					req.Header.Set("User-Agent", userAgent)
+					resp, err := client.Do(req)
 					if err != nil {
 						continue
 					}
