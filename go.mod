@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/rogpeppe/go-internal v1.9.0
+	golang.org/x/mod v0.7.0
 	golang.org/x/sync v0.1.0
 )
 

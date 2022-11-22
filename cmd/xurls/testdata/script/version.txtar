@@ -1,0 +1,5 @@
+# Note that "go test" does not embed vcs information by default.
+# We copied the code from another project which is tested,
+# so there's no need to fully test the VCS aspect.
+exec xurls -version
+stdout '\(devel\)'
