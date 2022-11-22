@@ -29,43 +29,51 @@ func TestScript(t *testing.T) {
 		RequireExplicitExec: true,
 		Setup: func(env *testscript.Env) error {
 			mux := http.NewServeMux()
-			mux.HandleFunc("/plain", func(w http.ResponseWriter, r *http.Request) {
+			handle := func(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+				mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+					if r.Method != http.MethodHead {
+						t.Errorf("expected all requests to be %q, got %q", http.MethodHead, r.Method)
+					}
+					handler(w, r)
+				})
+			}
+			handle("/plain", func(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "plaintext")
 			})
-			mux.HandleFunc("/redir-1", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-1", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", http.StatusMovedPermanently)
 			})
-			mux.HandleFunc("/redir-2", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-2", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/redir-1", http.StatusMovedPermanently)
 			})
 
-			mux.HandleFunc("/redir-longer", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-longer", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/redir-longtarget", http.StatusMovedPermanently)
 			})
-			mux.HandleFunc("/redir-longtarget", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-longtarget", func(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "long target")
 			})
-			mux.HandleFunc("/redir-fragment", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-fragment", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain#bar", http.StatusMovedPermanently)
 			})
 
-			mux.HandleFunc("/redir-301", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-301", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", 301)
 			})
-			mux.HandleFunc("/redir-302", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-302", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", 302)
 			})
-			mux.HandleFunc("/redir-307", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-307", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", 307)
 			})
-			mux.HandleFunc("/redir-308", func(w http.ResponseWriter, r *http.Request) {
+			handle("/redir-308", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain", 308)
 			})
 
-			mux.HandleFunc("/404", func(w http.ResponseWriter, r *http.Request) {
+			handle("/404", func(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "", 404)
 			})
-			mux.HandleFunc("/500", func(w http.ResponseWriter, r *http.Request) {
+			handle("/500", func(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "", 500)
 			})
 

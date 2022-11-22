@@ -120,7 +120,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 							return nil
 						},
 					}
-					resp, err := client.Get(fixed)
+					resp, err := client.Head(fixed)
 					if err != nil {
 						continue
 					}
