@@ -29,52 +29,63 @@ func TestScript(t *testing.T) {
 		RequireExplicitExec: true,
 		Setup: func(env *testscript.Env) error {
 			mux := http.NewServeMux()
-			handle := func(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+			handle := func(method, pattern string, handler func(http.ResponseWriter, *http.Request)) {
 				mux.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
-					if r.Method != http.MethodHead {
-						t.Errorf("expected all requests to be %q, got %q", http.MethodHead, r.Method)
+					if r.Method != method {
+						t.Errorf("expected all requests to be %q, got %q", method, r.Method)
 					}
 					handler(w, r)
 				})
 			}
-			handle("/plain", func(w http.ResponseWriter, r *http.Request) {
-				fmt.Fprintf(w, "plaintext")
+			handle("HEAD", "/plain-head", func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(200)
 			})
-			handle("/redir-1", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain", http.StatusMovedPermanently)
+			handle("HEAD", "/redir-1", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", http.StatusMovedPermanently)
 			})
-			handle("/redir-2", func(w http.ResponseWriter, r *http.Request) {
+			handle("HEAD", "/redir-2", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/redir-1", http.StatusMovedPermanently)
 			})
 
-			handle("/redir-longer", func(w http.ResponseWriter, r *http.Request) {
+			handle("HEAD", "/redir-longer", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/redir-longtarget", http.StatusMovedPermanently)
 			})
-			handle("/redir-longtarget", func(w http.ResponseWriter, r *http.Request) {
-				fmt.Fprintf(w, "long target")
+			handle("HEAD", "/redir-longtarget", func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(200)
 			})
-			handle("/redir-fragment", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain#bar", http.StatusMovedPermanently)
-			})
-
-			handle("/redir-301", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain", 301)
-			})
-			handle("/redir-302", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain", 302)
-			})
-			handle("/redir-307", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain", 307)
-			})
-			handle("/redir-308", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain", 308)
+			handle("HEAD", "/redir-fragment", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head#bar", http.StatusMovedPermanently)
 			})
 
-			handle("/404", func(w http.ResponseWriter, r *http.Request) {
+			handle("HEAD", "/redir-301", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", 301)
+			})
+			handle("HEAD", "/redir-302", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", 302)
+			})
+			handle("HEAD", "/redir-307", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", 307)
+			})
+			handle("HEAD", "/redir-308", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", 308)
+			})
+
+			handle("HEAD", "/404", func(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "", 404)
 			})
-			handle("/500", func(w http.ResponseWriter, r *http.Request) {
+			handle("HEAD", "/500", func(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "", 500)
+			})
+
+			handle("GET", "/plain-get", func(w http.ResponseWriter, r *http.Request) {
+				fmt.Fprintf(w, "plaintext")
+			})
+			mux.HandleFunc("/get-only", func(w http.ResponseWriter, r *http.Request) {
+				if r.Method == "GET" {
+					http.Redirect(w, r, "/plain-get", 301)
+				} else {
+					http.Error(w, "", 405)
+				}
 			})
 
 			ln, err := net.Listen("tcp", ":0")

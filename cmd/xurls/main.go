@@ -127,7 +127,9 @@ func scanPath(re *regexp.Regexp, path string) error {
 							return nil
 						},
 					}
-					req, err := http.NewRequest(http.MethodHead, fixed, nil)
+					method := http.MethodHead
+				retry:
+					req, err := http.NewRequest(method, fixed, nil)
 					if err != nil {
 						r.appendBroken(match, err.Error())
 						continue
@@ -139,6 +141,11 @@ func scanPath(re *regexp.Regexp, path string) error {
 						continue
 					}
 					if code := resp.StatusCode; code >= 400 {
+						if code == http.StatusMethodNotAllowed {
+							method = http.MethodGet
+							resp.Body.Close()
+							goto retry
+						}
 						r.appendBroken(match, fmt.Sprintf("%d %s", code, http.StatusText(code)))
 					}
 					resp.Body.Close()

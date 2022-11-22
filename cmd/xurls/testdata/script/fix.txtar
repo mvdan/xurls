@@ -34,9 +34,9 @@ stderr -count=1 'totallydoesnotexist.localhost/ - Head .* dial tcp'
 cmp broken broken.golden
 
 -- nothing --
-No redirect: ${SERVER}/plain
+No redirect: ${SERVER}/plain-head
 -- redirects --
-No redirect: ${SERVER}/plain
+No redirect: ${SERVER}/plain-head
 One redirect: ${SERVER}/redir-1
 Two redirects: ${SERVER}/redir-2
 Redirect inherits fragment: ${SERVER}/redir-1#foo
@@ -53,31 +53,35 @@ Permanent redirect codes:
 Temporary redirect codes:
 * ${SERVER}/redir-302
 * ${SERVER}/redir-307
--- redirects.golden --
-No redirect: ${SERVER}/plain
-One redirect: ${SERVER}/plain
-Two redirects: ${SERVER}/plain
-Redirect inherits fragment: ${SERVER}/plain#foo
-Redirect replaces fragment: ${SERVER}/plain#bar
 
-Three links in one line: ${SERVER}/plain + ${SERVER}/plain + ${SERVER}/plain
+Only GET allowed, HEAD fails: ${SERVER}/get-only
+-- redirects.golden --
+No redirect: ${SERVER}/plain-head
+One redirect: ${SERVER}/plain-head
+Two redirects: ${SERVER}/plain-head
+Redirect inherits fragment: ${SERVER}/plain-head#foo
+Redirect replaces fragment: ${SERVER}/plain-head#bar
+
+Three links in one line: ${SERVER}/plain-head + ${SERVER}/plain-head + ${SERVER}/plain-head
 
 Redirect to a longer path ${SERVER}/redir-longtarget with trailing text
 
 Permanent redirect codes:
-* ${SERVER}/plain
-* ${SERVER}/plain
+* ${SERVER}/plain-head
+* ${SERVER}/plain-head
 
 Temporary redirect codes:
 * ${SERVER}/redir-302
 * ${SERVER}/redir-307
+
+Only GET allowed, HEAD fails: ${SERVER}/plain-get
 -- broken --
 One redirect: ${SERVER}/redir-1
 404 errors: ${SERVER}/404 ${SERVER}/404
 500 errors: ${SERVER}/500 ${SERVER}/500
 Dial error: http://totallydoesnotexist.localhost/
 -- broken.golden --
-One redirect: ${SERVER}/plain
+One redirect: ${SERVER}/plain-head
 404 errors: ${SERVER}/404 ${SERVER}/404
 500 errors: ${SERVER}/500 ${SERVER}/500
 Dial error: http://totallydoesnotexist.localhost/
