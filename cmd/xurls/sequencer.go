@@ -114,8 +114,8 @@ type reporterState struct {
 }
 
 type brokenURL struct {
-	url        string
-	statusCode int
+	url    string
+	reason string
 }
 
 // getState blocks until any prior reporters are finished with the reporter
@@ -135,9 +135,9 @@ func (r *reporter) Write(p []byte) (int, error) {
 	return r.getState().out.Write(p)
 }
 
-func (r *reporter) appendBroken(url string, statusCode int) {
+func (r *reporter) appendBroken(url, reason string) {
 	state := r.getState()
-	state.brokenURLs = append(state.brokenURLs, brokenURL{url, statusCode})
+	state.brokenURLs = append(state.brokenURLs, brokenURL{url, reason})
 }
 
 // Report emits a non-nil error to the reporter's error stream,

@@ -27,9 +27,10 @@ cmp redirects redirects.golden
 
 ! exec xurls -fix broken
 stdout -count=1 '^broken$'
-stderr -count=1 '4 broken urls'
-stderr -count=2 '/404'
-stderr -count=2 '/500'
+stderr -count=1 '5 broken urls'
+stderr -count=2 '/404 - 404 Not Found'
+stderr -count=2 '/500 - 500 Internal Server Error'
+stderr -count=1 'totallydoesnotexist.localhost/ - Head .* dial tcp'
 cmp broken broken.golden
 
 -- nothing --
@@ -74,7 +75,9 @@ Temporary redirect codes:
 One redirect: ${SERVER}/redir-1
 404 errors: ${SERVER}/404 ${SERVER}/404
 500 errors: ${SERVER}/500 ${SERVER}/500
+Dial error: http://totallydoesnotexist.localhost/
 -- broken.golden --
 One redirect: ${SERVER}/plain
 404 errors: ${SERVER}/404 ${SERVER}/404
 500 errors: ${SERVER}/500 ${SERVER}/500
+Dial error: http://totallydoesnotexist.localhost/

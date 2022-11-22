@@ -97,6 +97,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 				match := line[pair[0]:pair[1]]
 				origURL, err := url.Parse(match)
 				if err != nil {
+					r.appendBroken(match, err.Error())
 					continue
 				}
 				fixed := origURL.String()
@@ -128,15 +129,17 @@ func scanPath(re *regexp.Regexp, path string) error {
 					}
 					req, err := http.NewRequest(http.MethodHead, fixed, nil)
 					if err != nil {
+						r.appendBroken(match, err.Error())
 						continue
 					}
 					req.Header.Set("User-Agent", userAgent)
 					resp, err := client.Do(req)
 					if err != nil {
+						r.appendBroken(match, err.Error())
 						continue
 					}
-					if resp.StatusCode >= 400 {
-						r.appendBroken(match, resp.StatusCode)
+					if code := resp.StatusCode; code >= 400 {
+						r.appendBroken(match, fmt.Sprintf("%d %s", code, http.StatusText(code)))
 					}
 					resp.Body.Close()
 				}
@@ -148,7 +151,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 					atomic.AddUint32(&atomicFixedCount, 1)
 				}
 			}
-			io.WriteString(r, line)
+			io.WriteString(r, line) // add the fixed line to outBuf
 			return nil
 		})
 		if err := scanner.Err(); err != nil {
@@ -173,7 +176,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		var s strings.Builder
 		fmt.Fprintf(&s, "found %d broken urls in %q:\n", len(state.brokenURLs), path)
 		for _, broken := range state.brokenURLs {
-			fmt.Fprintf(&s, "  * %d: %s\n", broken.statusCode, broken.url)
+			fmt.Fprintf(&s, "  * %s - %s\n", broken.url, broken.reason)
 		}
 		return errors.New(s.String())
 	}
