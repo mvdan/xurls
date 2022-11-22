@@ -84,7 +84,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		}
 		seq.Add(weight, func(r *reporter) error {
 			offsetWithinLine := 0
-			for _, pair := range re.FindAllStringIndex(line, -1) {
+			for _, pair := range matches {
 				// The indexes are based on the original line.
 				pair[0] += offsetWithinLine
 				pair[1] += offsetWithinLine
