@@ -63,6 +63,9 @@ func TestScript(t *testing.T) {
 			handle("HEAD", "/redir-302", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain-head", 302)
 			})
+			handle("HEAD", "/redir-303", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/plain-head", 303)
+			})
 			handle("HEAD", "/redir-307", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain-head", 307)
 			})

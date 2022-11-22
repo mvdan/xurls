@@ -28,22 +28,39 @@ import (
 var (
 	matching = flag.String("m", "", "")
 	relaxed  = flag.Bool("r", false, "")
-	fix      = flag.Bool("fix", false, "")
+	fix      boolString
 	version  = flag.Bool("version", false, "")
 )
 
+type boolString string
+
+func (s *boolString) Set(val string) error {
+	*s = boolString(val)
+	return nil
+}
+func (s *boolString) Get() any       { return string(*s) }
+func (s *boolString) String() string { return string(*s) }
+func (*boolString) IsBoolFlag() bool { return true }
+
 func init() {
+	flag.Var(&fix, "fix", "")
 	flag.Usage = func() {
-		p := func(format string, a ...interface{}) {
-			fmt.Fprintf(os.Stderr, format, a...)
-		}
-		p("Usage: xurls [-h] [files]\n\n")
-		p("If no files are given, it reads from standard input.\n\n")
-		p("   -m <regexp>   only match urls whose scheme matches a regexp\n")
-		p("                    example: 'https?://|mailto:'\n")
-		p("   -r            also match urls without a scheme (relaxed)\n")
-		p("   -fix          overwrite urls that redirect\n")
-		p("   -version      print version and exit\n")
+		fmt.Fprint(os.Stderr, `
+Usage: xurls [-h] [files]
+
+xurls extracts urls from text using regular expressions.
+If no files are given, it reads from standard input.
+
+   -m <regexp>   only match urls whose scheme matches a regexp
+                    example: 'https?://|mailto:'
+   -r            also match urls without a scheme (relaxed)
+   -version      print version and exit
+
+When the -fix or -fix=auto flag is used, xurls instead attempts to replace
+any urls which result in a permanent redirect (301 or 308).
+It also fails if any urls fail to load, so that they may be removed or replaced.
+To replace urls which result in temporary redirect as well, use -fix=all.
+`[1:])
 	}
 }
 
@@ -57,7 +74,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		if err != nil {
 			return err
 		}
-		if *fix {
+		if fix != "" {
 			outBuf = new(bytes.Buffer)
 			out = outBuf
 		}
@@ -77,7 +94,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 	for scanner.Scan() {
 		line := scanner.Text() + "\n"
 		matches := re.FindAllStringIndex(line, -1)
-		if !*fix {
+		if fix == "" {
 			for _, pair := range matches {
 				match := line[pair[0]:pair[1]]
 				fmt.Printf("%s\n", match)
@@ -104,8 +121,6 @@ func scanPath(re *regexp.Regexp, path string) error {
 				switch origURL.Scheme {
 				case "http", "https":
 					// See if the URL redirects somewhere.
-					// Only apply a fix if the redirect chain is permanent.
-					allPermanent := true
 					client := &http.Client{
 						Timeout: 10 * time.Second,
 						CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -114,16 +129,21 @@ func scanPath(re *regexp.Regexp, path string) error {
 							}
 							switch req.Response.StatusCode {
 							case http.StatusMovedPermanently, http.StatusPermanentRedirect:
-							default:
-								allPermanent = false
-							}
-							if allPermanent {
-								// Inherit the fragment if empty.
-								if req.URL.Fragment == "" {
-									req.URL.Fragment = origURL.Fragment
+								// "auto" and "all" fix permanent redirects.
+							case http.StatusFound, http.StatusSeeOther, http.StatusTemporaryRedirect:
+								// Only "all" fixes temporary redirects.
+								if fix != "all" {
+									return http.ErrUseLastResponse
 								}
-								fixed = req.URL.String()
+							default:
+								// Any other redirects are ignored.
+								return http.ErrUseLastResponse
 							}
+							// Inherit the fragment if empty.
+							if req.URL.Fragment == "" {
+								req.URL.Fragment = origURL.Fragment
+							}
+							fixed = req.URL.String()
 							return nil
 						},
 					}
@@ -201,6 +221,14 @@ func main1() int {
 	if *relaxed && *matching != "" {
 		fmt.Fprintln(os.Stderr, "-r and -m at the same time don't make much sense")
 		return 1
+	}
+	switch fix {
+	case "": // disabled by default
+	case "false": // disabled via -fix=false; normalize
+		fix = ""
+	case "auto", "all": // enabled via -fix=auto, -fix=all, etc
+	case "true": // enabled via -fix; normalize
+		fix = "auto"
 	}
 	var re *regexp.Regexp
 	if *relaxed {
