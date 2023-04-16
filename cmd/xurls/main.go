@@ -26,11 +26,13 @@ import (
 )
 
 var (
-	matching = flag.String("m", "", "")
-	relaxed  = flag.Bool("r", false, "")
-	fix      boolString
-	version  = flag.Bool("version", false, "")
+	matching    = flag.String("m", "", "")
+	relaxed     = flag.Bool("r", false, "")
+	fix         boolString
+	versionFlag = flag.Bool("version", false, "")
 )
+
+var version string
 
 type boolString string
 
@@ -214,7 +216,7 @@ func main() { os.Exit(main1()) }
 
 func main1() int {
 	flag.Parse()
-	if *version {
+	if *versionFlag {
 		fmt.Println(readVersion())
 		return 0
 	}
@@ -258,6 +260,9 @@ func main1() int {
 // Borrowed from https://github.com/burrowers/garble.
 
 func readVersion() string {
+	if version != "" {
+		return version
+	}
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
 		return "unknown"
