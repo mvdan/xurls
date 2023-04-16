@@ -717,7 +717,6 @@ var TLDs = []string{
 	`limited`,
 	`limo`,
 	`lincoln`,
-	`linde`,
 	`link`,
 	`lipsy`,
 	`live`,
