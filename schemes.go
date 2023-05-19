@@ -59,6 +59,7 @@ var Schemes = []string{
 	`dat`,
 	`data`,
 	`dav`,
+	`dhttp`,
 	`diaspora`,
 	`dict`,
 	`did`,
