@@ -10,7 +10,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -197,7 +196,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		// Overwrite the file, if we weren't reading stdin. Report its
 		// path too.
 		fmt.Println(path)
-		if err := ioutil.WriteFile(path, outBuf.Bytes(), 0o666); err != nil {
+		if err := os.WriteFile(path, outBuf.Bytes(), 0o666); err != nil {
 			return err
 		}
 	}

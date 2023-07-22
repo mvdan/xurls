@@ -6,7 +6,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -116,7 +115,7 @@ func TestScript(t *testing.T) {
 				for _, arg := range args {
 					data := ts.ReadFile(arg)
 					data = os.Expand(data, ts.Getenv)
-					err := ioutil.WriteFile(ts.MkAbs(arg), []byte(data), 0o666)
+					err := os.WriteFile(ts.MkAbs(arg), []byte(data), 0o666)
 					ts.Check(err)
 				}
 			},
