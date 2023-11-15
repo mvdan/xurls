@@ -89,6 +89,7 @@ var SchemesNoAuthority = []string{
 	`bitcoin`, // Bitcoin
 	`cid`,     // Content-ID
 	`file`,    // Files
+	`geo`,     // Geographic location
 	`magnet`,  // Torrent magnets
 	`mailto`,  // Mail
 	`mid`,     // Message-ID
