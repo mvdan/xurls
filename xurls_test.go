@@ -328,6 +328,7 @@ func TestRegexes(t *testing.T) {
 		{`"foo.com/bar"`, `foo.com/bar`},
 		{`what is foo.com?`, `foo.com`},
 		{`the foo.com!`, `foo.com`},
+		{`check of foo.com: ok`, `foo.com`},
 
 		{`foo@bar`, nil},
 		{`foo@bar.a`, nil},

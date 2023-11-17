@@ -75,7 +75,7 @@ const (
 		`)`
 	ipv6Addr         = `(?:` + ipv6AddrMinusEmpty + `|::)`
 	ipAddrMinusEmpty = `(?:` + ipv6AddrMinusEmpty + `|\b` + ipv4Addr + `\b)`
-	port             = `(?::[0-9]*)?`
+	port             = `(?::[0-9]+)?`
 )
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
