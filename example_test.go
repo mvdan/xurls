@@ -27,3 +27,18 @@ func ExampleStrictMatchingScheme() {
 	// Output:
 	// [https://foo.com/dl]
 }
+
+func Example_filterEmails() {
+	s := "Email dev@foo.com about any issues with foo.com or https://foo.com/dl"
+	rx := xurls.Relaxed()
+	idxEmail := rx.SubexpIndex("relaxedEmail")
+	for _, match := range rx.FindAllStringSubmatch(s, -1) {
+		if match[idxEmail] != "" {
+			continue // skip lone email addresses
+		}
+		fmt.Println(match[0])
+	}
+	// Output:
+	// foo.com
+	// https://foo.com/dl
+}

@@ -164,7 +164,7 @@ func relaxedExp() string {
 
 	hostName := `(?:` + domain + `|\[` + ipv6Addr + `\]|\b` + ipv4Addr + `\b)`
 	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
-	email := `[a-zA-Z0-9._%\-+]+@` + domain
+	email := `(?P<relaxedEmail>[a-zA-Z0-9._%\-+]+@` + domain + `)`
 	return strictExp() + `|` + webURL + `|` + email + `|` + ipv6AddrMinusEmpty
 }
 
@@ -179,7 +179,10 @@ func Strict() *regexp.Regexp {
 }
 
 // Relaxed produces a regexp that matches any URL matched by Strict, plus any
-// URL with no scheme or email address.
+// URL or email address with no scheme.
+//
+// Email addresses without a scheme match the `relaxedEmail` subexpression,
+// which can be used to filter them as needed.
 func Relaxed() *regexp.Regexp {
 	relaxedInit.Do(func() {
 		relaxedRe = regexp.MustCompile(relaxedExp())
