@@ -57,19 +57,19 @@ func TestScript(t *testing.T) {
 			})
 
 			handle("HEAD", "/redir-301", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain-head", 301)
+				http.Redirect(w, r, "/plain-head", http.StatusMovedPermanently)
 			})
 			handle("HEAD", "/redir-302", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain-head", 302)
+				http.Redirect(w, r, "/plain-head", http.StatusFound)
 			})
 			handle("HEAD", "/redir-303", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain-head", 303)
+				http.Redirect(w, r, "/plain-head", http.StatusSeeOther)
 			})
 			handle("HEAD", "/redir-307", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain-head", 307)
+				http.Redirect(w, r, "/plain-head", http.StatusTemporaryRedirect)
 			})
 			handle("HEAD", "/redir-308", func(w http.ResponseWriter, r *http.Request) {
-				http.Redirect(w, r, "/plain-head", 308)
+				http.Redirect(w, r, "/plain-head", http.StatusPermanentRedirect)
 			})
 
 			handle("HEAD", "/404", func(w http.ResponseWriter, r *http.Request) {
@@ -84,9 +84,9 @@ func TestScript(t *testing.T) {
 			})
 			mux.HandleFunc("/get-only", func(w http.ResponseWriter, r *http.Request) {
 				if r.Method == "GET" {
-					http.Redirect(w, r, "/plain-get", 301)
+					http.Redirect(w, r, "/plain-get", http.StatusMovedPermanently)
 				} else {
-					http.Error(w, "", 405)
+					http.Error(w, "", http.StatusMethodNotAllowed)
 				}
 			})
 
