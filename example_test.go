@@ -17,3 +17,13 @@ func Example() {
 	// http://golang.org
 	// [foo.com http://foo.com/]
 }
+
+func ExampleStrictMatchingScheme() {
+	rx, err := xurls.StrictMatchingScheme(`https?://`)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(rx.FindAllString("Download binaries via https://foo.com/dl or ftps://foo.com/dl", -1))
+	// Output:
+	// [https://foo.com/dl]
+}
