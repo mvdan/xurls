@@ -34,6 +34,7 @@ var Schemes = []string{
 	`bitcoincash`,
 	`blob`,
 	`bolo`,
+	`brid`,
 	`browserext`,
 	`cabal`,
 	`calculator`,
