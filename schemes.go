@@ -107,7 +107,7 @@ var Schemes = []string{
 	`go`,
 	`gopher`,
 	`gophers`,
-  `graph`,
+  	`graph`,
 	`grd`,
 	`gtalk`,
 	`h323`,
