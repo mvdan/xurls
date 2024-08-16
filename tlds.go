@@ -1048,7 +1048,6 @@ var TLDs = []string{
 	`sh`,
 	`shangrila`,
 	`sharp`,
-	`shaw`,
 	`shell`,
 	`shia`,
 	`shiksha`,
