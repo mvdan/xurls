@@ -165,7 +165,7 @@ func relaxedExp() string {
 	hostName := `(?:` + domain + `|\[` + ipv6Addr + `\]|\b` + ipv4Addr + `\b)`
 	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
 	email := `(?P<relaxedEmail>[a-zA-Z0-9._%\-+]+@` + domain + `)`
-	return strictExp() + `|` + webURL + `|` + email + `|` + ipv6AddrMinusEmpty
+	return strictExp() + `|` + webURL + `|` + email
 }
 
 // Strict produces a regexp that matches any URL with a scheme in either the

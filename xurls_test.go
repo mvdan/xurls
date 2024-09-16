@@ -199,6 +199,11 @@ var constantTestCases = []testCase{
 func TestRegexes(t *testing.T) {
 	doTest(t, "Relaxed", Relaxed(), constantTestCases)
 	doTest(t, "Strict", Strict(), constantTestCases)
+	doTest(t, "Relaxed_YouTubeEmotes", Relaxed(), []testCase{
+		// Shoul not match YouTube emotes: the YouTube API contains emotes in a plain text format with zero metadata allowing us to understand
+		// the placement of said emotes. This change locks ipv6 to only match through `[<ipv6>]`, which is required for web browsers to click with anyways.
+		{`:face-orange-biting-nails::face-orange-biting-nails::face-orange-biting-nails::face-orange-biting-nails::face-orange-biting-nails:`, nil},
+	})
 	doTest(t, "Relaxed2", Relaxed(), []testCase{
 		{`foo.a`, nil},
 		{`foo.com`, true},
@@ -229,73 +234,73 @@ func TestRegexes(t *testing.T) {
 		{`foo@1.2.3.4`, `1.2.3.4`},
 
 		// https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
-		{`::1`, true},
+		{`[::1]`, true},
 		//{`::`, true},
-		{`::ffff:0:0`, true},
-		{`64:ff9b::`, true},
-		{`64:ff9b:1::`, true},
-		{`100::`, true},
-		{`2001::`, true},
-		{`2001:1::1`, true},
-		{`2001:1::2`, true},
-		{`2001:2::`, true},
-		{`2001:3::`, true},
-		{`2001:4:112::`, true},
-		{`2001:10::`, true},
-		{`2001:20::`, true},
-		{`2001:db8::`, true},
-		{`2002::`, true},
-		{`2620:4f:8000::`, true},
-		{`fc00::`, true},
-		{`fe80::`, true},
+		{`[::ffff:0:0]`, true},
+		{`[64:ff9b::]`, true},
+		{`[64:ff9b:1::]`, true},
+		{`[100::]`, true},
+		{`[2001::]`, true},
+		{`[2001:1::1]`, true},
+		{`[2001:1::2]`, true},
+		{`[2001:2::]`, true},
+		{`[2001:3::]`, true},
+		{`[2001:4:112::]`, true},
+		{`[2001:10::]`, true},
+		{`[2001:20::]`, true},
+		{`[2001:db8::]`, true},
+		{`[2002::]`, true},
+		{`[2620:4f:8000::]`, true},
+		{`[fc00::]`, true},
+		{`[fe80::]`, true},
 
 		// https://datatracker.ietf.org/doc/html/rfc4291#section-2.2
-		{`ABCD:EF01:2345:6789:ABCD:EF01:2345:6789`, true},
-		{`2001:DB8:0:0:8:800:200C:417A`, true},
-		{`2001:DB8:0:0:8:800:200C:417A`, true}, // a unicast address
-		{`FF01:0:0:0:0:0:0:101`, true},         // a multicast address
-		{`0:0:0:0:0:0:0:1`, true},              // the loopback address
-		{`0:0:0:0:0:0:0:0`, true},              // the unspecified address
-		{`2001:DB8::8:800:200C:417A`, true},    // a unicast address
-		{`FF01::101`, true},                    // a multicast address
-		{`::1`, true},                          // the loopback address
+		{`[ABCD:EF01:2345:6789:ABCD:EF01:2345:6789]`, true},
+		{`[2001:DB8:0:0:8:800:200C:417A]`, true},
+		{`[2001:DB8:0:0:8:800:200C:417A]`, true}, // a unicast address
+		{`[FF01:0:0:0:0:0:0:101]`, true},         // a multicast address
+		{`[0:0:0:0:0:0:0:1]`, true},              // the loopback address
+		{`[0:0:0:0:0:0:0:0]`, true},              // the unspecified address
+		{`[2001:DB8::8:800:200C:417A]`, true},    // a unicast address
+		{`[FF01::101]`, true},                    // a multicast address
+		{`[::1]`, true},                          // the loopback address
 		//{`::`, true},                         // the unspecified address
 		{`::`, nil},
-		{`0:0:0:0:0:0:13.1.68.3`, true},
-		{`0:0:0:0:0:FFFF:129.144.52.38`, true},
-		{`::13.1.68.3`, true},
-		{`::FFFF:129.144.52.38`, true},
+		{`[0:0:0:0:0:0:13.1.68.3]`, true},
+		{`[0:0:0:0:0:FFFF:129.144.52.38]`, true},
+		{`[::13.1.68.3]`, true},
+		{`[::FFFF:129.144.52.38]`, true},
 
 		// https://datatracker.ietf.org/doc/html/rfc5952#section-1
-		{`2001:db8:0:0:1:0:0:1`, true},
-		{`2001:0db8:0:0:1:0:0:1`, true},
-		{`2001:db8::1:0:0:1`, true},
-		{`2001:db8::0:1:0:0:1`, true},
-		{`2001:0db8::1:0:0:1`, true},
-		{`2001:db8:0:0:1::1`, true},
-		{`2001:db8:0000:0:1::1`, true},
-		{`2001:DB8:0:0:1::1`, true},
+		{`[2001:db8:0:0:1:0:0:1]`, true},
+		{`[2001:0db8:0:0:1:0:0:1]`, true},
+		{`[2001:db8::1:0:0:1]`, true},
+		{`[2001:db8::0:1:0:0:1]`, true},
+		{`[2001:0db8::1:0:0:1]`, true},
+		{`[2001:db8:0:0:1::1]`, true},
+		{`[2001:db8:0000:0:1::1]`, true},
+		{`[2001:DB8:0:0:1::1]`, true},
 
 		// https://datatracker.ietf.org/doc/html/rfc5952#section-2.1
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:0001`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:001`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:01`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:1`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:0001]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:001]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:01]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:1]`, true},
 
 		// https://datatracker.ietf.org/doc/html/rfc5952#section-2.2
-		{`2001:db8:aaaa:bbbb:cccc:dddd::1`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:0:1`, true},
-		{`2001:db8:0:0:0::1`, true},
-		{`2001:db8:0:0::1`, true},
-		{`2001:db8:0::1`, true},
-		{`2001:db8::1`, true},
-		{`2001:db8::aaaa:0:0:1`, true},
-		{`2001:db8:0:0:aaaa::1`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd::1]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:0:1]`, true},
+		{`[2001:db8:0:0:0::1]`, true},
+		{`[2001:db8:0:0::1]`, true},
+		{`[2001:db8:0::1]`, true},
+		{`[2001:db8::1]`, true},
+		{`[2001:db8::aaaa:0:0:1]`, true},
+		{`[2001:db8:0:0:aaaa::1]`, true},
 
 		// https://datatracker.ietf.org/doc/html/rfc5952#section-2.3
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:aaaa`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AAAA`, true},
-		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AaAa`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:aaaa]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:AAAA]`, true},
+		{`[2001:db8:aaaa:bbbb:cccc:dddd:eeee:AaAa]`, true},
 
 		// An IP address in URI host position must be bracketed unless it is IPv4.
 		// https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2
