@@ -18,8 +18,8 @@ func main() {
 }
 ```
 
-Since API is centered around [regexp.Regexp](https://golang.org/pkg/regexp/#Regexp),
-many other methods are available, such as finding the [byte indexes](https://golang.org/pkg/regexp/#Regexp.FindAllIndex)
+Since API is centered around [regexp.Regexp](https://pkg.go.dev/regexp#Regexp),
+many other methods are available, such as finding the [byte indexes](https://pkg.go.dev/regexp#Regexp.FindAllIndex)
 for all matches.
 
 The regular expressions are compiled when the API is first called.

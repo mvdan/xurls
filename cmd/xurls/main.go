@@ -47,7 +47,7 @@ func init() {
 	flag.Var(&fix, "fix", "")
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, `
-Usage: xurls [-h] [files]
+Usage: xurls [flags] [files]
 
 xurls extracts urls from text using regular expressions.
 If no files are given, it reads from standard input.
@@ -230,6 +230,9 @@ func main1() int {
 	case "auto", "all": // enabled via -fix=auto, -fix=all, etc
 	case "true": // enabled via -fix; normalize
 		fix = "auto"
+	default:
+		flag.Usage()
+		return 1
 	}
 	var re *regexp.Regexp
 	if *relaxed {
