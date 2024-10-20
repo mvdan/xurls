@@ -92,6 +92,7 @@ var SchemesNoAuthority = []string{
 	`geo`,     // Geographic location
 	`magnet`,  // Torrent magnets
 	`mailto`,  // Mail
+	`matrix`,  // Matrix
 	`mid`,     // Message-ID
 	`sms`,     // SMS
 	`tel`,     // Telephone
