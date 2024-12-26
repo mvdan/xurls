@@ -211,17 +211,15 @@ func scanPath(re *regexp.Regexp, path string) error {
 	return nil
 }
 
-func main() { os.Exit(main1()) }
-
-func main1() int {
+func main() {
 	flag.Parse()
 	if *versionFlag {
 		fmt.Println(readVersion())
-		return 0
+		return
 	}
 	if *relaxed && *matching != "" {
 		fmt.Fprintln(os.Stderr, "-r and -m at the same time don't make much sense")
-		return 1
+		os.Exit(1)
 	}
 	switch fix {
 	case "": // disabled by default
@@ -232,7 +230,7 @@ func main1() int {
 		fix = "auto"
 	default:
 		flag.Usage()
-		return 1
+		os.Exit(2)
 	}
 	var re *regexp.Regexp
 	if *relaxed {
@@ -241,7 +239,7 @@ func main1() int {
 		var err error
 		if re, err = xurls.StrictMatchingScheme(*matching); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return 1
+			os.Exit(2)
 		}
 	} else {
 		re = xurls.Strict()
@@ -253,10 +251,9 @@ func main1() int {
 	for _, path := range args {
 		if err := scanPath(re, path); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			return 1
+			os.Exit(1)
 		}
 	}
-	return 0
 }
 
 // Borrowed from https://github.com/burrowers/garble.

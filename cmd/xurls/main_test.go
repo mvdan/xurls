@@ -16,9 +16,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	os.Exit(testscript.RunMain(m, map[string]func() int{
-		"xurls": main1,
-	}))
+	testscript.Main(m, map[string]func(){
+		"xurls": main,
+	})
 }
 
 func TestScript(t *testing.T) {
