@@ -1,6 +1,6 @@
 module mvdan.cc/xurls/v2
 
-go 1.22.0
+go 1.23
 
 require (
 	github.com/rogpeppe/go-internal v1.13.2-0.20241226121412-a5dc8ff20d0a
