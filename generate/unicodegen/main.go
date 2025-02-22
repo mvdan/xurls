@@ -6,6 +6,7 @@ package main
 import (
 	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"text/template"
@@ -102,13 +103,13 @@ func writeUnicode() error {
 	}
 
 	// sepFreeRanges excludes separators from rfc3987Ranges.
-	sepFreeRanges := append([][2]rune{}, rfc3987Ranges...)
+	sepFreeRanges := slices.Clone(rfc3987Ranges)
 	visit(unicode.Z, func(cp rune) {
 		sepFreeRanges = removeRune(sepFreeRanges, cp)
 	})
 
 	// puncFreeRanges excludes punctuation from sepFreeRanges.
-	puncFreeRanges := append([][2]rune{}, sepFreeRanges...)
+	puncFreeRanges := slices.Clone(sepFreeRanges)
 	visit(unicode.Po, func(cp rune) {
 		puncFreeRanges = removeRune(puncFreeRanges, cp)
 	})

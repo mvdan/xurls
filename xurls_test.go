@@ -12,10 +12,10 @@ import (
 
 type testCase struct {
 	in   string
-	want interface{}
+	want any
 }
 
-func wantStr(in string, want interface{}) string {
+func wantStr(in string, want any) string {
 	switch x := want.(type) {
 	case string:
 		return x

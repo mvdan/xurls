@@ -102,10 +102,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 			}
 			continue
 		}
-		weight := int64(len(matches))
-		if weight > maxWeight {
-			weight = maxWeight
-		}
+		weight := min(int64(len(matches)), maxWeight)
 		seq.Add(weight, func(r *reporter) error {
 			offsetWithinLine := 0
 			for _, pair := range matches {
