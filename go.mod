@@ -3,8 +3,8 @@ module mvdan.cc/xurls/v2
 go 1.24.0
 
 require (
-	github.com/rogpeppe/go-internal v1.13.2-0.20241226121412-a5dc8ff20d0a
-	golang.org/x/sync v0.10.0
+	github.com/rogpeppe/go-internal v1.14.1
+	golang.org/x/sync v0.16.0
 )
 
 require (
