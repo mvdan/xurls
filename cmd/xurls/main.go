@@ -19,8 +19,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"golang.org/x/mod/module"
-
 	"mvdan.cc/xurls/v2"
 )
 
@@ -30,8 +28,6 @@ var (
 	fix         boolString
 	versionFlag = flag.Bool("version", false, "")
 )
-
-var version string
 
 type boolString string
 
@@ -253,42 +249,14 @@ func main() {
 	}
 }
 
-// Borrowed from https://github.com/burrowers/garble.
-
 func readVersion() string {
-	if version != "" {
-		return version
-	}
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
-		return "unknown"
+		return "(unknown)"
 	}
 	mod := &info.Main
 	if mod.Replace != nil {
 		mod = mod.Replace
-	}
-
-	// Until https://github.com/golang/go/issues/50603 is implemented,
-	// manually construct something like a pseudo-version.
-	// TODO: remove when this code is dead, hopefully in Go 1.22.
-	if mod.Version == "(devel)" {
-		var vcsTime time.Time
-		var vcsRevision string
-		for _, setting := range info.Settings {
-			switch setting.Key {
-			case "vcs.time":
-				// If the format is invalid, we'll print a zero timestamp.
-				vcsTime, _ = time.Parse(time.RFC3339Nano, setting.Value)
-			case "vcs.revision":
-				vcsRevision = setting.Value
-				if len(vcsRevision) > 12 {
-					vcsRevision = vcsRevision[:12]
-				}
-			}
-		}
-		if vcsRevision != "" {
-			mod.Version = module.PseudoVersion("", "", vcsTime, vcsRevision)
-		}
 	}
 	return mod.Version
 }
