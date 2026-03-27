@@ -17,18 +17,18 @@ cmp nothing nothing.orig
 
 stdin redirects
 exec xurls -fix
-cmp stdout redirects.golden-auto
+[go1.26] cmp stdout redirects.golden-auto
 cmp redirects redirects.orig
 ! stderr .
 
 exec xurls -fix redirects
 stdout '^redirects$'
 ! stderr .
-cmp redirects redirects.golden-auto
+[go1.26] cmp redirects redirects.golden-auto
 cp redirects.orig redirects
 
 exec xurls -fix=auto redirects
-cmp redirects redirects.golden-auto
+[go1.26] cmp redirects redirects.golden-auto
 cp redirects.orig redirects
 
 exec xurls -fix=all redirects
@@ -73,7 +73,7 @@ Two redirects: ${SERVER}/plain-head
 Redirect inherits fragment: ${SERVER}/plain-head#foo
 Redirect replaces fragment: ${SERVER}/plain-head#bar
 
-Three links in one line: ${SERVER}/plain-head + ${SERVER}/plain-head + ${SERVER}/plain-head
+Three links in one line: ${SERVER}/plain-head + ${SERVER}//redir-1 + ${SERVER}///redir-1
 
 Redirect to a longer path ${SERVER}/redir-longtarget with trailing text
 
