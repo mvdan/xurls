@@ -34,7 +34,9 @@ const (
 	wellBrack           = `\[(?:[` + midIChar + `]|\[[` + midIChar + `]*\])*\]`
 	wellBrace           = `\{(?:[` + midIChar + `]|\{[` + midIChar + `]*\})*\}`
 	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
-	pathCont            = `(?:[` + midIChar + `]*(?:` + wellAll + `|[` + endIChar + `]))+`
+	// Allow a trailing "@!" pair so fragments like "#@!" are kept, while a
+	// lone trailing "!" is still dropped as sentence punctuation.
+	pathCont            = `(?:[` + midIChar + `]*(?:` + wellAll + `|[` + endIChar + `]|@!))+`
 
 	letter    = `\p{L}`
 	mark      = `\p{M}`
