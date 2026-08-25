@@ -126,6 +126,9 @@ var (
 
 	relaxedRe   *regexp.Regexp
 	relaxedInit sync.Once
+
+	publicRe   *regexp.Regexp
+	publicInit sync.Once
 )
 
 func anyOf(strs ...string) string {
@@ -169,6 +172,31 @@ func relaxedExp() string {
 	return strictExp() + `|` + webURL + `|` + email + `|` + ipv6AddrMinusEmpty
 }
 
+func publicExp() string {
+	var asciiTLDs, unicodeTLDs []string
+	for i, tld := range TLDs {
+		if tld[0] >= utf8.RuneSelf {
+			asciiTLDs = TLDs[:i:i]
+			unicodeTLDs = TLDs[i:]
+			break
+		}
+	}
+	punycode := `xn--[a-z0-9-]+`
+
+	// Use \b to make sure ASCII TLDs are immediately followed by a word break.
+	// We can't do that with unicode TLDs, as they don't see following
+	// whitespace as a word break.
+	tlds := `(?:(?i)` + punycode + `|` + anyOf(asciiTLDs...) + `\b|` + anyOf(unicodeTLDs...) + `)`
+	domain := subdomain + tlds
+
+	hostName := `(?:` + domain + `)`
+	webURL := hostName + port + `(?:/` + pathCont + `|/)?`
+
+	schemes := `(?:(?i)(?:` + anyOf([]string{"http", "https"}...) + `)://)`
+
+	return schemes + pathCont + webURL
+}
+
 // Strict produces a regexp that matches any URL with a scheme in either the
 // Schemes or SchemesNoAuthority lists.
 func Strict() *regexp.Regexp {
@@ -202,4 +230,16 @@ func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
 	}
 	re.Longest()
 	return re, nil
+}
+
+// Public produces a regexp that matches any valid publicly accessible URL.
+// A publicly accessible URL is a URL with a scheme in either the "http" or
+// "https" lists, and a domain with a valid TLD. IPv4 and IPv6 addresses are
+// not supported.
+func Public() *regexp.Regexp {
+	publicInit.Do(func() {
+		publicRe = regexp.MustCompile(publicExp())
+		publicRe.Longest()
+	})
+	return publicRe
 }
