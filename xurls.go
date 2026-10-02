@@ -80,7 +80,7 @@ const (
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
 // scheme, and not just the known ones.
-var AnyScheme = `(?:[a-zA-Z][a-zA-Z.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
+var AnyScheme = `(?:[a-zA-Z][a-zA-Z0-9.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
 // followed by ":" instead of "://". The list includes both officially
