@@ -400,6 +400,9 @@ func TestStrictMatchingScheme(t *testing.T) {
 func TestStrictMatchingSchemeAny(t *testing.T) {
 	strictMatching, _ := StrictMatchingScheme(AnyScheme)
 	doTest(t, "StrictMatchingScheme", strictMatching, []testCase{
+		{`h2://example.com/path`, true},
+		{`web3://example.com/path`, true},
+		{`a1.b2-c3+d4://example.com`, true},
 		{`http://foo`, true},
 		{`git+https://foo`, true},
 		{`randomtexthttp://foo.bar/etc`, true},
