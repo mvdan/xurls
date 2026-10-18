@@ -306,6 +306,11 @@ func TestRegexes(t *testing.T) {
 
 		{`foo.com:8080`, true},
 		{`foo.com:8080/path`, true},
+		{`foo.com?key=value`, true},
+		{`foo.com#section`, true},
+		{`foo.com:8080?key=value#section`, true},
+		{`1.2.3.4?key=value`, true},
+		{`[::1]#section`, true},
 		{`test.foo.com`, true},
 		{`test.foo.com/path`, true},
 		{`test.foo.com/path/more/`, true},
