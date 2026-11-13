@@ -108,11 +108,15 @@ func writeUnicode() error {
 		sepFreeRanges = removeRune(sepFreeRanges, cp)
 	})
 
-	// puncFreeRanges excludes punctuation from sepFreeRanges.
+	// puncFreeRanges excludes punctuation from sepFreeRanges, which is other
+	// punctuation such as the full stop and final quotation marks such as the
+	// right double quotation mark that closes a quote around a URL.
 	puncFreeRanges := slices.Clone(sepFreeRanges)
-	visit(unicode.Po, func(cp rune) {
-		puncFreeRanges = removeRune(puncFreeRanges, cp)
-	})
+	for _, rt := range []*unicode.RangeTable{unicode.Po, unicode.Pf} {
+		visit(rt, func(cp rune) {
+			puncFreeRanges = removeRune(puncFreeRanges, cp)
+		})
+	}
 
 	// Build the corresponding regular expression character class contents.
 	characterClassContents := func(ranges [][2]rune) strings.Builder {
