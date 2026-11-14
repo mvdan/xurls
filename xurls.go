@@ -17,7 +17,7 @@ import (
 
 const (
 	// pathCont is based on https://www.rfc-editor.org/rfc/rfc3987#section-2.2
-	// but does not match separators anywhere or most puncutation in final position,
+	// but does not match separators anywhere or most punctuation in final position,
 	// to avoid creating asymmetries like
 	// `Did you know that **<a href="...">https://example.com/**</a> is reserved for documentation?`
 	// from `Did you know that **https://example.com/** is reserved for documentation?`.
@@ -73,9 +73,8 @@ const (
 		// `:` is an intentionally omitted alternative, to avoid matching `::`.
 		`:(?:(?::` + h4 + `){0,5}:` + ipv4Addr + `|(?::` + h4 + `){1,7})` +
 		`)`
-	ipv6Addr         = `(?:` + ipv6AddrMinusEmpty + `|::)`
-	ipAddrMinusEmpty = `(?:` + ipv6AddrMinusEmpty + `|\b` + ipv4Addr + `\b)`
-	port             = `(?::[0-9]+)?`
+	ipv6Addr = `(?:` + ipv6AddrMinusEmpty + `|::)`
+	port     = `(?::[0-9]+)?`
 )
 
 // AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
