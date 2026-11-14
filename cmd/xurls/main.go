@@ -81,7 +81,18 @@ func scanPath(re *regexp.Regexp, path string) error {
 	seq := newSequencer(32, out) // a maximum of 32 parallel requests
 
 	userAgent := fmt.Sprintf("mvdan.cc/xurls %s", readVersion())
-	br := bufio.NewReader(in)
+
+	// Without -fix, buffer the printed urls.
+	var input io.Reader = in
+	var stdout *bufio.Writer
+	if fix == "" {
+		stdout = bufio.NewWriter(os.Stdout)
+		// Flush before reads which may block, such as from a pipe.
+		if info, err := in.Stat(); err != nil || !info.Mode().IsRegular() {
+			input = flushReader{in, stdout}
+		}
+	}
+	br := bufio.NewReader(input)
 
 	// Doesn't need to be part of reporterState as order doesn't matter.
 	var fixedCount atomic.Uint32
@@ -98,7 +109,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		if fix == "" {
 			for _, pair := range matches {
 				match := line[pair[0]:pair[1]]
-				fmt.Printf("%s\n", match)
+				fmt.Fprintln(stdout, match)
 			}
 			continue
 		}
@@ -179,6 +190,11 @@ func scanPath(re *regexp.Regexp, path string) error {
 			io.WriteString(r, line) // add the fixed line to outBuf
 		})
 	}
+	if stdout != nil {
+		if err := stdout.Flush(); err != nil {
+			return err
+		}
+	}
 	state := seq.finalState()
 	var brokenErr error
 	if len(state.brokenURLs) > 0 {
@@ -204,6 +220,19 @@ func scanPath(re *regexp.Regexp, path string) error {
 		}
 	}
 	return brokenErr
+}
+
+// flushReader flushes a writer before each read.
+type flushReader struct {
+	r io.Reader
+	w *bufio.Writer
+}
+
+func (fr flushReader) Read(p []byte) (int, error) {
+	if err := fr.w.Flush(); err != nil {
+		return 0, err
+	}
+	return fr.r.Read(p)
 }
 
 func main() {
