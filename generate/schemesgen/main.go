@@ -5,6 +5,7 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -29,6 +30,9 @@ var Schemes = []string{
 
 func schemeList() []string {
 	resp, err := http.Get("https://www.iana.org/assignments/uri-schemes/uri-schemes-1.csv")
+	if err == nil && resp.StatusCode >= 400 {
+		err = errors.New(resp.Status)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
