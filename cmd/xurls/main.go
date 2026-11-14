@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime/debug"
 	"strings"
@@ -215,7 +216,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		// Overwrite the file, if we weren't reading stdin. Report its
 		// path too.
 		fmt.Println(path)
-		if err := os.WriteFile(path, outBuf.Bytes(), 0o666); err != nil {
+		if err := writeFile(path, outBuf.Bytes()); err != nil {
 			return err
 		}
 	}
@@ -233,6 +234,65 @@ func (fr flushReader) Read(p []byte) (int, error) {
 		return 0, err
 	}
 	return fr.r.Read(p)
+}
+
+// writeFile overwrites a file in place, following symlinks.
+// Like gofmt -w, it backs up the original contents first,
+// and restores them if the write fails.
+func writeFile(path string, data []byte) error {
+	path, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return err
+	}
+	// Opening first leaves the file untouched if we cannot write to it.
+	f, err := os.OpenFile(path, os.O_RDWR, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	bakPath, err := backupFile(f)
+	if err != nil {
+		return err
+	}
+	_, err = f.WriteAt(data, 0)
+	if err == nil {
+		err = f.Truncate(int64(len(data)))
+	}
+	if err2 := f.Close(); err == nil {
+		err = err2
+	}
+	if err != nil {
+		if err2 := os.Rename(bakPath, path); err2 != nil {
+			return fmt.Errorf("%w; original kept in %s", err, bakPath)
+		}
+		return err
+	}
+	return os.Remove(bakPath)
+}
+
+// backupFile copies an open file next to it, keeping its permissions.
+func backupFile(f *os.File) (string, error) {
+	info, err := f.Stat()
+	if err != nil {
+		return "", err
+	}
+	path := f.Name()
+	bak, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".xurls-*")
+	if err != nil {
+		return "", err
+	}
+	_, err = io.Copy(bak, f)
+	if err == nil {
+		err = bak.Chmod(info.Mode().Perm())
+	}
+	if err2 := bak.Close(); err == nil {
+		err = err2
+	}
+	if err != nil {
+		os.Remove(bak.Name())
+		return "", err
+	}
+	return bak.Name(), nil
 }
 
 func main() {
