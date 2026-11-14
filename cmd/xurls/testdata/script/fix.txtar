@@ -63,6 +63,7 @@ No redirect: ${SERVER}/plain-head
 One redirect: ${SERVER}/redir-1
 Two redirects: ${SERVER}/redir-2
 Redirect inherits fragment: ${SERVER}/redir-1#foo
+Redirect inherits non-ASCII fragment: ${SERVER}/redir-1#café
 Redirect replaces fragment: ${SERVER}/redir-fragment#foo
 
 Three links in one line: ${SERVER}/redir-1 + ${SERVER}//redir-1 + ${SERVER}///redir-1
@@ -84,6 +85,7 @@ No redirect: ${SERVER}/plain-head
 One redirect: ${SERVER}/plain-head
 Two redirects: ${SERVER}/plain-head
 Redirect inherits fragment: ${SERVER}/plain-head#foo
+Redirect inherits non-ASCII fragment: ${SERVER}/plain-head#caf%C3%A9
 Redirect replaces fragment: ${SERVER}/plain-head#bar
 
 Three links in one line: ${SERVER}/plain-head + ${SERVER}//redir-1 + ${SERVER}///redir-1
@@ -105,6 +107,7 @@ No redirect: ${SERVER}/plain-head
 One redirect: ${SERVER}/plain-head
 Two redirects: ${SERVER}/plain-head
 Redirect inherits fragment: ${SERVER}/plain-head#foo
+Redirect inherits non-ASCII fragment: ${SERVER}/plain-head#caf%C3%A9
 Redirect replaces fragment: ${SERVER}/plain-head#bar
 
 Three links in one line: ${SERVER}/plain-head + ${SERVER}/plain-head + ${SERVER}/plain-head
