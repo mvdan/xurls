@@ -56,6 +56,9 @@ func TestScript(t *testing.T) {
 			handle("HEAD", "/redir-fragment", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain-head#bar", http.StatusMovedPermanently)
 			})
+			handle("HEAD", "/redir-fragment-chain", func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, "/redir-1#bar", http.StatusMovedPermanently)
+			})
 
 			handle("HEAD", "/redir-301", func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/plain-head", http.StatusMovedPermanently)
