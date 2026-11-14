@@ -173,7 +173,10 @@ func relaxedExp() string {
 
 	hostName := `(?:` + domain + `|\[` + ipv6Addr + `\]|\b` + ipv4Addr + `\b)`
 	webURL := hostName + port + `(?:[/?#]` + pathCont + `|/)?`
-	email := `(?P<relaxedEmail>[a-zA-Z0-9._%\-+]+@` + domain + `)`
+	// Leave out scripts written without spaces, such as Han or Thai,
+	// so that an email does not take in the text before it.
+	atom := `[\p{Latin}\p{Greek}\p{Cyrillic}\p{Inherited}0-9_%\-+]+`
+	email := `(?P<relaxedEmail>` + atom + `(?:[.']` + atom + `)*@` + domain + `)`
 	return strictExp() + `|` + webURL + `|` + email + `|` + ipv6AddrMinusEmpty
 }
 
