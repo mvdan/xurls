@@ -78,9 +78,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 		defer in.Close()
 	}
 
-	// A maximum of 32 parallel requests.
-	maxWeight := int64(32)
-	seq := newSequencer(maxWeight, out, os.Stderr)
+	seq := newSequencer(32, out) // a maximum of 32 parallel requests
 
 	userAgent := fmt.Sprintf("mvdan.cc/xurls %s", readVersion())
 	br := bufio.NewReader(in)
@@ -104,8 +102,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 			}
 			continue
 		}
-		weight := min(int64(len(matches)), maxWeight)
-		seq.Add(weight, func(r *reporter) error {
+		seq.Add(int64(len(matches)), func(r *reporter) {
 			offsetWithinLine := 0
 			for _, pair := range matches {
 				// The indexes are based on the original line.
@@ -179,13 +176,9 @@ func scanPath(re *regexp.Regexp, path string) error {
 				}
 			}
 			io.WriteString(r, line) // add the fixed line to outBuf
-			return nil
 		})
 	}
 	state := seq.finalState()
-	if state.exitCode != 0 {
-		panic("we aren't using sequencer for any errors")
-	}
 	var brokenErr error
 	if len(state.brokenURLs) > 0 {
 		var s strings.Builder
