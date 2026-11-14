@@ -146,10 +146,13 @@ func scanPath(re *regexp.Regexp, path string) error {
 								// Any other redirects are ignored.
 								return http.ErrUseLastResponse
 							}
+							prev := fixed
 							fixed = req.URL.String()
-							if req.URL.Fragment == "" && origURL.Fragment != "" {
-								// Inherit the fragment as written, without escaping it.
-								fixed += match[strings.IndexByte(match, '#'):]
+							if req.URL.Fragment == "" {
+								// Inherit the previous fragment as written, without escaping it.
+								if i := strings.IndexByte(prev, '#'); i >= 0 {
+									fixed += prev[i:]
+								}
 							}
 							return nil
 						},
