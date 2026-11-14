@@ -4,12 +4,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/rogpeppe/go-internal/testscript"
@@ -96,7 +98,10 @@ func TestScript(t *testing.T) {
 			}
 			server := &http.Server{Handler: mux}
 			go server.Serve(ln)
-			env.Vars = append(env.Vars, "SERVER=http://"+ln.Addr().String())
+			env.Vars = append(env.Vars,
+				"SERVER=http://"+ln.Addr().String(),
+				"CR=\r",
+			)
 			env.Defer(func() {
 				if err := server.Shutdown(context.TODO()); err != nil {
 					t.Fatal(err)
@@ -114,7 +119,27 @@ func TestScript(t *testing.T) {
 				}
 				for _, arg := range args {
 					data := ts.ReadFile(arg)
-					data = os.Expand(data, ts.Getenv)
+					data = os.Expand(data, func(name string) string {
+						// Too long for an environment variable on Windows.
+						if name == "LONGLINE" {
+							return strings.Repeat("x", bufio.MaxScanTokenSize+1)
+						}
+						return ts.Getenv(name)
+					})
+					err := os.WriteFile(ts.MkAbs(arg), []byte(data), 0o666)
+					ts.Check(err)
+				}
+			},
+			"chomp": func(ts *testscript.TestScript, neg bool, args []string) {
+				if neg {
+					ts.Fatalf("unsupported: ! chomp")
+				}
+				if len(args) == 0 {
+					ts.Fatalf("usage: chomp file...")
+				}
+				for _, arg := range args {
+					data := ts.ReadFile(arg)
+					data = strings.TrimSuffix(data, "\n")
 					err := os.WriteFile(ts.MkAbs(arg), []byte(data), 0o666)
 					ts.Check(err)
 				}

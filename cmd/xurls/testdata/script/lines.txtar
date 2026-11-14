@@ -1,0 +1,45 @@
+# Lines of any length are read in full.
+# TODO: reading silently stops at a line longer than 64KiB,
+# and -fix overwrites the file with only the lines before it.
+expand long long.golden
+exec xurls long
+stdout -count=1 '/redir-1$'
+! stderr .
+
+exec xurls -fix long
+stdout '^long$'
+! stderr .
+cmp long long.golden
+
+# Line endings are kept as they are.
+# TODO: -fix turns CRLF into LF, and adds a missing final newline.
+expand crlf crlf.golden
+chomp crlf
+stdin crlf
+exec xurls -fix
+cmp stdout crlf.golden
+! stderr .
+
+exec xurls -fix crlf
+stdout '^crlf$'
+! stderr .
+cmp crlf crlf.golden
+
+# Read errors are reported.
+# TODO: they are ignored.
+mkdir dir
+exec xurls dir
+! stderr .
+
+-- long --
+Before: ${SERVER}/redir-1
+${LONGLINE} ${SERVER}/redir-1
+After: ${SERVER}/redir-1
+-- long.golden --
+Before: ${SERVER}/plain-head
+-- crlf --
+CRLF: ${SERVER}/redir-1${CR}
+No final newline: ${SERVER}/redir-1
+-- crlf.golden --
+CRLF: ${SERVER}/plain-head
+No final newline: ${SERVER}/plain-head
