@@ -383,6 +383,10 @@ func TestRegexes(t *testing.T) {
 		{`foo@bar.com/path`, `foo@bar.com`},
 		{`foo+test@bar.com`, true},
 		{`foo+._%-@bar.com`, true},
+		{`müller@firma.de`, `ller@firma.de`},         // TODO: match the whole address
+		{`o'brien@example.com`, `brien@example.com`}, // TODO: match the whole address
+		{`'foo@bar.com'`, `foo@bar.com`},
+		{`请联系support@example.com获取帮助`, `support@example.com`},
 		{`xmailto:foo@bar.com`, `foo@bar.com`},
 	})
 	doTest(t, "Strict2", Strict(), []testCase{
