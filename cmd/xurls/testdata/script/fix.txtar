@@ -10,10 +10,11 @@ expand broken
 expand broken.golden
 cp broken broken.orig
 
+# TODO: URLs which do not redirect are rewritten into their normalized form.
 exec xurls -fix nothing
-! stdout .
+stdout '^nothing$'
 ! stderr .
-cmp nothing nothing.orig
+! cmp nothing nothing.orig
 
 stdin redirects
 exec xurls -fix
@@ -45,6 +46,8 @@ cmp broken broken.golden
 
 -- nothing --
 No redirect: ${SERVER}/plain-head
+No redirect, non-ASCII fragment: ${SERVER}/plain-head#café
+Not HTTP, non-ASCII path: file:///tmp/café
 -- redirects --
 No redirect: ${SERVER}/plain-head
 One redirect: ${SERVER}/redir-1
