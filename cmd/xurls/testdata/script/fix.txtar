@@ -17,18 +17,18 @@ cmp nothing nothing.orig
 
 stdin redirects
 exec xurls -fix
-[go1.26] cmp stdout redirects.golden-auto
+cmp stdout redirects.golden-auto
 cmp redirects redirects.orig
 ! stderr .
 
 exec xurls -fix redirects
 stdout '^redirects$'
 ! stderr .
-[go1.26] cmp redirects redirects.golden-auto
+cmp redirects redirects.golden-auto
 cp redirects.orig redirects
 
 exec xurls -fix=auto redirects
-[go1.26] cmp redirects redirects.golden-auto
+cmp redirects redirects.golden-auto
 cp redirects.orig redirects
 
 exec xurls -fix=all redirects

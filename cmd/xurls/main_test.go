@@ -5,10 +5,9 @@ package main
 
 import (
 	"bufio"
-	"context"
 	"fmt"
-	"net"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -92,21 +91,12 @@ func TestScript(t *testing.T) {
 				}
 			})
 
-			ln, err := net.Listen("tcp", ":0")
-			if err != nil {
-				return err
-			}
-			server := &http.Server{Handler: mux}
-			go server.Serve(ln)
+			server := httptest.NewServer(mux)
+			env.Defer(server.Close)
 			env.Vars = append(env.Vars,
-				"SERVER=http://"+ln.Addr().String(),
+				"SERVER="+server.URL,
 				"CR=\r",
 			)
-			env.Defer(func() {
-				if err := server.Shutdown(context.TODO()); err != nil {
-					t.Fatal(err)
-				}
-			})
 			return nil
 		},
 		Cmds: map[string]func(ts *testscript.TestScript, neg bool, args []string){
