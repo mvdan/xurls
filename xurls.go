@@ -29,7 +29,7 @@ const (
 	midIPathSegmentChar = unreservedChar + `%` + midSubDelimChar + `:@` + allowedUcsChar
 	endIPathSegmentChar = endUnreservedChar + `%` + endSubDelimChar + `@` + allowedUcsCharMinusPunc
 	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
-	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
+	midIChar            = `/?#` + midIPathSegmentChar + iPrivateChar
 	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
 	wellParen           = `\((?:[` + midIChar + `]|\([` + midIChar + `]*\))*\)`
 	wellBrack           = `\[(?:[` + midIChar + `]|\[[` + midIChar + `]*\])*\]`

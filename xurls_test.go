@@ -126,8 +126,8 @@ var constantTestCases = []testCase{
 	{`"http://foo.com/bar"more`, `http://foo.com/bar`},
 	{`{"url":"http://foo.com/bar"}`, `http://foo.com/bar`},
 	{`{"before":"foo","url":"http://foo.com/bar","after":"bar"}`, `http://foo.com/bar`},
-	{`{"text":"see http://foo.com/bar\nmore"}`, `http://foo.com/bar\nmore`}, // TODO: stop at the backslash
-	{`http://foo.com/a\b`, true},                                            // TODO: stop at the backslash
+	{`{"text":"see http://foo.com/bar\nmore"}`, `http://foo.com/bar`},
+	{`http://foo.com/a\b`, `http://foo.com/a`},
 	{`http://a.b/a0/-+_&~*%=#@.,:;'?![]()a`, true},
 	{`http://a.b/a0/$€¥`, true},
 	{`http://✪foo.bar/pa✪th©more`, true},
