@@ -236,6 +236,8 @@ func TestRegexes(t *testing.T) {
 		{`foo.i2p`, true},
 		{`foo.local`, true},
 		{`foo.onion`, true},
+		{`os.Exit(1)`, `os.Exit`},   // TODO: no match
+		{`sys.exit(0)`, `sys.exit`}, // TODO: no match
 		{`中国.中国`, true},
 		{`中国.中国/foo中国`, true},
 		{`test.联通`, true},
