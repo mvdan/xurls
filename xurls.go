@@ -78,8 +78,10 @@ const (
 	port     = `(?::[0-9]+)?`
 )
 
-// AnyScheme can be passed to StrictMatchingScheme to match any possibly valid
-// scheme, and not just the known ones.
+// AnyScheme can be passed to [StrictMatchingScheme] to match any scheme
+// followed by "://", as well as the schemes in [SchemesNoAuthority].
+// It is built at init time, so later changes to [SchemesNoAuthority] do not
+// affect it.
 var AnyScheme = `(?:[a-zA-Z][a-zA-Z0-9.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
@@ -167,8 +169,8 @@ func relaxedExp() string {
 	return strictExp() + `|` + webURL + `|` + email + `|` + ipv6AddrMinusEmpty
 }
 
-// Strict produces a regexp that matches any URL with a scheme in either the
-// Schemes or SchemesNoAuthority lists.
+// Strict produces a regexp that matches any URL with a scheme in the
+// [Schemes], [SchemesUnofficial], or [SchemesNoAuthority] lists.
 func Strict() *regexp.Regexp {
 	strictInit.Do(func() {
 		strictRe = regexp.MustCompile(strictExp())
@@ -177,7 +179,7 @@ func Strict() *regexp.Regexp {
 	return strictRe
 }
 
-// Relaxed produces a regexp that matches any URL matched by Strict, plus any
+// Relaxed produces a regexp that matches any URL matched by [Strict], plus any
 // URL or email address with no scheme.
 //
 // Email addresses without a scheme match the `relaxedEmail` subexpression,
@@ -190,8 +192,11 @@ func Relaxed() *regexp.Regexp {
 	return relaxedRe
 }
 
-// StrictMatchingScheme produces a regexp similar to Strict, but requiring that
-// the scheme match the given regular expression. See AnyScheme too.
+// StrictMatchingScheme produces a regexp similar to [Strict], but requiring that
+// the scheme match the given regular expression. See [AnyScheme] too.
+//
+// The expression matches case-insensitively and has no left boundary,
+// so "https?://" also matches within "xhttps://example.com".
 func StrictMatchingScheme(exp string) (*regexp.Regexp, error) {
 	strictMatching := `(?i)(?:` + exp + `)(?-i)` + pathCont
 	re, err := regexp.Compile(strictMatching)
