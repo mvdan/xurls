@@ -189,9 +189,9 @@ func scanPath(re *regexp.Regexp, path string) error {
 	var brokenErr error
 	if len(state.brokenURLs) > 0 {
 		var s strings.Builder
-		fmt.Fprintf(&s, "found %d broken urls in %q:\n", len(state.brokenURLs), path)
+		fmt.Fprintf(&s, "found %d broken urls in %q:", len(state.brokenURLs), path)
 		for _, broken := range state.brokenURLs {
-			fmt.Fprintf(&s, "  * %s - %s\n", broken.url, broken.reason)
+			fmt.Fprintf(&s, "\n  * %s - %s", broken.url, broken.reason)
 		}
 		brokenErr = errors.New(s.String())
 	}
@@ -249,11 +249,15 @@ func main() {
 	if len(args) == 0 {
 		args = []string{"-"}
 	}
+	failed := false
 	for _, path := range args {
 		if err := scanPath(re, path); err != nil {
 			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			failed = true
 		}
+	}
+	if failed {
+		os.Exit(1)
 	}
 }
 

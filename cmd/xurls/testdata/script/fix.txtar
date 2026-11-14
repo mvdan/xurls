@@ -45,13 +45,13 @@ cmp broken broken.golden
 cp broken.orig broken
 
 # A file with broken URLs does not stop the files after it from being fixed.
-# TODO: xurls exits at the first file with broken URLs.
 ! exec xurls -fix broken redirects
 stdout -count=1 '^broken$'
-! stdout '^redirects$'
+stdout -count=1 '^redirects$'
 stderr -count=1 '5 broken urls'
+! stderr '\n\n'
 cmp broken broken.golden
-cmp redirects redirects.orig
+cmp redirects redirects.golden-auto
 cp redirects.orig redirects
 
 -- nothing --

@@ -10,9 +10,8 @@ stdout 'https://foo.com'
 stderr 'open missing'
 
 # A failing file does not stop the files after it.
-# TODO: xurls exits at the first failing file.
 ! exec xurls missing input
-! stdout .
+stdout 'https://foo.com'
 stderr 'open missing'
 
 exec xurls input
