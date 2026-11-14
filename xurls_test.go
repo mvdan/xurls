@@ -311,6 +311,16 @@ func TestRegexes(t *testing.T) {
 		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AAAA`, true},
 		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AaAa`, true},
 
+		// TODO: bare IPv6 addresses should not match within words or code.
+		{`std::cout`, `d::c`},
+		{`fmt::Debug`, `::Deb`},
+		{`Vec::new()`, `ec::`},
+		{`.. note::`, `e::`},
+		{`12345::1`, `2345::1`},
+		{`2001:db8::1g`, `2001:db8::1`},
+		{`cafe::face`, true},
+		{`see ::1.`, `::1`},
+
 		// An IP address in URI host position must be bracketed unless it is IPv4.
 		// https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2
 		// TODO: Implement this restriction, ideally without matching the `http://1080` prefix.
