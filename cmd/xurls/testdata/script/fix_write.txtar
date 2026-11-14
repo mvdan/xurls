@@ -1,0 +1,30 @@
+[!unix] skip 'needs file permissions and symlinks'
+
+expand redirects redirects.golden
+cp redirects redirects.orig
+
+# Fixed files keep their permissions.
+chmod 0640 redirects
+exec xurls -fix redirects
+stdout '^redirects$'
+cmp redirects redirects.golden
+mode redirects 0640
+cp redirects.orig redirects
+
+# Read-only files are left alone.
+chmod 0444 redirects
+! exec xurls -fix redirects
+stderr 'permission denied'
+cmp redirects redirects.orig
+chmod 0644 redirects
+
+# Symlinks are followed rather than replaced.
+symlink link -> redirects
+exec xurls -fix link
+stdout '^link$'
+cmp redirects redirects.golden
+
+-- redirects --
+One redirect: ${SERVER}/redir-1
+-- redirects.golden --
+One redirect: ${SERVER}/plain-head

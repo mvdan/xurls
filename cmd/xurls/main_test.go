@@ -120,6 +120,19 @@ func TestScript(t *testing.T) {
 					ts.Check(err)
 				}
 			},
+			"mode": func(ts *testscript.TestScript, neg bool, args []string) {
+				if neg {
+					ts.Fatalf("unsupported: ! mode")
+				}
+				if len(args) != 2 {
+					ts.Fatalf("usage: mode file perm")
+				}
+				info, err := os.Stat(ts.MkAbs(args[0]))
+				ts.Check(err)
+				if got := fmt.Sprintf("%#o", info.Mode().Perm()); got != args[1] {
+					ts.Fatalf("%s has mode %s, want %s", args[0], got, args[1])
+				}
+			},
 			"chomp": func(ts *testscript.TestScript, neg bool, args []string) {
 				if neg {
 					ts.Fatalf("unsupported: ! chomp")
