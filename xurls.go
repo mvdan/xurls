@@ -34,7 +34,7 @@ const (
 	wellParen           = `\((?:[` + midIChar + `]|\([` + midIChar + `]*\))*\)`
 	wellBrack           = `\[(?:[` + midIChar + `]|\[[` + midIChar + `]*\])*\]`
 	wellBrace           = `\{(?:[` + midIChar + `]|\{[` + midIChar + `]*\})*\}`
-	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace
+	wellAll             = wellParen + `|` + wellBrack + `|` + wellBrace + `|` + wellCJK
 	pathCont            = `(?:[` + midIChar + `]*(?:` + wellAll + `|[` + endIChar + `]))+`
 
 	letter    = `\p{L}`

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"slices"
@@ -22,6 +23,9 @@ package xurls
 const allowedUcsChar = {{.withPunc}}
 
 const allowedUcsCharMinusPunc = {{.withoutPunc}}
+
+// wellCJK matches the brackets left out of allowedUcsChar in balanced pairs.
+const wellCJK = {{.wellCJK}}
 `))
 
 func visit(rt *unicode.RangeTable, fn func(rune)) {
@@ -108,11 +112,19 @@ func writeUnicode() error {
 		sepFreeRanges = removeRune(sepFreeRanges, cp)
 	})
 
-	// puncFreeRanges excludes punctuation from sepFreeRanges, which is other
-	// punctuation such as the full stop and final quotation marks such as the
-	// right double quotation mark that closes a quote around a URL.
+	// Like ASCII brackets, these are only allowed in balanced pairs.
+	var wellCJK []string
+	for _, pair := range [][2]rune{{'（', '）'}, {'「', '」'}, {'【', '】'}, {'《', '》'}} {
+		sepFreeRanges = removeRune(sepFreeRanges, pair[0])
+		sepFreeRanges = removeRune(sepFreeRanges, pair[1])
+		wellCJK = append(wellCJK, fmt.Sprintf("`%c[` + midIChar + `]*%c`", pair[0], pair[1]))
+	}
+
+	// puncFreeRanges also excludes punctuation other than dashes and connectors,
+	// such as "." or "”", which may end a sentence or close brackets or quotes
+	// around a URL.
 	puncFreeRanges := slices.Clone(sepFreeRanges)
-	for _, rt := range []*unicode.RangeTable{unicode.Po, unicode.Pf} {
+	for _, rt := range []*unicode.RangeTable{unicode.Po, unicode.Ps, unicode.Pe, unicode.Pi, unicode.Pf} {
 		visit(rt, func(cp rune) {
 			puncFreeRanges = removeRune(puncFreeRanges, cp)
 		})
@@ -146,6 +158,7 @@ func writeUnicode() error {
 	return tmpl.Execute(f, map[string]string{
 		"withPunc":    strconv.Quote(allowedUcsChar.String()),
 		"withoutPunc": strconv.Quote(allowedUcsCharMinusPunc.String()),
+		"wellCJK":     strings.Join(wellCJK, " + `|` + "),
 	})
 }
 

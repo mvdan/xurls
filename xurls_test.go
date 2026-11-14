@@ -199,14 +199,15 @@ var constantTestCases = []testCase{
 	{`he said “http://foo.com/path” twice`, `http://foo.com/path`},
 	{`‘http://foo.com/path’`, `http://foo.com/path`},
 	{`«http://foo.com/path»`, `http://foo.com/path`},
-	{`»http://foo.com/path«`, `http://foo.com/path«`}, // TODO: drop the closing quote
-	{`„http://foo.com/path“`, `http://foo.com/path“`}, // TODO: drop the closing quote
-	{`（http://foo.com/path）`, `http://foo.com/path）`}, // TODO: drop the closing bracket
-	{`「http://foo.com/path」`, `http://foo.com/path」`}, // TODO: drop the closing bracket
+	{`»http://foo.com/path«`, `http://foo.com/path`},
+	{`„http://foo.com/path“`, `http://foo.com/path`},
+	{`（http://foo.com/path）`, `http://foo.com/path`},
+	{`「http://foo.com/path」`, `http://foo.com/path`},
 	{`http://foo.com/a（b）c`, true},
 	{`http://foo.com/a（b）`, true},
-	{`（http://foo.com/a（b））`, `http://foo.com/a（b））`}, // TODO: drop the closing bracket
-	{`http://foo.com/a〔`, `http://foo.com/a〔`},        // TODO: drop the opening bracket
+	{`（http://foo.com/a（b））`, `http://foo.com/a（b）`},
+	{`http://foo.com/a（b`, `http://foo.com/a`},
+	{`http://foo.com/a〔`, `http://foo.com/a`},
 	{`“go to http://foo.com/path.”`, `http://foo.com/path`},
 	{`http://foo.com/a”b`, true},
 	{`http://foo.com/🐼`, true},
