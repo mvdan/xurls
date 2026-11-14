@@ -69,6 +69,12 @@ var constantTestCases = []testCase{
 	{`:foo`, nil},
 	{`://foo`, nil},
 	{`foorandom:bar`, nil},
+	// TODO: no-authority schemes should not match within words.
+	{`Makefile:12: recipe`, `file:12`},
+	{`profile:prod`, `file:prod`},
+	{`hotel:Hilton`, `tel:Hilton`},
+	{`pyramid:foo`, `mid:foo`},
+	{`acid:bar`, `cid:bar`},
 	{`foo.randombar`, nil},
 	{`zzz.`, nil},
 	{`.zzz`, nil},
@@ -87,6 +93,8 @@ var constantTestCases = []testCase{
 	{`https://localhost`, true},
 	{`mailto:foo`, true},
 	{`MAILTO:foo`, true},
+	{`(mailto:foo)`, `mailto:foo`},
+	{`<tel:+123>`, `tel:+123`},
 	{`sms:123`, true},
 	{`xmpp:foo@bar`, true},
 	{`bitcoin:Addr23?amount=1&message=foo`, true},
@@ -355,6 +363,7 @@ func TestRegexes(t *testing.T) {
 		{`foo@bar.com/path`, `foo@bar.com`},
 		{`foo+test@bar.com`, true},
 		{`foo+._%-@bar.com`, true},
+		{`xmailto:foo@bar.com`, `mailto:foo@bar.com`}, // TODO: only match the email
 	})
 	doTest(t, "Strict2", Strict(), []testCase{
 		{`http:// foo.com`, nil},
@@ -365,6 +374,7 @@ func TestRegexes(t *testing.T) {
 		{`3ffe:2a00:100:7031::1`, nil},
 		{`test.foo.com:8080/path`, nil},
 		{`foo@bar.com`, nil},
+		{`xmailto:foo@bar.com`, `mailto:foo@bar.com`}, // TODO: no match
 
 		// An IP address in URI host position must be bracketed unless it is IPv4.
 		// https://www.rfc-editor.org/rfc/rfc3986#section-3.2.2
@@ -418,6 +428,7 @@ func TestStrictMatchingSchemeAny(t *testing.T) {
 		{`git+https://foo`, true},
 		{`randomtexthttp://foo.bar/etc`, true},
 		{`mailto:foo`, true},
+		{`xmailto:foo`, `mailto:foo`}, // TODO: no match
 	})
 }
 
