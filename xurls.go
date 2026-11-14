@@ -79,10 +79,11 @@ const (
 )
 
 // AnyScheme can be passed to [StrictMatchingScheme] to match any scheme
-// followed by "://", as well as the schemes in [SchemesNoAuthority].
+// followed by "://", as well as the schemes in [SchemesNoAuthority]
+// followed by ":" at the start of a word.
 // It is built at init time, so later changes to [SchemesNoAuthority] do not
 // affect it.
-var AnyScheme = `(?:[a-zA-Z][a-zA-Z0-9.\-+]*://|` + anyOf(SchemesNoAuthority...) + `:)`
+var AnyScheme = `(?:[a-zA-Z][a-zA-Z0-9.\-+]*://|` + noAuthorityExp() + `)`
 
 // SchemesNoAuthority is a sorted list of some well-known url schemes that are
 // followed by ":" instead of "://". The list includes both officially
@@ -143,8 +144,14 @@ func anyOf(strs ...string) string {
 	return b.String()
 }
 
+// noAuthorityExp matches a scheme in [SchemesNoAuthority] at the start of a
+// word, followed by ":".
+func noAuthorityExp() string {
+	return `\b` + anyOf(SchemesNoAuthority...) + `:`
+}
+
 func strictExp() string {
-	schemes := `(?:(?i)(?:` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + anyOf(SchemesNoAuthority...) + `:)`
+	schemes := `(?:(?i)(?:` + anyOf(Schemes...) + `|` + anyOf(SchemesUnofficial...) + `)://|` + noAuthorityExp() + `)`
 	return schemes + pathCont
 }
 
