@@ -49,30 +49,31 @@ const (
 	// ipv6Addr is based on https://datatracker.ietf.org/doc/html/rfc4291#section-2.2
 	// with a specific alternative for each valid count of leading 16-bit hexadecimal "chomps"
 	// that have not been replaced with a `::` elision.
+	// Word boundaries at either end avoid matching within code like `std::cout`.
 	h4                 = `[0-9a-fA-F]{1,4}`
 	ipv6AddrMinusEmpty = `(?:` +
 		// 7 colon-terminated chomps, followed by a final chomp or the rest of an elision.
-		`(?:` + h4 + `:){7}(?:` + h4 + `|:)|` +
+		`\b(?:` + h4 + `:){7}(?:` + h4 + `\b|:\B)|` +
 		// 6 chomps, followed by an IPv4 address or elision with final chomp or final elision.
-		`(?:` + h4 + `:){6}(?:` + ipv4Addr + `|:` + h4 + `|:)|` +
+		`\b(?:` + h4 + `:){6}(?:` + ipv4Addr + `\b|:` + h4 + `\b|:\B)|` +
 		// 5 chomps, followed by an elision with optional IPv4 or up to 2 final chomps.
-		`(?:` + h4 + `:){5}(?::` + ipv4Addr + `|(?::` + h4 + `){1,2}|:)|` +
+		`\b(?:` + h4 + `:){5}(?::` + ipv4Addr + `\b|(?::` + h4 + `){1,2}\b|:\B)|` +
 		// 4 chomps, followed by an elision with optional IPv4 (optionally preceded by a chomp) or
 		// up to 3 final chomps.
-		`(?:` + h4 + `:){4}(?:(?::` + h4 + `){0,1}:` + ipv4Addr + `|(?::` + h4 + `){1,3}|:)|` +
+		`\b(?:` + h4 + `:){4}(?:(?::` + h4 + `){0,1}:` + ipv4Addr + `\b|(?::` + h4 + `){1,3}\b|:\B)|` +
 		// 3 chomps, followed by an elision with optional IPv4 (preceded by up to 2 chomps) or
 		// up to 4 final chomps.
-		`(?:` + h4 + `:){3}(?:(?::` + h4 + `){0,2}:` + ipv4Addr + `|(?::` + h4 + `){1,4}|:)|` +
+		`\b(?:` + h4 + `:){3}(?:(?::` + h4 + `){0,2}:` + ipv4Addr + `\b|(?::` + h4 + `){1,4}\b|:\B)|` +
 		// 2 chomps, followed by an elision with optional IPv4 (preceded by up to 3 chomps) or
 		// up to 5 final chomps.
-		`(?:` + h4 + `:){2}(?:(?::` + h4 + `){0,3}:` + ipv4Addr + `|(?::` + h4 + `){1,5}|:)|` +
+		`\b(?:` + h4 + `:){2}(?:(?::` + h4 + `){0,3}:` + ipv4Addr + `\b|(?::` + h4 + `){1,5}\b|:\B)|` +
 		// 1 chomp, followed by an elision with optional IPv4 (preceded by up to 4 chomps) or
 		// up to 6 final chomps.
-		`(?:` + h4 + `:){1}(?:(?::` + h4 + `){0,4}:` + ipv4Addr + `|(?::` + h4 + `){1,6}|:)|` +
+		`\b(?:` + h4 + `:){1}(?:(?::` + h4 + `){0,4}:` + ipv4Addr + `\b|(?::` + h4 + `){1,6}\b|:\B)|` +
 		// elision, followed by optional IPv4 (preceded by up to 5 chomps) or
 		// up to 7 final chomps.
 		// `:` is an intentionally omitted alternative, to avoid matching `::`.
-		`:(?:(?::` + h4 + `){0,5}:` + ipv4Addr + `|(?::` + h4 + `){1,7})` +
+		`\B:(?:(?::` + h4 + `){0,5}:` + ipv4Addr + `\b|(?::` + h4 + `){1,7}\b)` +
 		`)`
 	ipv6Addr = `(?:` + ipv6AddrMinusEmpty + `|::)`
 	port     = `(?::[0-9]+)?`

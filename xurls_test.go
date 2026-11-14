@@ -311,13 +311,13 @@ func TestRegexes(t *testing.T) {
 		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AAAA`, true},
 		{`2001:db8:aaaa:bbbb:cccc:dddd:eeee:AaAa`, true},
 
-		// TODO: bare IPv6 addresses should not match within words or code.
-		{`std::cout`, `d::c`},
-		{`fmt::Debug`, `::Deb`},
-		{`Vec::new()`, `ec::`},
-		{`.. note::`, `e::`},
-		{`12345::1`, `2345::1`},
-		{`2001:db8::1g`, `2001:db8::1`},
+		// Bare IPv6 addresses do not match within words or code.
+		{`std::cout`, nil},
+		{`fmt::Debug`, nil},
+		{`Vec::new()`, nil},
+		{`.. note::`, nil},
+		{`12345::1`, nil},
+		{`2001:db8::1g`, nil},
 		{`cafe::face`, true},
 		{`see ::1.`, `::1`},
 
