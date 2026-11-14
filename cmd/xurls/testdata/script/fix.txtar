@@ -42,6 +42,17 @@ stderr -count=2 '/404 - 404 Not Found'
 stderr -count=2 '/500 - 500 Internal Server Error'
 stderr -count=1 'totallydoesnotexist.localhost/ - Head .* dial tcp'
 cmp broken broken.golden
+cp broken.orig broken
+
+# A file with broken URLs does not stop the files after it from being fixed.
+# TODO: xurls exits at the first file with broken URLs.
+! exec xurls -fix broken redirects
+stdout -count=1 '^broken$'
+! stdout '^redirects$'
+stderr -count=1 '5 broken urls'
+cmp broken broken.golden
+cmp redirects redirects.orig
+cp redirects.orig redirects
 
 -- nothing --
 No redirect: ${SERVER}/plain-head
