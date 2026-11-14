@@ -117,7 +117,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 					r.appendBroken(match, err.Error())
 					continue
 				}
-				fixed := origURL.String()
+				fixed := match
 				switch origURL.Scheme {
 				case "http", "https":
 					// See if the URL redirects somewhere.

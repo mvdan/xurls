@@ -10,11 +10,10 @@ expand broken
 expand broken.golden
 cp broken broken.orig
 
-# TODO: URLs which do not redirect are rewritten into their normalized form.
 exec xurls -fix nothing
-stdout '^nothing$'
+! stdout .
 ! stderr .
-! cmp nothing nothing.orig
+cmp nothing nothing.orig
 
 stdin redirects
 exec xurls -fix
