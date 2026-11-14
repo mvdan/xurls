@@ -130,7 +130,7 @@ var constantTestCases = []testCase{
 	{`http://foo.bar/path%`, true},
 	{`http://foo.bar/path=`, true},
 	{`http://foo.bar/path#`, true},
-	{`http://foo.bar/path@`, `http://foo.bar/path`}, // TODO: keep the trailing @
+	{`http://foo.bar/path@`, true},
 	{`http://foo.bar/path.`, `http://foo.bar/path`},
 	{`http://foo.bar/path,`, `http://foo.bar/path`},
 	{`http://foo.bar/path:`, `http://foo.bar/path`},
@@ -340,7 +340,7 @@ func TestRegexes(t *testing.T) {
 		{`"foo.com/bar"`, `foo.com/bar`},
 		{`what is foo.com?`, `foo.com`},
 		{`the foo.com!`, `foo.com`},
-		{`see foo.com/?q=1#@!.`, `foo.com/?q=1#`}, // TODO: keep the trailing @
+		{`see foo.com/?q=1#@!.`, `foo.com/?q=1#@`},
 		{`check of foo.com: ok`, `foo.com`},
 
 		{`foo@bar`, nil},

@@ -26,7 +26,7 @@ const (
 	midSubDelimChar     = `!$&'*+,;=`
 	endSubDelimChar     = `$&+=`
 	midIPathSegmentChar = unreservedChar + `%` + midSubDelimChar + `:@` + allowedUcsChar
-	endIPathSegmentChar = endUnreservedChar + `%` + endSubDelimChar + allowedUcsCharMinusPunc
+	endIPathSegmentChar = endUnreservedChar + `%` + endSubDelimChar + `@` + allowedUcsCharMinusPunc
 	iPrivateChar        = `\x{E000}-\x{F8FF}\x{F0000}-\x{FFFFD}\x{100000}-\x{10FFFD}`
 	midIChar            = `/?#\\` + midIPathSegmentChar + iPrivateChar
 	endIChar            = `/#` + endIPathSegmentChar + iPrivateChar
