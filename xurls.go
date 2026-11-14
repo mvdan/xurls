@@ -6,6 +6,7 @@ package xurls
 
 import (
 	"regexp"
+	"slices"
 	"strings"
 	"sync"
 	"unicode/utf8"
@@ -146,14 +147,12 @@ func strictExp() string {
 }
 
 func relaxedExp() string {
-	var asciiTLDs, unicodeTLDs []string
-	for i, tld := range TLDs {
-		if tld[0] >= utf8.RuneSelf {
-			asciiTLDs = TLDs[:i:i]
-			unicodeTLDs = TLDs[i:]
-			break
-		}
+	// TLDs is sorted, so any Unicode TLDs come after the ASCII ones.
+	i := slices.IndexFunc(TLDs, func(tld string) bool { return tld[0] >= utf8.RuneSelf })
+	if i < 0 {
+		i = len(TLDs)
 	}
+	asciiTLDs, unicodeTLDs := TLDs[:i:i], TLDs[i:]
 	punycode := `xn--[a-z0-9-]+`
 
 	// Use \b to make sure ASCII TLDs are immediately followed by a word break.
