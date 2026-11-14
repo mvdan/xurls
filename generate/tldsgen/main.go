@@ -40,8 +40,7 @@ func cleanTld(tld string) string {
 	return tld
 }
 
-func fetchFromURL(wg *sync.WaitGroup, url, pat string, tldSet map[string]bool) {
-	defer wg.Done()
+func fetchFromURL(url, pat string) []string {
 	log.Printf("Fetching %s", url)
 	resp, err := http.Get(url)
 	if err == nil && resp.StatusCode >= 400 {
@@ -53,6 +52,7 @@ func fetchFromURL(wg *sync.WaitGroup, url, pat string, tldSet map[string]bool) {
 	defer resp.Body.Close()
 	scanner := bufio.NewScanner(resp.Body)
 	re := regexp.MustCompile(pat)
+	var tlds []string
 	for scanner.Scan() {
 		line := scanner.Text()
 		tld := re.FindString(line)
@@ -60,21 +60,29 @@ func fetchFromURL(wg *sync.WaitGroup, url, pat string, tldSet map[string]bool) {
 		if tld == "" {
 			continue
 		}
-		tldSet[tld] = true
+		tlds = append(tlds, tld)
 	}
 	if err := scanner.Err(); err != nil {
 		panic(fmt.Errorf("%s: %s", url, err))
 	}
+	return tlds
 }
 
 func tldList() ([]string, []string) {
 	var urls []string
 	var wg sync.WaitGroup
+	var mu sync.Mutex
 	tldSet := make(map[string]bool)
 	fromURL := func(url, pat string) {
 		urls = append(urls, url)
-		wg.Add(1)
-		go fetchFromURL(&wg, url, pat, tldSet)
+		wg.Go(func() {
+			tlds := fetchFromURL(url, pat)
+			mu.Lock()
+			defer mu.Unlock()
+			for _, tld := range tlds {
+				tldSet[tld] = true
+			}
+		})
 	}
 	fromURL("https://data.iana.org/TLD/tlds-alpha-by-domain.txt", `^[^#]+$`)
 	fromURL("https://publicsuffix.org/list/effective_tld_names.dat", `^[^/.]+$`)
@@ -92,7 +100,7 @@ func tldList() ([]string, []string) {
 func writeTlds(tlds, urls []string) error {
 	f, err := os.Create(path)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer f.Close()
 	return tldsTmpl.Execute(f, struct {
@@ -107,5 +115,7 @@ func writeTlds(tlds, urls []string) error {
 func main() {
 	tlds, urls := tldList()
 	log.Printf("Generating %s...", path)
-	writeTlds(tlds, urls)
+	if err := writeTlds(tlds, urls); err != nil {
+		log.Fatal(err)
+	}
 }
