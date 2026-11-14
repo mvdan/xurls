@@ -83,13 +83,19 @@ func scanPath(re *regexp.Regexp, path string) error {
 	seq := newSequencer(maxWeight, out, os.Stderr)
 
 	userAgent := fmt.Sprintf("mvdan.cc/xurls %s", readVersion())
-	scanner := bufio.NewScanner(in)
+	br := bufio.NewReader(in)
 
 	// Doesn't need to be part of reporterState as order doesn't matter.
 	var fixedCount atomic.Uint32
 
-	for scanner.Scan() {
-		line := scanner.Text() + "\n"
+	var readErr error
+	for readErr == nil {
+		// Keep any line ending as-is, so that -fix leaves it unchanged.
+		var line string
+		line, readErr = br.ReadString('\n')
+		if line == "" {
+			continue // only along with io.EOF or another error
+		}
 		matches := re.FindAllStringIndex(line, -1)
 		if fix == "" {
 			for _, pair := range matches {
@@ -175,13 +181,23 @@ func scanPath(re *regexp.Regexp, path string) error {
 			io.WriteString(r, line) // add the fixed line to outBuf
 			return nil
 		})
-		if err := scanner.Err(); err != nil {
-			return err
-		}
 	}
 	state := seq.finalState()
 	if state.exitCode != 0 {
 		panic("we aren't using sequencer for any errors")
+	}
+	var brokenErr error
+	if len(state.brokenURLs) > 0 {
+		var s strings.Builder
+		fmt.Fprintf(&s, "found %d broken urls in %q:\n", len(state.brokenURLs), path)
+		for _, broken := range state.brokenURLs {
+			fmt.Fprintf(&s, "  * %s - %s\n", broken.url, broken.reason)
+		}
+		brokenErr = errors.New(s.String())
+	}
+	if readErr != io.EOF {
+		// Don't overwrite the file with partial output.
+		return errors.Join(readErr, brokenErr)
 	}
 	// Note that all goroutines have stopped at this point.
 	if fixedCount.Load() > 0 && path != "-" {
@@ -193,15 +209,7 @@ func scanPath(re *regexp.Regexp, path string) error {
 			return err
 		}
 	}
-	if len(state.brokenURLs) > 0 {
-		var s strings.Builder
-		fmt.Fprintf(&s, "found %d broken urls in %q:\n", len(state.brokenURLs), path)
-		for _, broken := range state.brokenURLs {
-			fmt.Fprintf(&s, "  * %s - %s\n", broken.url, broken.reason)
-		}
-		return errors.New(s.String())
-	}
-	return nil
+	return brokenErr
 }
 
 func main() {
