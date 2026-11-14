@@ -103,11 +103,9 @@ func scanPath(re *regexp.Regexp, path string) error {
 			continue
 		}
 		seq.Add(int64(len(matches)), func(r *reporter) {
-			offsetWithinLine := 0
+			var fixedLine strings.Builder
+			last := 0 // end of the last replaced url in line
 			for _, pair := range matches {
-				// The indexes are based on the original line.
-				pair[0] += offsetWithinLine
-				pair[1] += offsetWithinLine
 				match := line[pair[0]:pair[1]]
 				origURL, err := url.Parse(match)
 				if err != nil {
@@ -168,12 +166,15 @@ func scanPath(re *regexp.Regexp, path string) error {
 					resp.Body.Close()
 				}
 				if fixed != match {
-					// Replace the url, and update offsetWithinLine.
-					newLine := line[:pair[0]] + fixed + line[pair[1]:]
-					offsetWithinLine += len(newLine) - len(line)
-					line = newLine
+					fixedLine.WriteString(line[last:pair[0]])
+					fixedLine.WriteString(fixed)
+					last = pair[1]
 					fixedCount.Add(1)
 				}
+			}
+			if last > 0 {
+				fixedLine.WriteString(line[last:])
+				line = fixedLine.String()
 			}
 			io.WriteString(r, line) // add the fixed line to outBuf
 		})
