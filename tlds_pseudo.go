@@ -13,7 +13,6 @@ package xurls
 var PseudoTLDs = []string{
 	`bit`,       // Namecoin
 	`example`,   // Example domain
-	`exit`,      // Tor exit node
 	`gnu`,       // GNS by public key
 	`i2p`,       // I2P network
 	`invalid`,   // Invalid domain
